@@ -77,7 +77,7 @@ export const HorizontalTabs = () => {
             value="tab4"
           >
             <SizableText fontFamily="$body" text="center" ellipsis>
-              Jt boxes
+              Jt boxes and homes
             </SizableText>
           </Tabs.Tab>
     
