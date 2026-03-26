@@ -15,6 +15,7 @@ import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import { Link, Stack } from 'expo-router'
 import Contents800 from 'components/Contents800'
+import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 
 const demos = ['horizontal', 'vertical'] as const
 const demosTitle: Record<(typeof demos)[number], string> = {
@@ -34,7 +35,7 @@ export default function CreateAccount() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "Create account", headerShown: true }} />
-        <Contents800>
+        <Contents800_2_flexdirection>
           <Contents400>
             <View style={{ width: width < 600 ? width : 400 }}>
               <Form self={'center'} width={350} gap={'$4'}>
@@ -71,7 +72,7 @@ export default function CreateAccount() {
               </Form>
             </View>
           </Contents400>
-        </Contents800>
+        </Contents800_2_flexdirection>
       </View>
     </KeyboardAvoidingView>
   )

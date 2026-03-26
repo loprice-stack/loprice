@@ -6,27 +6,19 @@ import {
   Button,
   H5,
   Separator,
-  SizableText,
-  Tabs,
-  XStack,
-  YStack,
-  isWeb,
   Text,
   useWindowDimensions,
   Image,
-  getConfig,
   Input,
   Form,
   Label,
-  H2,
-  H3,
-  H4,
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import Contents400_2 from 'components/Contents400_2'
 import { Link, Stack } from 'expo-router'
 import Contents800 from 'components/Contents800'
+import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 const demos = ['horizontal', 'vertical'] as const
 const demosTitle: Record<(typeof demos)[number], string> = {
   horizontal: 'Horizontal',
@@ -51,7 +43,7 @@ export default function Login () {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "Account", headerShown: true }} />
-        <Contents800>
+        <Contents800_2_flexdirection>
           <Contents400_2>
             <Image
               self={'center'}
@@ -102,7 +94,7 @@ export default function Login () {
               </Form>
             </View>
           </Contents400>
-        </Contents800>
+        </Contents800_2_flexdirection>
       </View>
     </KeyboardAvoidingView>
   )

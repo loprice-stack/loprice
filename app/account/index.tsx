@@ -33,6 +33,7 @@ import { Link, Stack } from 'expo-router'
 import Contents800 from 'components/Contents800'
 import AccountCard from 'components/AccountCard'
 import Contents400_2_flex from 'components/Contents400_2_flex'
+import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 
 const demos = ['horizontal', 'vertical'] as const
 const demosTitle: Record<(typeof demos)[number], string> = {
@@ -60,7 +61,7 @@ export default function Account() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "Account", headerShown: true }} />
-        <Contents800>
+        <Contents800_2_flexdirection>
           <Contents400_2_flex>
             <Theme name="surface1">
                 <AccountCard
@@ -114,7 +115,7 @@ export default function Account() {
               </YGroup>
             </View>
           </Contents400>
-        </Contents800>
+        </Contents800_2_flexdirection>
       </View>
     </KeyboardAvoidingView>
   )

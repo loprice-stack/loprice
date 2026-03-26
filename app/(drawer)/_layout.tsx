@@ -7,7 +7,6 @@ import Chats from 'app/chats/chats';
 import Inmails from 'app/inmails/inmails';
 import Listings from 'app/listings/listings';
 import SettingsHome from 'app/settings/settings';
-import Settings from 'app/settings/settings';
 import Streams from 'app/streams/streams';
 import React from 'react';
 

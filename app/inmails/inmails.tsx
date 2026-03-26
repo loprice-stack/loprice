@@ -27,7 +27,7 @@ export default function Inmails() {
   const [demoIndex, setDemoIndex] = React.useState(0)
   const demo = demos[demoIndex]
   return (
-         <PortalProvider>
+  
     <YStack
       px="$1"
       items='center'
@@ -51,6 +51,6 @@ export default function Inmails() {
       </XStack>
      
     </YStack>
-    </PortalProvider>
+
   )
 }

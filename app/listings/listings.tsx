@@ -1,57 +1,54 @@
-import { HorizontalTabs } from 'components/HorizontalTabs'
-import { VerticalTabs } from 'components/VerticalTabs '
-import React from 'react'
+import * as React from 'react';
+import { Animated, View, Platform, Text } from 'react-native';
 import {
-  Button,
-  H5,
-  PortalProvider,
-  Separator,
-  SizableText,
-  Tabs,
-  XStack,
-  YStack,
-  isWeb,
+  useLinkBuilder,
   useTheme,
-  useWindowDimensions,
-} from 'tamagui'
+  NavigationContainer,
+} from '@react-navigation/native';
+import { PlatformPressable } from '@react-navigation/elements';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import AccountCard from 'components/AccountCard';
+import { Avatar, Separator, useWindowDimensions } from 'tamagui';
+import { Stack } from 'expo-router';
+import Contents800 from 'components/Contents800';
+import ListingTabBar from 'components/ListingTabBar';
+import Apartments from './Apartments';
+import FremShops from './FremShops';
+import Houses from './Houses';
+import Jitboxes from './Jtboxes';
+import Rooms from './Rooms';
+import ShortList from './ShortList';
 
-const demos = ['horizontal', 'vertical'] as const
-const demosTitle: Record<(typeof demos)[number], string> = {
-  horizontal: 'Horizontal',
-  vertical: 'Vertical',
-}
+
+
+
+const Tab = createMaterialTopTabNavigator();
+
+
 
 
 export default function Listings() {
 
-  const [demoIndex, setDemoIndex] = React.useState(0)
-  const demo = demos[demoIndex]
-  return (
-         <PortalProvider>
-    <YStack
-      px="$1"
-      items='center'
-      {...(isWeb && {
-        position: 'unset' as any,
-      })}
-    >
-  
-      {demo === 'horizontal' ? <HorizontalTabs /> : <VerticalTabs />}
+  const { width, height } = useWindowDimensions();
 
-      <XStack
-        items="center"
-        gap="$4"
-        position="absolute"
-        b="$3"
-        l="$4"
-        $max-xs={{ display: 'none' }}
-      >
-        <Button size="$2" onPress={() => setDemoIndex((x) => (x + 1) % demos.length)}>
-          {demosTitle[demo]}
-        </Button>
-      </XStack>
-     
-    </YStack>
-    </PortalProvider>
-  )
+
+  return (
+    <Contents800>
+      <Tab.Navigator
+        tabBar={(props) => <ListingTabBar {...props} />}>
+        <Tab.Screen name="rooms" component={Rooms} />
+        <Tab.Screen name="houses" component={Houses} />
+        <Tab.Screen name="apartments" component={Apartments} />
+        <Tab.Screen name="jtboxes" component={Jitboxes} />
+        <Tab.Screen name="fremshops" component={FremShops} />
+        <Tab.Screen name="shortlist" component={ShortList} />
+      </Tab.Navigator>
+    </Contents800>
+  );
 }
+
+
+
+
+
+

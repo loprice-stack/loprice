@@ -49,7 +49,7 @@ export default function SettingsHome() {
             <YGroup.Item>
               <ListItem title="Listings" subTitle="Lists, searches, filters" icon={LayoutList} iconAfter={ChevronRight} />
             </YGroup.Item>
-              <Separator />
+            <Separator />
             <YGroup.Item>
               <ListItem title="Streams" subTitle="Live, recorded, lists, searches views, filters" icon={TvMinimalPlay} iconAfter={ChevronRight} />
             </YGroup.Item>
@@ -57,7 +57,7 @@ export default function SettingsHome() {
             <YGroup.Item>
               <ListItem title="Calls" subTitle="Video, audio, skin, themes" icon={Video} iconAfter={ChevronRight} />
             </YGroup.Item>
-              <Separator />
+            <Separator />
             <YGroup.Item>
               <ListItem title="Chat" subTitle="Buble, Online status, Suscriptions" icon={MessagesSquare} iconAfter={ChevronRight} />
             </YGroup.Item>

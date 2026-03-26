@@ -11,8 +11,6 @@ export default function Contents400_2({ children }: { children: React.ReactNode 
     return (
 
         <YStack
-
-
             justify={'center'}
             self={'center'}
             items={'center'}
