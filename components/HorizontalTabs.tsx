@@ -44,7 +44,7 @@ export const HorizontalTabs = () => {
             value="tab1"
           >
             <SizableText fontFamily="$body" text="center" ellipsis>
-              Rooms s
+              Rooms
             </SizableText>
           </Tabs.Tab>
           <Tabs.Tab

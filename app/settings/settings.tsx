@@ -8,15 +8,7 @@ import { Stack } from 'expo-router'
 import React from 'react'
 import { View } from 'react-native'
 import {
-  Button,
-  H5,
   Separator,
-  SizableText,
-  Tabs,
-  XStack,
-  YStack,
-  isWeb,
-  Text,
   useWindowDimensions,
   YGroup,
   ListItem,
@@ -29,21 +21,19 @@ const demosTitle: Record<(typeof demos)[number], string> = {
 }
 
 
+
 export default function SettingsHome() {
 
   const { width, height } = useWindowDimensions();
-
-
-
   const [demoIndex, setDemoIndex] = React.useState(0)
   const demo = demos[demoIndex]
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Settings", headerShown: true }} />
       <Contents800>
         <View style={{ width: width < 600 ? width - 2 : 800 }}>
           <YGroup
-          
             justify={'center'}
             items={'center'}
             borderWidth={1}
