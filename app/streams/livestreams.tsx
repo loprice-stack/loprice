@@ -8,13 +8,13 @@ import { Avatar } from "tamagui";
 export default function LiveStreams() {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Stack.Screen options={{ title: "LiveStreams", headerShown: true }} />
+            <Stack.Screen options={{ title: "Live", headerShown: true }} />
 
             <Contents800>
                 <Contents400_2_flex>
                     <AccountCard
                         //@ts-ignore
-                        username={'LiveStreams'}>
+                        username={'Live'}>
                         <Avatar onClick={() => alert("Profile")} circular size="$10">
                             <Avatar.Image
                                 aria-label="Cam"

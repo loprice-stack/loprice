@@ -18,7 +18,6 @@ export default function ListingTabbar({ state, descriptors, navigation, position
                     flexWrap="wrap"
                     flexDirection={'row'}
                     self='center'
-
                     background="#fff"
                     width={width < 600 ? undefined : 800}
 

@@ -1,33 +1,25 @@
-import * as React from 'react';
-import { Animated, View, Platform, Text } from 'react-native';
-import {
-  useLinkBuilder,
-  useTheme,
-  NavigationContainer,
-} from '@react-navigation/native';
-import { PlatformPressable } from '@react-navigation/elements';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import AccountCard from 'components/AccountCard';
-import { Avatar, Separator, useWindowDimensions } from 'tamagui';
-import { Stack } from 'expo-router';
+import { useWindowDimensions } from 'tamagui';
 import Contents800 from 'components/Contents800';
 import ListingTabBar from 'components/ListingTabBar';
-import Apartments from './Apartments';
-import FremShops from './FremShops';
-import Houses from './Houses';
-import Jitboxes from './Jtboxes';
-import Rooms from './Rooms';
-import ShortList from './ShortList';
+import Apartments from './apartments';
+import FremShops from './fremshops';
+import Houses from './houses';
+import Jitboxes from './jtboxes';
+import Rooms from './rooms';
+import ShortList from './shortlist';
+import ListingSearch from './searchlisting';
 
 
 
 
-const Tab = createMaterialTopTabNavigator();
 
 
 
 
 export default function Listings() {
+
+  const Tab = createMaterialTopTabNavigator();
 
   const { width, height } = useWindowDimensions();
 
@@ -42,6 +34,7 @@ export default function Listings() {
         <Tab.Screen name="jtboxes" component={Jitboxes} />
         <Tab.Screen name="fremshops" component={FremShops} />
         <Tab.Screen name="shortlist" component={ShortList} />
+        <Tab.Screen name="search" component={ListingSearch} />
       </Tab.Navigator>
     </Contents800>
   );

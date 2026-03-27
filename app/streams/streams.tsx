@@ -19,9 +19,10 @@ import Contents400_2_flex from 'components/Contents400_2_flex';
 
 import ListingTabBar from 'components/ListingTabBar';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import LiveStreams from './LiveStreams'
-import RecordedStreams from './RecordedStreams'
-import SearchStreams from './SearchStreams'
+import LiveStreams from './livestreams'
+import RecordedStreams from './recordedstreams'
+import SearchStreams from './searchstreams'
+
 
 
 
@@ -44,9 +45,9 @@ export default function Streams() {
     <Contents800>
       <Tab.Navigator
         tabBar={(props) => <ListingTabBar {...props} />}>
-        <Tab.Screen name="rooms" component={LiveStreams} />
-        <Tab.Screen name="houses" component={RecordedStreams} />
-        <Tab.Screen name="apartments" component={SearchStreams} />
+        <Tab.Screen name="live" component={LiveStreams} />
+        <Tab.Screen name="recorded" component={RecordedStreams} />
+        <Tab.Screen name="search" component={SearchStreams} />
       </Tab.Navigator>
     </Contents800>
   )
