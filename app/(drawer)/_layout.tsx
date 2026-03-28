@@ -8,7 +8,7 @@ import Inmails from 'app/inmails/inmails';
 import Listings from 'app/listings/listings';
 import SettingsHome from 'app/settings/settings';
 import Streams from 'app/streams/streams';
-import React from 'react';
+import { useAppSelector } from 'store/redux/store';
 
 
 
@@ -17,7 +17,7 @@ const Drawer = createDrawerNavigator();
 
 export default function DrawerLayout() {
 
-   const [isloggedin, setIsloggedin] = React.useState(false)
+const isloggedin = useAppSelector(state => state.account.user.user_token)
   return (
     <Drawer.Navigator
       screenOptions={{

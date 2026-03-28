@@ -4,7 +4,7 @@ import { ToastProvider, ToastViewport } from '@tamagui/toast'
 import { config } from '../tamagui.config'
 import { NavigationContainer } from '@react-navigation/native'
 
-export function Provider({
+export function LopriceProvider({
   children,
   ...rest
 }: Omit<TamaguiProviderProps, 'config' | 'defaultTheme'>) {

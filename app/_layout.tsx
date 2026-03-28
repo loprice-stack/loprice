@@ -6,8 +6,11 @@ import { StatusBar } from 'expo-status-bar'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
-import { Provider } from 'components/Provider'
+import { LopriceProvider } from 'components/LopriceProvider'
 import { useTheme } from 'tamagui'
+import { Provider } from 'react-redux'
+import { store } from 'store/redux/store'
+
 
 
 export const unstable_settings = {
@@ -36,14 +39,16 @@ export default function RootLayout() {
   }
 
   return (
-    <Providers>
-      <RootLayoutNav />
-    </Providers>
+    <Provider store={store}>
+      <Providers>
+        <RootLayoutNav />
+      </Providers>
+    </Provider>
   )
 }
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
-  return <Provider>{children}</Provider>
+  return <LopriceProvider>{children}</LopriceProvider>
 }
 
 function RootLayoutNav() {
