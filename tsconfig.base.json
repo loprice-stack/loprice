@@ -10,7 +10,7 @@
     "preserveSymlinks": true,
     "incremental": true,
     "jsx": "react-jsx",
-    "module": "system",
+    "module": "commonjs", // changed from (module : system)
     "moduleResolution": "node",
     "noEmitOnError": false,
     "noImplicitAny": false,
@@ -25,10 +25,18 @@
     "sourceMap": false,
     "strictNullChecks": true,
     "target": "es2020",
-    "types": ["node"],
-    "lib": ["dom", "esnext"]
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "resolveJsonModule": true, //added by loprice
   },
-  "exclude": ["_"],
+  "exclude": [
+    "_"
+  ],
   "typeAcquisition": {
     "enable": true
   }

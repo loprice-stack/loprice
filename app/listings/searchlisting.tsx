@@ -5,7 +5,6 @@ import Contents800_2 from "components/Contents800_2";
 import ResidentialAvailabilitySearchTab from "components/ResidentialAvailabilitySearchTab";
 
 import ResidentialLocationContents from "components/ResidentialLocationContents";
-import { SelectDemo } from "components/SelectLocationContents";
 import { Stack } from "expo-router";
 import { Platform, View } from "react-native";
 import { Avatar } from "tamagui";

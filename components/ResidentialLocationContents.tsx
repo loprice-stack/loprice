@@ -1,10 +1,8 @@
 import React from 'react'
 import { Check, Cloud, Moon, Search, ChevronDown, Sun, ChevronUp } from "@tamagui/lucide-icons-2";
-import { ListItem, FontSizeTokens, useWindowDimensions, SelectProps, YGroup, Label, Select, Sheet, Theme, XStack, YStack, getFontSize, Adapt, ScrollView } from "tamagui";
+import { ListItem, Text, useWindowDimensions, SelectProps, YGroup, Label, Select, Sheet, Theme, XStack, YStack, getFontSize, Adapt, ScrollView } from "tamagui";
+import { SelectLocationContents } from './SelectLocationContents';
 
-
-import { LinearGradient } from 'tamagui/linear-gradient'
-import SelectLocationContents from './SelectLocationContents';
 
 
 export default function ResidentialLocationContents() {
@@ -34,10 +32,7 @@ export default function ResidentialLocationContents() {
       <YGroup.Item>
         <ListItem gap="$3">
           <XStack width={width < 600 ? width : 600} items="center" gap="$2">
-            <Label htmlFor="select-demo-1" flex={1} minW={20}>
-              Region
-            </Label>
-             <SelectLocationContents id="select-demo-1" />
+             <SelectLocationContents/>
 
           </XStack>
 

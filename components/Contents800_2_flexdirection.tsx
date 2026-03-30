@@ -11,11 +11,10 @@ export default function Contents800_2_flexdirection({ children }: { children: Re
 
         <XStack
             flex={1}
-            flexWrap="wrap"
+          
             flexDirection={width < 600 ? 'column' : 'row'}
             self='center'
         
-            background="#fff"
             width={width < 600 ? width : 800}
           
             // media query
