@@ -3,7 +3,7 @@ import { Text, useWindowDimensions, View, XStack, YStack } from 'tamagui'
 
 
 
-export default function Contents800_2_flexdirection({ children }: { children: React.ReactNode }) {
+export default function Contents800_2_flexdirection_no_bckgnd({ children }: { children: React.ReactNode }) {
 
     const { width, height } = useWindowDimensions();
 
@@ -11,11 +11,12 @@ export default function Contents800_2_flexdirection({ children }: { children: Re
 
         <XStack
             flex={1}
+          
             flexDirection={width < 600 ? 'column' : 'row'}
             self='center'
         
             width={width < 600 ? width : 800}
-            background={'#fff'}
+       
             // media query
             gap={2}
         >

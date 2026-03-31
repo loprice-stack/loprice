@@ -1,6 +1,6 @@
 {
-  "name": "Loprice",
-  "version": "2.0.0-rc.31",
+  "name": "loprice",
+  "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {

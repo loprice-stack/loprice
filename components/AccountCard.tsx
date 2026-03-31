@@ -5,7 +5,7 @@ export default function AccountCard(props: CardProps) {
     return (
         <Card size="$4" borderWidth={1} borderColor="$borderColor" {...props}>
             <Card.Header items={'center'} p="$4">
-                
+
                 <H2>{
                     //@ts-ignore
                     props.username
