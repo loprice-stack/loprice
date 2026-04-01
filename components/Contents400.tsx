@@ -1,6 +1,5 @@
-import { ReactElement } from 'react'
 import { Platform } from 'react-native';
-import { Text, useWindowDimensions, View, XStack, YStack } from 'tamagui'
+import { useWindowDimensions, YStack } from 'tamagui'
 
 
 
@@ -9,10 +8,9 @@ export default function Contents400({ children }: { children: React.ReactNode })
     const { width, height } = useWindowDimensions();
     const currentOS = Platform.OS; // 'ios' or 'android'
     return (
-
         <YStack
             flex={1}
-            flexWrap="wrap"
+            //flexWrap="wrap"
             justify={'center'}
             self={'center'}
             items={'center'}

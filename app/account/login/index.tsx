@@ -1,6 +1,3 @@
-import { HorizontalTabs } from 'components/HorizontalTabs'
-import LoginSignupContent from 'components/Contents800'
-import { VerticalTabs } from 'components/VerticalTabs '
 import React from 'react'
 import {
   Button,
@@ -12,6 +9,10 @@ import {
   Input,
   Form,
   Label,
+  YStack,
+  Spinner,
+  AlertDialog,
+  XStack,
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
@@ -23,33 +24,103 @@ import { accountLogin } from 'client/AxiosHttpClient'
 import { useAppDispatch } from 'store/redux/store'
 
 
-
-
 export default function Login() {
 
-  const demos = ['horizontal', 'vertical'] as const
-  const demosTitle: Record<(typeof demos)[number], string> = {
-    horizontal: 'Horizontal',
-    vertical: 'Vertical',
-  }
-
-
   const { width, height } = useWindowDimensions();
-
-  const currentOS = Platform.OS; // 'ios' or 'android'
   const [demoIndex, setDemoIndex] = React.useState(0)
-  const demo = demos[demoIndex]
   const [username, setUsername] = React.useState("")
   const [password, setPassword] = React.useState("")
-
+  const [isloading, setIsloading] = React.useState(false)
+  const [isopen, setIsopen] = React.useState(false)
+  const [errorm, setErrorm] = React.useState("")
   const dispatch = useAppDispatch();
-  //const { isloggedin } = useAppSelector(state => state.account.account)
+
+
+
+
+  function login() {
+    setIsloading(true);
+    accountLogin(username, password).then((response) => {
+      const token = response.data.user_token
+      if (token) {
+        dispatch(updateLoginStatus({
+          "user_token": token,
+          "user_id": response.data.user_id,
+          "email": response.data.email,
+          "image_url": response.data.image_url,
+          "user_type": response.data.user_type,
+          "token_type": response.data.token_type,
+          "access_level": response.data.access_level
+        }))
+      } else {
+        setErrorm(response.data.message)
+        setIsopen(true)
+        console.log(response.data)
+      }
+      setIsloading(false);
+      //console.log(token)
+    }).catch((error) => {
+      const er = error.response.data.detail
+      if (er) {
+        setErrorm(error.response.data.detail)
+      } else {
+        setErrorm("Unkown error")
+      }
+      setIsloading(false);
+      setIsopen(true)
+      console.log(error)
+    })
+  }
 
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "Account", headerShown: true }} />
+        <AlertDialog open={isopen} onOpenChange={() => setIsopen(false)}>
+          <AlertDialog.Portal>
+            <AlertDialog.Overlay
+              key="overlay"
+              //@ts-ignore
+              transition="quick"
+              opacity={0.5}
+              backgroundColor="$background"
+              enterStyle={{ opacity: 0 }}
+              exitStyle={{ opacity: 0 }}
+            />
+            <AlertDialog.Content
+              elevate
+              key="content"
+              transition={[
+                //@ts-ignore
+                'quick',
+                {
+                  opacity: {
+                    overshootClamping: true,
+                  },
+                },
+              ]}
+              enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
+              exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
+              x={0}
+              scale={1}
+              opacity={1}
+              y={0}
+            >
+              <YStack gap="$4">
+                <AlertDialog.Title>Login failed!</AlertDialog.Title>
+                <AlertDialog.Description>
+                  {errorm}
+                </AlertDialog.Description>
+                <XStack gap="$3" justify="flex-end">
+                  <AlertDialog.Cancel asChild>
+                    <Button theme="accent">Ok</Button>
+                  </AlertDialog.Cancel>
+                </XStack>
+              </YStack>
+            </AlertDialog.Content>
+          </AlertDialog.Portal>
+        </AlertDialog>
         <Contents800_2_flexdirection>
           <Contents400_2>
             <Image
@@ -65,7 +136,9 @@ export default function Login() {
           <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
           <Contents400>
             <View style={{ width: width < 600 ? width : 400 }}>
-              <Form self={'center'} width={350} gap={'$4'}>
+              <Form
+                onSubmit={() => login()}
+                self={'center'} width={350} gap={'$4'}>
                 <Label width={400} htmlFor="name">
                   <H5>Log into Loprice</H5>
                 </Label>
@@ -81,45 +154,23 @@ export default function Login() {
                   placeholder={'Password'}
                   onChangeText={(text) => setPassword(text)}
                 />
-
-                <Button size="$3" background="#04AA6D" onClick={() => {
-                  accountLogin(username, password).then((response) => {
-
-                    const token = response.data.user_token
-
-                    if (token) {
-                      dispatch(updateLoginStatus({
-                        "user_token": token,
-                        "user_jid": response.data.user_id,
-                        "email": response.data.email,
-                        "image_url": response.data.image_url,
-                        "user_type": response.data.user_type,
-                        "token_type": response.data.token_type,
-                        "access_level": response.data.access_level
-                      }))
-                    }
-                    //console.log(token)
-                  }).catch((error) => {
-                    console.log(error)
-                  })
-                }}>
-                  <Text fontSize={14} color={'white'}>Login</Text>
-                </Button>
-
                 <Form.Trigger style={{ marginTop: 16 }} asChild>
-                  <Button size="$3" variant="outlined">
-                    <Link href="/account/create">
-                      <Text fontSize={14} >Create new account</Text>
-                    </Link>
+                  <Button
+                    size="$3" background="#04AA6D" >
+                    <Spinner style={{ display: isloading ? 'flex' : 'none' }} size="small" color="$green10" />
+                    <Button.Text fontSize={14} color={'white'}>Login</Button.Text>
                   </Button>
                 </Form.Trigger>
-                <Form.Trigger asChild>
-                  <Button size="$3" >
-                    <Link href="/account/forgot">
-                      <Text fontSize={14}>Forgot password</Text>
-                    </Link>
-                  </Button>
-                </Form.Trigger>
+                <Button size="$3" variant="outlined">
+                  <Link href="/account/create">
+                    <Text fontSize={14} >Create new account</Text>
+                  </Link>
+                </Button>
+                <Button size="$3" >
+                  <Link href="/account/forgot">
+                    <Text fontSize={14}>Forgot password</Text>
+                  </Link>
+                </Button>
               </Form>
             </View>
           </Contents400>

@@ -5,7 +5,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 export interface AccountState {
     user: {
         user_token: string | undefined
-        user_jid: string
+        user_id: string
         email: string
         image_url: string
         user_type: string
@@ -20,7 +20,7 @@ export interface AccountState {
 const initialState: AccountState = {
     user: {
         user_token: undefined,
-        user_jid: "response.data.user_id",
+        user_id: "response.data.user_id",
         email: "response.data.email",
         image_url: "response.data.image_url",
         user_type: "response.data.user_type",
