@@ -1,4 +1,4 @@
-import { Badge, Barcode, Contact, Flag, Locate } from "@tamagui/lucide-icons-2";
+import { Badge, Barcode, Contact, Flag, Locate, Plus } from "@tamagui/lucide-icons-2";
 import { ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 
 export default function PersonalInfoCard() {
@@ -19,8 +19,9 @@ export default function PersonalInfoCard() {
                 <ListItem
                     gap="$3"
                     title="Nationality"
-                    subTitle="Subtitle"
+                    subTitle="Tanzanian"
                     icon={Flag}
+                    iconAfter={Plus}
                 />
             </YGroup.Item>
             <Separator />
@@ -28,8 +29,9 @@ export default function PersonalInfoCard() {
                 <ListItem
                     gap="$3"
                     title="Tin"
-                    subTitle="Subtitle"
+                    subTitle="157-752-049"
                     icon={Barcode}
+                    iconAfter={Plus}
                 />
             </YGroup.Item>
             <Separator />
@@ -37,8 +39,9 @@ export default function PersonalInfoCard() {
                 <ListItem
                     gap="$3"
                     title="Contacts"
-                    subTitle="Subtitle"
+                    subTitle="+255746334493"
                     icon={Contact}
+                    iconAfter={Plus}
                 />
             </YGroup.Item>
             <Separator />
@@ -46,8 +49,9 @@ export default function PersonalInfoCard() {
                 <ListItem
                     gap="$3"
                     title="Address"
-                    subTitle="Subtitle"
+                    subTitle="POBOX901"
                     icon={Locate}
+                    iconAfter={Plus}
                 />
             </YGroup.Item>
             <Separator />
@@ -55,8 +59,9 @@ export default function PersonalInfoCard() {
                 <ListItem
                     gap="$3"
                     title="Payments account"
-                    subTitle="Subtitle"
+                    subTitle="10204674674"
                     icon={Badge}
+                    iconAfter={Plus}
                 />
             </YGroup.Item>
             <Separator />

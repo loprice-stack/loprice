@@ -12,7 +12,7 @@ export default function AccountCard(props: CardProps) {
     return (
         <Card size="$4" borderWidth={1} borderColor="$borderColor" {...props}>
             <Card.Header items={'center'} p="$4">
-                <H2>{user.token_type}</H2>
+                <H2>{user.user_type}</H2>
                 <Paragraph>{user.user_id} </Paragraph>
             </Card.Header>
 
@@ -20,32 +20,34 @@ export default function AccountCard(props: CardProps) {
                 {props.children}
             </YStack>
             <Card.Footer items={'center'} p="$2" gap={'$-11'}>
-                <Button rounded="$10">
-                    <Link
-                        //@ts-ignore
-                        href="/account/info">
-                        <Text fontSize={14} >Info</Text>
-                    </Link>
-                </Button>
+                <Link 
+                    //@ts-ignore
+                    href="/account/info">
+                    <Button rounded="$10">
+                        <Text maxW={'100%'} fontSize={14} >Info</Text>
+                    </Button>
+                </Link>
 
-                <Button rounded="$10">
-                    <Link
-                        //@ts-ignore
-                        href="/settings/settings">
-                        <Text fontSize={14} >Settings</Text>
-                    </Link>
-                </Button>
+                <Link
+                    //@ts-ignore
+                    href="/settings/settings">
+                    <Button rounded="$10">
+
+                        <Button.Text fontSize={14} >Settings</Button.Text>
+
+                    </Button>
+                </Link>
                 <Form
                     onSubmit={() => {
                         console.log('clicked');
                         dispatch(updateLoginStatus({
                             "user_token": undefined,
-                            "user_jid": "response.data.user_id",
-                            "email": "response.data.email",
-                            "image_url": "response.data.image_url",
-                            "user_type": "response.data.user_type",
-                            "token_type": "response.data.token_type",
-                            "access_level": "response.data.access_level"
+                            "user_id": "loprice@loprice.co.tz",
+                            "email": "loprice@loprice.co.tz",
+                            "image_url": "",
+                            "user_type": "owner",
+                            "token_type": "bearer",
+                            "access_level": 1
                         }))
                     }}
                 >

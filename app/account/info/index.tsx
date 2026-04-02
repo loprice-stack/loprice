@@ -27,6 +27,8 @@ import { accountLogin } from 'client/AxiosHttpClient'
 import { useAppDispatch } from 'store/redux/store'
 import PersonalInfoCard from 'components/PersonalInfoCard'
 import UserInfoCard from 'components/UserInfoCard'
+import { FullnameEditDialog } from 'components/FullnameEditDialog'
+import { GenderAgeDialogy } from 'components/GenderAgeDialogy'
 
 
 
@@ -64,6 +66,8 @@ export default function Info() {
         <Stack.Screen options={{ title: "Personal Information", headerShown: true }} />
         <Contents800_2_flexdirection>
           <Contents400_2>
+            <FullnameEditDialog/>
+            <GenderAgeDialogy/>
             <UserInfoCard />
           </Contents400_2>
           <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
