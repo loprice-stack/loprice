@@ -17,7 +17,7 @@ import {
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import Contents400_2 from 'components/Contents400_2'
-import { Link, Stack } from 'expo-router'
+import { Link, Stack, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { updateLoginStatus } from '../accountSlice'
 import { accountLogin } from 'client/AxiosHttpClient'
@@ -26,8 +26,8 @@ import { useAppDispatch } from 'store/redux/store'
 
 export default function Login() {
 
+  const router = useRouter()
   const { width, height } = useWindowDimensions();
-  const [demoIndex, setDemoIndex] = React.useState(0)
   const [username, setUsername] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [isloading, setIsloading] = React.useState(false)
@@ -161,15 +161,16 @@ export default function Login() {
                     <Button.Text fontSize={14} color={'white'}>Login</Button.Text>
                   </Button>
                 </Form.Trigger>
-                <Button size="$3" variant="outlined">
-                  <Link href="/account/create">
-                    <Text fontSize={14} >Create new account</Text>
-                  </Link>
+                <Button
+                  onPress={() => router.navigate('/account/create')}
+                  size="$3" variant="outlined">
+                  <Text fontSize={14} >Create new account</Text>
+
                 </Button>
-                <Button size="$3" >
-                  <Link href="/account/forgot">
-                    <Text fontSize={14}>Forgot password</Text>
-                  </Link>
+                <Button
+                  onPress={() => router.navigate('/account/forgot')}
+                  size="$3" >
+                  <Text fontSize={14}>Forgot password</Text>
                 </Button>
               </Form>
             </View>

@@ -13,24 +13,17 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Link, Stack } from 'expo-router'
+import { Link, Stack, useRouter } from 'expo-router'
 import Contents800 from 'components/Contents800'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-
-const demos = ['horizontal', 'vertical'] as const
-const demosTitle: Record<(typeof demos)[number], string> = {
-  horizontal: 'Horizontal',
-  vertical: 'Vertical',
-}
 
 
 
 export default function ResetPassword() {
+  const router = useRouter()
   const { width, height } = useWindowDimensions();
 
-  const currentOS = Platform.OS; // 'ios' or 'android'
-  const [demoIndex, setDemoIndex] = React.useState(0)
-  const demo = demos[demoIndex]
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -58,10 +51,10 @@ export default function ResetPassword() {
                   </Button>
                 </Form.Trigger>
                 <Form.Trigger style={{ marginTop: 16 }} asChild>
-                  <Button size="$3" >
-                    <Link href="/account">
-                      <Text fontSize={14}>I remembered my password</Text>
-                    </Link>
+                  <Button
+                    onPress={() => router.navigate('/account/login')}
+                    size="$3" >
+                    <Text fontSize={14}>I remembered my password</Text>
                   </Button>
                 </Form.Trigger>
               </Form>

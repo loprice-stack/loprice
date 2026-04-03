@@ -1,6 +1,6 @@
 import { selectors } from '@playwright/test';
 import { Check, ChevronDown, ChevronUp, X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, setGenderAgeDialogOpen, updateGender } from 'app/account/accountSlice';
+import { setFullnameDialogOpen, setGenderAgeDialogOpen, updateAge, updateGender } from 'app/account/accountSlice';
 import React from 'react';
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -26,7 +26,7 @@ import { LinearGradient } from 'tamagui/linear-gradient';
 
 
 
-export function GenderAgeDialogy() {
+export function GenderAgeEditDialogy() {
 
     const [gender, setGender] = React.useState([{ value: "male" }, { value: "female" }])
     const dispatch = useAppDispatch();
@@ -207,7 +207,9 @@ export function GenderAgeDialogy() {
                             <Input
                                 keyboardType="numeric"    // For Native
                                 inputMode="numeric"      // For Web
-                                flex={1} />
+                                flex={1} 
+                                onChangeText={(text) => dispatch(updateAge(text))}
+                                />
                         </Fieldset>
 
                         <XStack self="flex-end" gap="$4">

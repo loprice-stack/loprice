@@ -1,9 +1,14 @@
 import { Badge, Barcode, Contact, Flag, Locate, Plus } from "@tamagui/lucide-icons-2";
+import { setAddressDialogOpen, setContactPDialogOpen, setFullnameDialogOpen, setNationalityDialogOpen, setPaymentsAccountDialogOpen, setTinDialogOpen } from "app/account/accountSlice";
+import { useAppDispatch, useAppSelector } from "store/redux/store";
 import { ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 
-export default function PersonalInfoCard() {
+export default function UserInfoCard2() {
 
     const { width, height } = useWindowDimensions();
+        const dispatch = useAppDispatch();
+        const userinfo = useAppSelector(state => state.account.userinfo)
+    
 
     return (
         <YGroup
@@ -21,7 +26,7 @@ export default function PersonalInfoCard() {
                     title="Nationality"
                     subTitle="Tanzanian"
                     icon={Flag}
-                    iconAfter={Plus}
+                    iconAfter={<Plus onPress={() => dispatch(setNationalityDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -31,7 +36,7 @@ export default function PersonalInfoCard() {
                     title="Tin"
                     subTitle="157-752-049"
                     icon={Barcode}
-                    iconAfter={Plus}
+                    iconAfter={<Plus onPress={() => dispatch(setTinDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -41,7 +46,7 @@ export default function PersonalInfoCard() {
                     title="Contacts"
                     subTitle="+255746334493"
                     icon={Contact}
-                    iconAfter={Plus}
+                    iconAfter={<Plus onPress={() => dispatch(setContactPDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -51,7 +56,7 @@ export default function PersonalInfoCard() {
                     title="Address"
                     subTitle="POBOX901"
                     icon={Locate}
-                    iconAfter={Plus}
+                    iconAfter={<Plus onPress={() => dispatch(setAddressDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -61,7 +66,7 @@ export default function PersonalInfoCard() {
                     title="Payments account"
                     subTitle="10204674674"
                     icon={Badge}
-                    iconAfter={Plus}
+                    iconAfter={<Plus onPress={() => dispatch(setPaymentsAccountDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />

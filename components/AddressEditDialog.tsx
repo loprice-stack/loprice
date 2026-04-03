@@ -1,6 +1,5 @@
-import { ChevronDown, X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'app/account/accountSlice';
-import { useState } from 'react'
+import {  X } from '@tamagui/lucide-icons-2'
+import { setAddressDialogOpen, setFullnameDialogOpen, updateAddress, updateFirstname} from 'app/account/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
@@ -9,19 +8,14 @@ import {
     Fieldset,
     Input,
     Label,
-    Paragraph,
-    Select,
     Sheet,
-    TooltipSimple,
     Unspaced,
-    View,
-    XGroup,
     XStack,
 } from 'tamagui'
 
 
 
-export function FullnameEditDialog() {
+export function AddressEditDialog() {
 
     const dispatch = useAppDispatch();
     const userinfo = useAppSelector(state => state.account.userinfo)
@@ -29,7 +23,7 @@ export function FullnameEditDialog() {
     return (
         <Dialog
             modal
-            open={userinfo.fullname_d_open}
+            open={userinfo.address_d_open}
             onOpenChange={undefined}
         >
             <Adapt
@@ -56,8 +50,6 @@ export function FullnameEditDialog() {
                     />
                 </Sheet>
             </Adapt>
-
-
             <Dialog.Portal>
                 <Dialog.Overlay
                     bg="$background"
@@ -75,7 +67,6 @@ export function FullnameEditDialog() {
                     enterStyle={{ opacity: 0 }}
                     exitStyle={{ opacity: 0 }}
                 />
-
                 <Dialog.FocusScope focusOnIdle>
                     <Dialog.Content
                         transition={[
@@ -91,44 +82,23 @@ export function FullnameEditDialog() {
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
                         gap="$4"
                     >
-                        <Dialog.Title>Edit full name</Dialog.Title>
+                        <Dialog.Title>Edit address</Dialog.Title>
                         <Dialog.Description>
-                            Make changes to your names. Click save when you're done.
+                            Make changes to your address. Click save when you're done.
                         </Dialog.Description>
-
                         <Fieldset gap="$4" horizontal>
                             <Label width={100} htmlFor="fname">
-                                First name
+                                Address
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateFirstname(text))} flex={1} id="fname"  />
+                            <Input onChangeText={(text) => dispatch(updateAddress(text))} flex={1} id="fname" />
                         </Fieldset>
-
-                        <Fieldset gap="$4" horizontal>
-                            <Label width={100} htmlFor="sname">
-                                Second name
-                            </Label>
-                            <Input onChangeText={(text) => dispatch(updatesecondname(text))} flex={1} id="sname"  />
-                        </Fieldset>
-
-                        <Fieldset gap="$4" horizontal>
-                            <Label width={100} htmlFor="lname">
-                                Last name
-                            </Label>
-                            <Input onChangeText={(text) => dispatch(updateLastname(text))} flex={1} id="lname"  />
-                        </Fieldset>
-
                         <XStack self="flex-end" gap="$4">
-
                             <Button theme="accent" aria-label="Close">
                                 Save changes
                             </Button>
-
                         </XStack>
-
                         <Unspaced>
-
-                            <Button onPress={() => dispatch(setFullnameDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
-
+                            <Button onPress={() => dispatch(setAddressDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
                         </Unspaced>
                     </Dialog.Content>
                 </Dialog.FocusScope>

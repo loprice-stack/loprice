@@ -13,7 +13,7 @@ export default function UserInfoCard() {
 
     return (
         <Contents400_2>
-            <Avatar self={'flex-start'} margin={40} onClick={() => alert("Profile")} circular size="$10">
+            <Avatar self={'flex-start'} margin={20} onClick={() => alert("Profile")} circular size="$10">
                 <Avatar.Image
                     aria-label="Cam"
                     src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"

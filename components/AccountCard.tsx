@@ -1,10 +1,12 @@
 import { updateLoginStatus } from 'app/account/accountSlice';
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import type { CardProps } from 'tamagui'
 import { Text, Button, Card, H2, Paragraph, YStack, Form } from 'tamagui'
 
 export default function AccountCard(props: CardProps) {
+
+    const router = useRouter();
 
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.account.user)
@@ -15,28 +17,20 @@ export default function AccountCard(props: CardProps) {
                 <H2>{user.user_type}</H2>
                 <Paragraph>{user.user_id} </Paragraph>
             </Card.Header>
-
             <YStack items="center" gap="$6">
                 {props.children}
             </YStack>
             <Card.Footer items={'center'} p="$2" gap={'$-11'}>
-                <Link 
-                    //@ts-ignore
-                    href="/account/info">
-                    <Button rounded="$10">
-                        <Text maxW={'100%'} fontSize={14} >Info</Text>
-                    </Button>
-                </Link>
-
-                <Link
-                    //@ts-ignore
-                    href="/settings/settings">
-                    <Button rounded="$10">
-
-                        <Button.Text fontSize={14} >Settings</Button.Text>
-
-                    </Button>
-                </Link>
+                <Button
+                    onPress={() => router.navigate('/account/info')}
+                    rounded="$10">
+                    <Text maxW={'100%'} fontSize={14} >Info</Text>
+                </Button>
+                <Button
+                    onPress={() => router.navigate('/settings/settings')}
+                    rounded="$10">
+                    <Button.Text fontSize={14} >Settings</Button.Text>
+                </Button>
                 <Form
                     onSubmit={() => {
                         console.log('clicked');

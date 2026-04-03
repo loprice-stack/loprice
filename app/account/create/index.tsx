@@ -13,24 +13,22 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Link, Stack } from 'expo-router'
+import { Link, Stack, useRouter } from 'expo-router'
 import Contents800 from 'components/Contents800'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 
-const demos = ['horizontal', 'vertical'] as const
-const demosTitle: Record<(typeof demos)[number], string> = {
-  horizontal: 'Horizontal',
-  vertical: 'Vertical',
-}
 
 
 
 export default function CreateAccount() {
+  const router = useRouter()
   const { width, height } = useWindowDimensions();
 
-  const currentOS = Platform.OS; // 'ios' or 'android'
-  const [demoIndex, setDemoIndex] = React.useState(0)
-  const demo = demos[demoIndex]
+  const [username, setUsername] = React.useState("")
+  const [password, setPassword] = React.useState("")
+  const [email, setEmail] = React.useState("")
+
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -46,16 +44,19 @@ export default function CreateAccount() {
                   theme="surface1"
                   size={'$4'}
                   placeholder={'Username'}
+                  onChangeText={(text) => setUsername(text)}
                 />
                 <Input
                   theme="surface1"
                   size={'$4'}
                   placeholder={'Email'}
+                  onChangeText={(text) => setEmail(text)}
                 />
                 <Input
                   theme="surface1"
                   size={'$4'}
                   placeholder={'Password'}
+                  onChangeText={(text) => setPassword(text)}
                 />
                 <Form.Trigger style={{ marginTop: 16 }} asChild>
                   <Button size="$3" background="#04AA6D" >
@@ -63,10 +64,10 @@ export default function CreateAccount() {
                   </Button>
                 </Form.Trigger>
                 <Form.Trigger style={{ marginTop: 16 }} asChild>
-                  <Button size="$3" >
-                    <Link href="/account">
-                      <Text fontSize={14}>I arleady have account</Text>
-                    </Link>
+                  <Button
+                    onPress={() => router.navigate('/account/login')}
+                    size="$3" >
+                    <Text fontSize={14}>I arleady have account</Text>
                   </Button>
                 </Form.Trigger>
               </Form>
