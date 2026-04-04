@@ -1,7 +1,7 @@
 import Contents800_2 from "components/Contents800_2";
-import ResidentialAvailabilitySearchTab from "components/ResidentialAvailabilitySearchTab";
-import { ResidentialLocationContents } from "components/ResidentialLocationContents";
-import { ResidentialTypeContents } from "components/ResidentialTypeContents";
+import ResidentialAvailabilitySearchTab from "components/listings/ResidentialAvailabilitySearchTab";
+import { ResidentialLocationContents } from "components/listings/ResidentialLocationContents";
+import { ResidentialTypeContents } from "components/listings/ResidentialTypeContents";
 
 import { Stack } from "expo-router";
 import { View } from "react-native";

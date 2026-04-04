@@ -6,9 +6,8 @@ import { ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 export default function UserInfoCard2() {
 
     const { width, height } = useWindowDimensions();
-        const dispatch = useAppDispatch();
-        const userinfo = useAppSelector(state => state.account.userinfo)
-    
+    const dispatch = useAppDispatch();
+
 
     return (
         <YGroup
@@ -26,7 +25,7 @@ export default function UserInfoCard2() {
                     title="Nationality"
                     subTitle="Tanzanian"
                     icon={Flag}
-                    iconAfter={<Plus onPress={() => dispatch(setNationalityDialogOpen(true))} />}
+                    iconAfter={<Plus cursor="pointer" onPress={() => dispatch(setNationalityDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -36,7 +35,7 @@ export default function UserInfoCard2() {
                     title="Tin"
                     subTitle="157-752-049"
                     icon={Barcode}
-                    iconAfter={<Plus onPress={() => dispatch(setTinDialogOpen(true))} />}
+                    iconAfter={<Plus cursor="pointer" onPress={() => dispatch(setTinDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -46,7 +45,7 @@ export default function UserInfoCard2() {
                     title="Contacts"
                     subTitle="+255746334493"
                     icon={Contact}
-                    iconAfter={<Plus onPress={() => dispatch(setContactPDialogOpen(true))} />}
+                    iconAfter={<Plus cursor="pointer" onPress={() => dispatch(setContactPDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -56,7 +55,7 @@ export default function UserInfoCard2() {
                     title="Address"
                     subTitle="POBOX901"
                     icon={Locate}
-                    iconAfter={<Plus onPress={() => dispatch(setAddressDialogOpen(true))} />}
+                    iconAfter={<Plus cursor="pointer" onPress={() => dispatch(setAddressDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />
@@ -66,7 +65,7 @@ export default function UserInfoCard2() {
                     title="Payments account"
                     subTitle="10204674674"
                     icon={Badge}
-                    iconAfter={<Plus onPress={() => dispatch(setPaymentsAccountDialogOpen(true))} />}
+                    iconAfter={<Plus cursor="pointer" onPress={() => dispatch(setPaymentsAccountDialogOpen(true))} />}
                 />
             </YGroup.Item>
             <Separator />

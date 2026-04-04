@@ -1,7 +1,7 @@
 import { H5, ListItem, Separator, SizableText, Tabs, useWindowDimensions, XStack, YGroup } from "tamagui"
 import { TabsContent } from "./TabContents"
 import { Search } from "@tamagui/lucide-icons-2"
-import Contents800_2_flexdirection_no_bckgnd from "./Contents800_2_flexdirection_no_bckgnd"
+import Contents800_2_flexdirection_no_bckgnd from "../Contents800_2_flexdirection_no_bckgnd"
 import { VerticalTabs } from "./VerticalTabs "
 import { HorizontalTabs } from "./HorizontalTabs"
 

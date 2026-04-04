@@ -2,11 +2,12 @@ import type { Action, ThunkAction } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
 import accountReducer from 'app/account/accountSlice'
 import { useDispatch, useSelector } from 'react-redux'
-
+import conversationsReducer from 'app/conversations/conversationsSlice'
 
 export const store = configureStore({
   reducer: {
-    account: accountReducer
+    account: accountReducer,
+        conversations: conversationsReducer
   }
 })
 

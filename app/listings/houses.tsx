@@ -1,29 +1,63 @@
-import AccountCard from "components/AccountCard";
+import AccountCard from "components/account/AccountCard";
 import Contents400_2_flex from "components/Contents400_2_flex";
 import Contents800 from "components/Contents800";
+import ResidentialItemCard from "components/listings/ResidentialItemCard";
 import { Stack } from "expo-router";
 import { View } from "react-native";
-import { Avatar } from "tamagui";
+import { Avatar, Group, ScrollView, Separator, useWindowDimensions, YGroup } from "tamagui";
 
 export default function Houses() {
+
+          const { width, height } = useWindowDimensions();
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Stack.Screen options={{ title: "Houses", headerShown: true }} />
-
             <Contents800>
-                <Contents400_2_flex>
-                    <AccountCard
-                        //@ts-ignore
-                        username={'Houses'}>
-                        <Avatar onClick={() => alert("Profile")} circular size="$10">
-                            <Avatar.Image
-                                aria-label="Cam"
-                                src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
-                            />
-                            <Avatar.Fallback bg="$blue10" />
-                        </Avatar>
-                    </AccountCard>
-                </Contents400_2_flex>
+                <ScrollView style={{ flex: 1, width:width < 600 ? width : 800, height: height, marginBottom: 40 }}>
+                    <YGroup>
+                        <YGroup.Item>
+                            <Group orientation="horizontal">
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                            </Group>
+                        </YGroup.Item>
+                        <Separator />
+                        <YGroup.Item>
+                            <Group orientation="horizontal">
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                            </Group>
+                        </YGroup.Item>
+                        <Separator />
+                        <YGroup.Item>
+                            <Group orientation="horizontal">
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                                <Group.Item>
+                                    <ResidentialItemCard />
+                                </Group.Item>
+                            </Group>
+                        </YGroup.Item>
+                    </YGroup>
+                </ScrollView>
             </Contents800>
         </View>
     );

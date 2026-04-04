@@ -1,6 +1,6 @@
 import Contents800 from 'components/Contents800'
-import { HorizontalTabs } from 'components/HorizontalTabs'
-import { VerticalTabs } from 'components/VerticalTabs '
+import { HorizontalTabs } from 'components/listings/HorizontalTabs'
+import { VerticalTabs } from 'components/listings/VerticalTabs '
 import React from 'react'
 import {
   Button,
@@ -17,7 +17,7 @@ import {
 
 import Contents400_2_flex from 'components/Contents400_2_flex';
 
-import ListingTabBar from 'components/ListingTabBar';
+import ListingTabBar from 'components/listings/ListingTabBar';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import LiveStreams from './livestreams'
 import RecordedStreams from './recordedstreams'

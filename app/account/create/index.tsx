@@ -1,6 +1,6 @@
-import { HorizontalTabs } from 'components/HorizontalTabs'
+import { HorizontalTabs } from 'components/listings/HorizontalTabs'
 
-import { VerticalTabs } from 'components/VerticalTabs '
+import { VerticalTabs } from 'components/listings/VerticalTabs '
 import React from 'react'
 import {
   Button,

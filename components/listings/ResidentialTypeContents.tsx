@@ -4,7 +4,7 @@ import { Check, ChevronDown, ChevronUp, Search } from '@tamagui/lucide-icons-2'
 import type { FontSizeTokens, SelectProps } from 'tamagui'
 import { Adapt, Label, ListItem, Select, Sheet, Theme, XStack, YGroup, YStack, getFontSize, useWindowDimensions } from 'tamagui'
 import { LinearGradient } from 'tamagui/linear-gradient'
-import Contents800_2_flexdirection_no_bckgnd from './Contents800_2_flexdirection_no_bckgnd'
+import Contents800_2_flexdirection_no_bckgnd from '../Contents800_2_flexdirection_no_bckgnd'
 import { GLOBAL_COUNTRIES, RESIDENTIAL_ROOMS, RESIDENTIAL_TYPE, TANZANIA_REGIONS } from 'client/constants'
 import { residentials } from 'client/AxiosHttpClient'
 

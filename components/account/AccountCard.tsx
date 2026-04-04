@@ -3,6 +3,7 @@ import { Link, useRouter } from 'expo-router'
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import type { CardProps } from 'tamagui'
 import { Text, Button, Card, H2, Paragraph, YStack, Form } from 'tamagui'
+import { ProfilePhotoShowAlertDialog } from './ProfilePhotoShowAlertDialog';
 
 export default function AccountCard(props: CardProps) {
 
@@ -12,6 +13,7 @@ export default function AccountCard(props: CardProps) {
     const user = useAppSelector(state => state.account.user)
 
     return (
+    
         <Card size="$4" borderWidth={1} borderColor="$borderColor" {...props}>
             <Card.Header items={'center'} p="$4">
                 <H2>{user.user_type}</H2>
@@ -54,5 +56,6 @@ export default function AccountCard(props: CardProps) {
                 </Form>
             </Card.Footer>
         </Card >
+      
     )
 }

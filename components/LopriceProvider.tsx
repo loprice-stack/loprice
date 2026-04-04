@@ -16,11 +16,7 @@ export function LopriceProvider({
       defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}
       {...rest}
     >
- 
-
         {children}
-  
-
     </TamaguiProvider>
   )
 }

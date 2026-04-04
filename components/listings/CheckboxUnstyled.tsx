@@ -17,10 +17,7 @@ export function CheckboxUnstyled() {
                     </Checkbox.Indicator>
                 </Checkbox>
                 <Label htmlFor="unstyled">Fence</Label>
-                
-
             </XStack>
-
             <XStack gap="$3" items="center">
                 <Checkbox defaultChecked id="1">
                     <Checkbox.Indicator>
@@ -34,20 +31,16 @@ export function CheckboxUnstyled() {
                     </Checkbox.Indicator>
                 </Checkbox>
                 <Label htmlFor="unstyled">Individual electricity</Label>
-
             </XStack>
+            <XStack gap="$3" items="center">
 
-                        <XStack gap="$3" items="center">
-        
                 <Checkbox defaultChecked id="1">
                     <Checkbox.Indicator>
                         <Check />
                     </Checkbox.Indicator>
                 </Checkbox>
                 <Label htmlFor="unstyled">Parking</Label>
-
             </XStack>
-
         </YStack>
     )
 }

@@ -9,16 +9,19 @@ import {
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import { Stack } from 'expo-router'
-import AccountCard from 'components/AccountCard'
+import AccountCard from 'components/account/AccountCard'
 import Contents400_2_flex from 'components/Contents400_2_flex'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
+import { useAppDispatch, useAppSelector } from 'store/redux/store'
+import { setAddressDialogOpen, setProfilePhotoAlertDialogOpen } from './accountSlice'
+import { ProfilePhotoShowAlertDialog } from 'components/account/ProfilePhotoShowAlertDialog'
 //import { useAppDispatch, useAppSelector } from 'store/redux/store'
 
 export default function Account() {
 
   const { width, height } = useWindowDimensions();
-  //const dispatch = useAppDispatch();
-  //const selector = useAppSelector(state => state)
+  const dispatch = useAppDispatch();
+  const userinfo = useAppSelector(state => state.account.userinfo)
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
@@ -33,17 +36,26 @@ export default function Account() {
                 size="$4"
                 width={300}
                 height={300}
-                scale={0.9}
-                hoverStyle={{ scale: 0.925 }}
-                pressStyle={{ scale: 0.875 }}
+
               >
-                <Avatar onClick={() => alert("Profile")} circular size="$10">
+                <Avatar
+
+                  //@ts-ignore
+                  transition="bouncy"
+                  animation="lazy" // Use a configured animation
+                  hoverStyle={{
+                    scale: 1.1,
+                    elevation: 5, // Adds shadow on hover
+                    cursor: 'pointer'
+                  }}
+                  onPress={() => dispatch(setProfilePhotoAlertDialogOpen(true))} circular size="$10">
                   <Avatar.Image
                     aria-label="Cam"
                     src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
                   />
                   <Avatar.Fallback bg="$blue10" />
                 </Avatar>
+                <ProfilePhotoShowAlertDialog />
               </AccountCard>
             </Theme>
           </Contents400_2_flex>

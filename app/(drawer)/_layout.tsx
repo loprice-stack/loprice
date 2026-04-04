@@ -2,9 +2,7 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Account from 'app/account';
 import Login from 'app/account/login';
-import Calls from 'app/calls/calls';
-import Chats from 'app/chats/chats';
-import Inmails from 'app/inmails/inmails';
+import Conversations from 'app/conversations';
 import Listings from 'app/listings/listings';
 import SettingsHome from 'app/settings/settings';
 import Streams from 'app/streams/streams';
@@ -29,9 +27,7 @@ const isloggedin = useAppSelector(state => state.account.user.user_token)
     >
       <Drawer.Screen name="listings" component={Listings} options={{ title: 'Listings' }}/>
       <Drawer.Screen name="streams" component={Streams} options={{ title: 'Streams' }} />
-      <Drawer.Screen name="calls" component={Calls} options={{ title: 'Calls' }} />
-      <Drawer.Screen name="chats" component={Chats} options={{ title: 'Chats' }} />
-      <Drawer.Screen name="inmails" component={Inmails} options={{ title: 'Inmails' }} />
+      <Drawer.Screen name="calls" component={Conversations} options={{ title: 'Conversations' }} />
       <Drawer.Screen name="account" component={isloggedin ? Account : Login} options={{ title: 'Account' }} />
       <Drawer.Screen name="settings" component={SettingsHome} options={{ title: 'Settings' }} />
     </Drawer.Navigator>

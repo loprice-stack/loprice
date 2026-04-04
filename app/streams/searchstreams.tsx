@@ -1,4 +1,4 @@
-import AccountCard from "components/AccountCard";
+import AccountCard from "components/account/AccountCard";
 import Contents400_2_flex from "components/Contents400_2_flex";
 import Contents800 from "components/Contents800";
 import { Stack } from "expo-router";

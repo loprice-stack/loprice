@@ -12,9 +12,12 @@ export interface AccountState {
         password: string
         email: string
         image_url: string
+        profileimage_d_open: boolean
+        profileimage_a_d_open: boolean
         user_type: string
         token_type: string
         access_level: number
+
 
     },
 
@@ -48,7 +51,9 @@ const initialState: AccountState = {
         password: "",
         user_id: "loprice@loprice.co.tz",
         email: "loprice@loprice.co.tz",
-        image_url: "",
+        image_url: "https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80",
+        profileimage_d_open: false,
+        profileimage_a_d_open: false,
         user_type: "owner",
         token_type: "bearer",
         access_level: 1,
@@ -100,6 +105,15 @@ export const accountSlice = createSlice({
             state.user = action.payload
             //console.log("New state is: " + state.user.user_jid)
         },
+
+        setProfilePhotoEditDialogOpen: (state, action) => {
+            state.user.profileimage_d_open = action.payload
+        },
+
+        setProfilePhotoAlertDialogOpen: (state, action) => {
+            state.user.profileimage_a_d_open = action.payload
+        },
+
 
 
         ////////////////////////////user info/////////////////////////////////////////
@@ -210,7 +224,9 @@ export const {
     setAddressDialogOpen,
     updateAccountName,
     updateAccountNumber,
-    setPaymentsAccountDialogOpen
+    setPaymentsAccountDialogOpen,
+    setProfilePhotoEditDialogOpen,
+    setProfilePhotoAlertDialogOpen
 } = accountSlice.actions
 
 // Export the slice reducer for use in the store configuration

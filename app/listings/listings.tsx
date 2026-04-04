@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useWindowDimensions } from 'tamagui';
 import Contents800 from 'components/Contents800';
-import ListingTabBar from 'components/ListingTabBar';
+import ListingTabBar from 'components/listings/ListingTabBar';
 import Apartments from './apartments';
 import FremShops from './fremshops';
 import Houses from './houses';
