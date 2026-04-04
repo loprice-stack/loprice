@@ -1,4 +1,4 @@
-import { Star, ChevronRight, Moon, Phone, MessageSquare } from "@tamagui/lucide-icons-2";
+import {  Phone, MessageSquare } from "@tamagui/lucide-icons-2";
 import { View } from "react-native";
 import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text } from "tamagui";
 
@@ -32,7 +32,7 @@ export default function PublicContacts() {
                                 />
                                 <Avatar.Fallback delayMs={600} bg="$blue10" />
                             </Avatar>}
-                            iconAfter={<XStack gap="$4"><MessageSquare size={'$1'} /><Phone size={'$1'} /></XStack>}
+                            iconAfter={<XStack gap="$4"><MessageSquare cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><Phone cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /></XStack>}
                         />
 
                     </YGroup.Item>

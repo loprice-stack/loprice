@@ -1,10 +1,11 @@
 import { Star, ChevronRight, Moon, Phone, MessageSquare } from "@tamagui/lucide-icons-2";
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text } from "tamagui";
 
 export default function MyContacts() {
 
-
+    const router = useRouter();
     const { width, height } = useWindowDimensions();
 
     return (
@@ -25,14 +26,29 @@ export default function MyContacts() {
                             gap="$3"
                             title="Star"
                             subTitle="Subtitle"
-                            icon={<Avatar circular size="$6">
+                            icon={<Avatar
+                                cursor="pointer"
+                                onPress={() => console.log("star clicked")}
+                                circular size="$6">
                                 <Avatar.Image
                                     aria-label="Nate Wienert"
                                     src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?&w=100&h=100&dpr=2&q=80"
                                 />
                                 <Avatar.Fallback delayMs={600} bg="$blue10" />
                             </Avatar>}
-                            iconAfter={<XStack gap="$4"><MessageSquare size={'$1'} /><Phone size={'$1'} /></XStack>}
+                            iconAfter={
+                                <XStack gap="$4">
+                                    <MessageSquare
+                                        cursor="pointer"
+                                        onPress={() => console.log("mail clicked")}
+                                        size={'$1'} />
+                                    <Phone
+                                        cursor="pointer"
+                                        onPress={
+                                            //@ts-ignore
+                                            () => router.navigate('/conversations/calls')}
+                                        size={'$1'} />
+                                </XStack>}
                         />
 
                     </YGroup.Item>

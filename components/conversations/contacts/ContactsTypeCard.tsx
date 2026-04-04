@@ -1,4 +1,4 @@
-import { Moon, Sun, Cloud, ChevronRight, Contact2, Phone, User, Mail, MessageSquare } from "@tamagui/lucide-icons-2";
+import { ChevronRight, Mail, MessageSquare } from "@tamagui/lucide-icons-2";
 import Account from "app/account";
 import { changeContactType } from "app/conversations/conversationsSlice";
 import { useAppDispatch } from "store/redux/store";
@@ -22,22 +22,22 @@ export default function ContactsTypeCard() {
             size="$4"
         >
             <YGroup.Item>
-                <ListItem onPress={() => dispatch(changeContactType("mycontacts"))} gap="$3" icon={MessageSquare}  iconAfter={ChevronRight}>
+                <ListItem cursor="pointer" onPress={() => dispatch(changeContactType("mycontacts"))} gap="$3" icon={MessageSquare}  iconAfter={ChevronRight}>
                     My contacts
                 </ListItem>
             </YGroup.Item>
             <YGroup.Item>
-                <ListItem onPress={() => dispatch(changeContactType("publiccontacts"))} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
+                <ListItem cursor="pointer" onPress={() => dispatch(changeContactType("publiccontacts"))} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
                     Public
                 </ListItem>
             </YGroup.Item>
             <YGroup.Item>
-                <ListItem onPress={() => dispatch(changeContactType("lopricecontacts"))} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
+                <ListItem cursor="pointer" onPress={() => dispatch(changeContactType("lopricecontacts"))} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
                     Loprice
                 </ListItem>
             </YGroup.Item>
                         <YGroup.Item>
-                <ListItem onPress={() => dispatch(changeContactType("mails"))} gap="$3" icon={Mail} iconAfter={ChevronRight}>
+                <ListItem cursor="pointer" onPress={() => dispatch(changeContactType("mails"))} gap="$3" icon={Mail} iconAfter={ChevronRight}>
                     Inmail
                 </ListItem>
             </YGroup.Item>
