@@ -43,31 +43,72 @@ export default function SettingsHome() {
             size="$5"
           >
             <YGroup.Item>
-              <ListItem title="General" subTitle="General app settings" icon={Settings} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="General"
+                subTitle="General app settings"
+                icon={Settings}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
-              <ListItem title="Listings" subTitle="Lists, searches, filters" icon={LayoutList} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="Listings"
+                subTitle="Lists, searches, filters"
+                icon={LayoutList}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
-              <ListItem title="Streams" subTitle="Live, recorded, lists, searches views, filters" icon={TvMinimalPlay} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="Streams"
+                subTitle="Live, recorded, lists, searches views, filters"
+                icon={TvMinimalPlay}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
-              <ListItem title="Calls" subTitle="Video, audio, skin, themes" icon={Video} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="Calls"
+                subTitle="Video, audio, skin, themes"
+                icon={Video}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
-              <ListItem title="Chat" subTitle="Buble, Online status, Suscriptions" icon={MessagesSquare} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="Chat"
+                subTitle="Buble, Online status, Suscriptions"
+                icon={MessagesSquare}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
-              <ListItem title="Inmail" subTitle="Inbox, outbox, sent items" icon={Mail} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="Inmail" subTitle="Inbox, outbox, sent items"
+                icon={Mail}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
-              <ListItem title="Account" subTitle="Profile, name, coins" icon={UserRoundCog} iconAfter={ChevronRight} />
+              <ListItem
+                gap="$3"
+                cursor="pointer"
+                title="Account"
+                subTitle="Profile, name, coins"
+                icon={UserRoundCog}
+                iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
           </YGroup>

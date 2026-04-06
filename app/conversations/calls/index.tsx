@@ -13,9 +13,11 @@ import {
 } from 'tamagui'
 
 
-//import Janode from 'janode';
-//const { Logger } = Janode;
-//import EchoTestPlugin from 'janode/src/plugins/echotest-plugin';
+import Janode from 'janode';
+
+import VideoRoomPlugin from '../../../node_modules/janode/src/plugins/videoroom-plugin';
+import { janus } from 'client/janus/janus';
+
 
 
 
@@ -24,21 +26,23 @@ export default function Calls() {
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(state => state.conversations.contacts.contact_type_openswitch)
+const { Logger } = Janode;
 
- // async function initializeJanus() {
+
+  async function initializeJanus() {
 
 
- //   const session = await connection.create();
+    const session = await janus();
 
     // Attach to a plugin using the plugin descriptor
- //   const echoHandle = await session.attach(EchoTestPlugin)
+    const videoroomHandle = await session.attach(VideoRoomPlugin )
 
     // Janode exports "EVENT" property with core events
- //   echoHandle.on(Janode.EVENT.HANDLE_WEBRTCUP, _ => Logger.info('webrtcup event'));
- //   echoHandle.on(Janode.EVENT.HANDLE_MEDIA, evtdata => Logger.info('media event', evtdata));
- //   echoHandle.on(Janode.EVENT.HANDLE_SLOWLINK, evtdata => Logger.info('slowlink event', evtdata));
- //   echoHandle.on(Janode.EVENT.HANDLE_HANGUP, evtdata => Logger.info('hangup event', evtdata));
- //   echoHandle.on(Janode.EVENT.HANDLE_DETACHED, evtdata => Logger.info('detached event', evtdata));
+    videoroomHandle.on(Janode.EVENT.HANDLE_WEBRTCUP, _ => Logger.info('webrtcup event'));
+    videoroomHandle.on(Janode.EVENT.HANDLE_MEDIA, evtdata => Logger.info('media event', evtdata));
+    videoroomHandle.on(Janode.EVENT.HANDLE_SLOWLINK, evtdata => Logger.info('slowlink event', evtdata));
+    videoroomHandle.on(Janode.EVENT.HANDLE_HANGUP, evtdata => Logger.info('hangup event', evtdata));
+    videoroomHandle.on(Janode.EVENT.HANDLE_DETACHED, evtdata => Logger.info('detached event', evtdata));
 
 
 
@@ -46,7 +50,7 @@ export default function Calls() {
 
 
 
- // }
+  }
 
 
 
@@ -56,8 +60,9 @@ export default function Calls() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Calls", headerShown: true }} />
+   
       <Contents800_2_flexdirection>
-        <Button onPress={() => console.log('good')}>Janode </Button>
+        <Button onPress={() => initializeJanus()}>Janode </Button>
       </Contents800_2_flexdirection>
     </View>
   )

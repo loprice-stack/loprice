@@ -1,13 +1,15 @@
 {
   "extends": "./tsconfig.base",
+  
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "ignoreDeprecations": "6.0"// deplecation silencer
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "src/**/*.json"
+    "src/**/*.json",
   ] ///added "src/**/*.json"
 }
