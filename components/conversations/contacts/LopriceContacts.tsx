@@ -4,7 +4,6 @@ import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, Scrol
 
 export default function LopriceContacts() {
 
-
     const { width, height } = useWindowDimensions();
 
     return (
@@ -26,16 +25,31 @@ export default function LopriceContacts() {
                             title="Loprice Limited"
                             subTitle="loprice@loprice.co.tz"
                             icon={<Avatar
-                            cursor="pointer"
-                            onPress={() => console.log("mail clicked")}
-                            circular size="$6">
+                                cursor="pointer"
+                                onPress={() => console.log("mail clicked")}
+                                circular size="$6">
                                 <Avatar.Image
                                     aria-label="Nate Wienert"
                                     src={require('assets/images/favicon.png')}
                                 />
                                 <Avatar.Fallback delayMs={600} bg="$blue10" />
                             </Avatar>}
-                            iconAfter={<XStack gap="$4"><Mail cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><MessageSquare cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><Phone cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /></XStack>}
+                            iconAfter={
+                                <XStack gap="$4">
+                                    <Mail
+                                        cursor="pointer"
+                                        onPress={() => console.log("mail clicked")}
+                                        size={'$1'}
+                                    />
+                                    <MessageSquare
+                                        cursor="pointer"
+                                        onPress={() => console.log("mail clicked")}
+                                        size={'$1'} />
+                                    <Phone
+                                        cursor="pointer"
+                                        onPress={() => console.log("mail clicked")}
+                                        size={'$1'} />
+                                </XStack>}
                         />
 
                     </YGroup.Item>
@@ -72,7 +86,7 @@ export default function LopriceContacts() {
                         />
                     </YGroup.Item>
 
-                                        <Separator />
+                    <Separator />
                     <YGroup.Item>
                         <ListItem
                             gap="$3"
@@ -81,22 +95,22 @@ export default function LopriceContacts() {
                             icon={<Avatar circular size="$6">
                                 <Avatar.Image
                                     aria-label="Nate Wienert"
-                                   src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
+                                    src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
                                 />
                                 <Avatar.Fallback delayMs={600} bg="$blue10" />
                             </Avatar>}
                             iconAfter={<XStack gap="$4"><Mail cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><MessageSquare cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><Phone cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /></XStack>}
                         />
                     </YGroup.Item>
-                                        <Separator />
+                    <Separator />
                     <YGroup.Item>
                         <ListItem
                             gap="$3"
                             title="Property Manager"
                             subTitle="propertymanager@loprice.co.tz"
-                            icon={<Avatar 
-                            
-                            circular size="$6">
+                            icon={<Avatar
+
+                                circular size="$6">
                                 <Avatar.Image
                                     aria-label="Nate Wienert"
                                     src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?&w=100&h=100&dpr=2&q=80"

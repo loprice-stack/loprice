@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-
+type JanodeObject = null | undefined
 
 // Define the TS type for the counter slice's state
 export interface ConversationsState {
-    contacts: {
-        contact_type_openswitch: string
+    janode: {
+        connection: JanodeObject
+        session: JanodeObject
 
     },
 
@@ -15,10 +16,12 @@ export interface ConversationsState {
 
 // Define the initial value for the slice state
 const initialState: ConversationsState = {
-    contacts: {
-     contact_type_openswitch: "mycontact",
+    janode: {
+        connection: null,
+        session: null
 
     },
+
 
 
 }
@@ -31,21 +34,37 @@ export const conversationsSlice = createSlice({
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
 
-        ////////////////////////////////////contacts//////////////////////////////////////
+        ////////////////////////////////////janode connection//////////////////////////////////////
 
-        changeContactType: (state, action) => {
-            state.contacts.contact_type_openswitch = action.payload
-            //console.log("New state is: " + state.user.user_jid)
+        setConnection: (state, action) => {
+
+            try {
+                state.janode.connection = action.payload
+            } catch (e) {
+                //console.log(e)
+            }
+            //console.log("New state is: " + state.janode.connection)
         },
 
-      
+        setSession: (state, action) => {
+            try {
+                state.janode.session = action.payload
+            } catch (e) {
+                //console.log(e)
+            }
+
+
+            //console.log("New state is: " + state.janode.session)
+        },
+
 
     }
 })
 
 // Export the generated action creators for use in components
 export const {
-    changeContactType
+    setConnection,
+    setSession
 } = conversationsSlice.actions
 
 // Export the slice reducer for use in the store configuration

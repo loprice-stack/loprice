@@ -3,13 +3,19 @@ import { configureStore } from '@reduxjs/toolkit'
 import accountReducer from 'app/account/accountSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import conversationsReducer from 'app/conversations/conversationsSlice'
+import contactsReducer from 'app/conversations/contacts/contactsSlice'
+import callsReducer from 'app/conversations/calls/callsSlice'
+import { createContext, useContext } from 'react'
 
 export const store = configureStore({
   reducer: {
     account: accountReducer,
-        conversations: conversationsReducer
+    conversations: conversationsReducer,
+    contacts: contactsReducer,
+    calls: callsReducer
   }
 })
+
 
 // Infer the type of `store`
 export type AppStore = typeof store

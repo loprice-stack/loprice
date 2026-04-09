@@ -21,7 +21,7 @@ export default function Conversations() {
 
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
-  const contacts = useAppSelector(state => state.conversations.contacts.contact_type_openswitch)
+  const contacts = useAppSelector(state => state.contacts.roaster.contact_type_openswitch)
 
 
   return (

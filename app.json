@@ -46,7 +46,8 @@
         }
       ],
       "expo-web-browser",
-      "expo-asset"
+      "expo-asset",
+      "@config-plugins/react-native-webrtc"
     ],
     "experiments": {
       "typedRoutes": true

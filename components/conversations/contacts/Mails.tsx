@@ -32,7 +32,17 @@ export default function Mails() {
                                 />
                                 <Avatar.Fallback delayMs={600} bg="$blue10" />
                             </Avatar>}
-                            iconAfter={<XStack gap="$4"><MessageSquare cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><Phone cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /></XStack>}
+                            iconAfter={
+                            <XStack gap="$4">
+                                <MessageSquare 
+                                cursor="pointer" 
+                                onPress={() => console.log("mail clicked")} 
+                                size={'$1'} />
+                                <Phone 
+                                cursor="pointer" 
+                                onPress={() => console.log("mail clicked")} 
+                                size={'$1'} />
+                                </XStack>}
                         />
 
                     </YGroup.Item>
