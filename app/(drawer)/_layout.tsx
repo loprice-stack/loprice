@@ -17,7 +17,7 @@ const Drawer = createDrawerNavigator();
 
 export default function DrawerLayout() {
 
-  const dispatch = useAppDispatch();
+
   const isloggedin = useAppSelector(state => state.account.user.user_token)
 
 

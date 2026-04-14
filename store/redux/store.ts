@@ -7,14 +7,78 @@ import contactsReducer from 'app/conversations/contacts/contactsSlice'
 import callsReducer from 'app/conversations/calls/callsSlice'
 import { createContext, useContext } from 'react'
 
+
+
+
 export const store = configureStore({
   reducer: {
     account: accountReducer,
     conversations: conversationsReducer,
     contacts: contactsReducer,
     calls: callsReducer
-  }
+  },
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: [
+          'conversations/setConnection',
+          'conversations/setSession',
+          'calls/setVideoCallHandle',
+          'calls/setPeerConnection',
+          'calls/setLocalStream',
+          'calls/setRemoteStream',
+          'calls/setLocalSdp',
+          'calls/setRemoteSdp'],
+        // Ignore these field paths in all actions
+        ignoredActionPaths: [
+          'conversations.setConnection',
+          'conversations.setSession',
+          'calls.setVideoCallHandle',
+          'calls.setPeerConnection',
+          'calls.setLocalStream',
+          'calls.setRemoteStream',
+          'calls.setLocalSdp',
+          'calls.setRemoteSdp'
+        ],
+        // Ignore these paths in the state
+        ignoredPaths: [
+          'conversations.setConnection',
+          'conversations.setSession',
+          'calls.setVideoCallHandle',
+          'calls.setPeerConnection',
+          'calls.setLocalStream',
+          'calls.setRemoteStream',
+          'calls.setLocalSdp',
+          'calls.setRemoteSdp'],
+      },
+    }),
+
+
+
 })
+
+const janodeContext = {
+  connection: null,
+  session: null,
+
+
+}
+
+const videoContext = {
+  videohandle: null,
+  peerconn: null
+
+}
+
+
+
+export const _session = createContext(janodeContext)
+export const _videohandle = createContext(videoContext)
+
+
+
 
 
 // Infer the type of `store`

@@ -19,7 +19,6 @@ const initialState: ConversationsState = {
     janode: {
         connection: null,
         session: null
-
     },
 
 
@@ -37,24 +36,11 @@ export const conversationsSlice = createSlice({
         ////////////////////////////////////janode connection//////////////////////////////////////
 
         setConnection: (state, action) => {
-
-            try {
-                state.janode.connection = action.payload
-            } catch (e) {
-                //console.log(e)
-            }
-            //console.log("New state is: " + state.janode.connection)
+            state.janode.connection = action.payload
         },
 
         setSession: (state, action) => {
-            try {
-                state.janode.session = action.payload
-            } catch (e) {
-                //console.log(e)
-            }
-
-
-            //console.log("New state is: " + state.janode.session)
+            state.janode.session = action.payload
         },
 
 

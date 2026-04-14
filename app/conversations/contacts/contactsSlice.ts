@@ -7,7 +7,6 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 export interface ContactsState {
     roaster: {
         contact_type_openswitch: string
-
     },
 
 
@@ -17,7 +16,6 @@ export interface ContactsState {
 const initialState: ContactsState = {
     roaster: {
      contact_type_openswitch: "mycontact",
-
     },
 
 
@@ -35,7 +33,6 @@ export const contactsSlice = createSlice({
 
         changeContactType: (state, action) => {
             state.roaster.contact_type_openswitch = action.payload
-            //console.log("New state is: " + state.user.user_jid)
         },
 
       

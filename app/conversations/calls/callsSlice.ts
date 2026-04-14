@@ -2,36 +2,30 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 
-type CallState = "calling" | "incoming" | "hangup" | "iddle"
+type CallState = "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
 type RingerState = "ringing" | "iddle"
 // Define the TS type for the counter slice's state
 export interface CallsState {
     callstate: CallState
     ringer: RingerState
-    callhandle: any,
+    videocallhandle: any,
     peerconnection: any
     localstream: any
     remotestream: any
     localsdp: any
     remotesdp: any
-
-
-
-
 }
 
 // Define the initial value for the slice state
 const initialState: CallsState = {
     callstate: 'iddle',
     ringer: 'iddle',
-    callhandle: null,
+    videocallhandle: null,
     peerconnection: null,
     localstream: null,
     remotestream: null,
     localsdp: null,
     remotesdp: null,
-
-
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -53,8 +47,8 @@ export const callsSlice = createSlice({
             //console.log("New state is: " + state.user.user_jid)
         },
 
-        setCallHandle: (state, action) => {
-            state.callhandle = action.payload
+        setVideoCallHandle: (state, action) => {
+            state.videocallhandle = action.payload
             //console.log("New state is: " + state.user.user_jid)
         },
 
@@ -87,7 +81,7 @@ export const callsSlice = createSlice({
 export const {
     setCallState,
     setRingerState,
-    setCallHandle,
+    setVideoCallHandle,
     setPeerConnection,
     setLocalStream,
     setRemoteStream,
