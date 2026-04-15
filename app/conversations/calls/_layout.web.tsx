@@ -6,17 +6,7 @@ import {
   useWindowDimensions,
   View,
 } from 'tamagui'
-import {
-  ScreenCapturePickerView,
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  RTCView,
-  MediaStream,
-  MediaStreamTrack,
-  mediaDevices,
-  registerGlobals
-} from 'react-native-webrtc-web-shim';
+
 import Janode from 'janode';
 import VideoRoomPlugin from 'janode/src/plugins/videoroom-plugin';
 
@@ -30,8 +20,24 @@ import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
 import { janussession } from 'client/janus/janus';
-//registerGlobals() did not hel us with stream url
-//setupURLPolyfill();
+
+import {
+  RTCPeerConnection,
+  RTCIceCandidate,
+  RTCSessionDescription,
+  RTCRtpTransceiver,
+  RTCRtpReceiver,
+  RTCRtpSender,
+  RTCErrorEvent,
+  MediaStream,
+  MediaStreamTrack,
+  mediaDevices,
+  permissions,
+  registerGlobals,
+  RTCView,
+} from 'react-native-webrtc-web-shim';
+
+
 
 
 
@@ -46,8 +52,8 @@ export default function Calls() {
     ringer,
     //videocallhandle,
     //peerconnection,
-    localstream,
-    remotestream,
+    //localstream,
+    //remotestream,
     localsdp,
     //remotesdp 
   } = useAppSelector(state => state.calls)
@@ -56,7 +62,8 @@ export default function Calls() {
   const [remotesdp, setRjsep] = useState(null)
   const [callstate, setCallstate] = useState('iddle')
   //const [peerconnection, setPeerConnection] = useState<RTCPeerConnection>(null)
-
+const [localstream, setLocalstream] = useState(null)
+const [remotestream, setRemotestream] = useState(null)
   async function getConnection() {
 
     const session = await janussession()
@@ -70,10 +77,12 @@ export default function Calls() {
     eventIcomming(videohandle)
     eventAccepted(videohandle)
     eventTricle(videohandle)
+    eventMedia(videohandle)
 
     videohandle.register("loprice@loprice.co.tz")
 
     videoCallContext.videohandle = videohandle
+    //@ts-ignore
     videoCallContext.peerconn = pc
 
     console.log("-------------------------videohandle--------------------------------")
@@ -124,11 +133,13 @@ export default function Calls() {
           console.log(remoteCandidates)
           console.log("------------------null--------list------------------------------------")
         } else {
+
           const iceCandidate = new RTCIceCandidate(evtdata);
           //@ts-ignore
           remoteCandidates.push(iceCandidate);
           console.log(remoteCandidates)
           console.log("--------------------------list------------------------------------")
+
         }
       } else {
         const iceCandidate = new RTCIceCandidate(evtdata);
@@ -157,9 +168,21 @@ export default function Calls() {
 
 
 
+  function eventMedia(videohandle) {
+
+    // generic audiobridge events
+    videohandle.on(Janode.EVENT.HANDLE_WEBRTCUP, () => console.log(`${videohandle.name} webrtcup event`));
+    videohandle.on(Janode.EVENT.HANDLE_MEDIA, evtdata => console.log(` ${videohandle.name} media event ${JSON.stringify(evtdata)}`));
+    videohandle.on(Janode.EVENT.HANDLE_SLOWLINK, evtdata => console.log(`${videohandle.name} slowlink event ${JSON.stringify(evtdata)}`));
+  }
+
+
+
+
+
   async function startCall() {
     try {
-      setMediaStream(videoCallContext.peerconn)
+      await setMediaStream(videoCallContext.peerconn)
       const jsep = await createOffer(videoCallContext.peerconn)
       //@ts-ignore
       videoCallContext.videohandle.call("timo@loprice.co.tz", jsep)
@@ -292,6 +315,7 @@ export default function Calls() {
       peerConnection.addEventListener('icecandidateerror', event => {
         // You can ignore some candidate errors.
         // Connections can still be made even when errors occur.
+         console.log(event)
         console.log("----------------------icecandidateerror----stufF---------------")
       });
 
@@ -340,18 +364,15 @@ export default function Calls() {
 
 
   function handleOntrack(peerConnection) {
-    if (peerConnection !== null) {
+
       peerConnection.addEventListener('track', event => {
 
-        dispatch(setRemoteStream(event.streams[0]))
+        setRemotestream(event.streams[0])
         console.log(event)
         console.log("----------------------track---------------------------------")
 
       });
-    } else {
 
-      console.log("----------null---------peerconnection---------------")
-    }
   }
 
 
@@ -436,19 +457,21 @@ export default function Calls() {
 
     const mediaStream = await mediaDevices.getUserMedia({
       audio: true,
-      video: true
+      video: {
+        frameRate: 30,
+        facingMode: 'user'
+      }
     })
-
+    //@ts-ignore
+    setLocalstream(mediaStream)
     mediaStream.getTracks().forEach(
       track => peerConnection.addTrack(track, mediaStream)
     );
 
-    dispatch(setLocalStream(mediaStream))
+
   }
 
-  async function setRemoteMediaStream(mediaStream) {
-    dispatch(setRemoteStream(mediaStream))
-  }
+
 }
 
 

@@ -8,25 +8,9 @@
  * @module videocall-plugin
  */
 
-import {
-  ScreenCapturePickerView,
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  RTCView,
-  MediaStream,
-  MediaStreamTrack,
-  mediaDevices,
-  registerGlobals
-} from 'react-native-webrtc-web-shim';
 
 
 import Handle from 'janode/src/handle.js';
-import { LOPRICE_JANUS_ICE_SERVER } from 'client/constants';
-import { setLocalSdp, setLocalStream, setPeerConnection, setRemoteSdp, setRemoteStream } from 'app/conversations/calls/callsSlice';
-import { store } from 'store/redux/store';
-import { randomString } from 'janode/src/utils/utils.js';
-/* The plugin ID exported in the plugin descriptor */
 const PLUGIN_ID = 'janus.plugin.videocall';
 
 /* These are the requests defined for the Janus RecordPlay API */
@@ -200,10 +184,8 @@ class VideoCallHandle extends Handle {
 
       
       if (!completed) {
-        janode_event.data.sdpMid = (typeof janus_message.candidate.sdpMid !== 'undefined')
-         || (janus_message.candidate.sdpMid !== null)  ? sdpMid : '0';
-        janode_event.data.sdpMLineIndex = (typeof janus_message.candidate.sdpMLineIndex !== 'undefined')
-         || (janus_message.candidate.sdpMLineIndex !== null) ? sdpMLineIndex : 0;
+        janode_event.data.sdpMid = sdpMid ;
+        janode_event.data.sdpMLineIndex = sdpMLineIndex ;
         janode_event.data.candidate = candidate;
       }
       else {
@@ -225,6 +207,7 @@ class VideoCallHandle extends Handle {
         return janode_event;
       }
     }
+    
 
     /* The event has not been handled, return a falsy value */
     return null;
@@ -326,7 +309,7 @@ class VideoCallHandle extends Handle {
     const response = await this.message(body, _jsep);
     //@ts-ignore
     const { event, data: evtdata } = this._getPluginEvent(response);;
-    if (event === PLUGIN_EVENT.ACCEPTED)
+    if (event === PLUGIN_EVENT.ACCEPTED || PLUGIN_EVENT.ERROR)
       return evtdata;
     const error = new Error(`unexpected response to ${body.request} request`);
     throw (error);
@@ -345,7 +328,7 @@ class VideoCallHandle extends Handle {
     const response = await this.message(body);
     //@ts-ignore
     const { event, data: evtdata } = this._getPluginEvent(response);;
-    if (event === PLUGIN_EVENT.HANGUP)
+    if (event === PLUGIN_EVENT.HANGUP || PLUGIN_EVENT.ERROR)
       return evtdata;
     const error = new Error(`unexpected response to ${body.request} request`);
     throw (error);

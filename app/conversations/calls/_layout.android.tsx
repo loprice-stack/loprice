@@ -20,11 +20,11 @@ import {
 } from 'react-native-webrtc';
 import Contents400_2 from 'components/Contents400_2';
 import Contents400_2_flex from 'components/Contents400_2_flex';
-import { setCallState, setLocalStream, setPeerConnection, setRemoteSdp, setRemoteStream, setVideoCallHandle } from './callsSlice';
+import { setLocalStream, setPeerConnection, setRemoteStream } from './callsSlice';
 import { LOPRICE_JANUS_ICE_SERVER } from 'client/constants';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { janussession } from 'client/janus/janus';
-import VideoCallHandle from 'client/janus/videocall-plugin-android'
+import VideoCallHandle from 'client/janus/videocall-plugin'
 import Janode from 'janode';
 
 
@@ -42,8 +42,8 @@ export default function Calls() {
     ringer,
     //videocallhandle,
     //peerconnection,
-    localstream,
-    remotestream,
+    //localstream,
+    //remotestream,
     localsdp,
     //remotesdp 
   } = useAppSelector(state => state.calls)
@@ -51,7 +51,8 @@ export default function Calls() {
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
   const [remotesdp, setRjsep] = useState(null)
   const [callstate, setCallstate] = useState('iddle')
-  //const [peerconnection, setPeerConnection] = useState<RTCPeerConnection>(null)
+const [localstream, setLocalstream] = useState(null)
+const [remotestream, setRemotestream] = useState(null)
 
   async function getConnection() {
 
@@ -67,6 +68,7 @@ export default function Calls() {
     eventIcomming(videohandle)
     eventAccepted(videohandle)
     eventTricle(videohandle)
+    eventMedia(videohandle)
     videohandle.register("timo@loprice.co.tz")
 
 
@@ -149,11 +151,19 @@ export default function Calls() {
   }
 
 
+    function eventMedia(videohandle) {
+
+        // generic audiobridge events
+        videohandle.on(Janode.EVENT.HANDLE_WEBRTCUP, () => console.log(`${videohandle.name} webrtcup event`));
+        videohandle.on(Janode.EVENT.HANDLE_MEDIA, evtdata => console.log(` ${videohandle.name} media event ${JSON.stringify(evtdata)}`));
+        videohandle.on(Janode.EVENT.HANDLE_SLOWLINK, evtdata => console.log(`${videohandle.name} slowlink event ${JSON.stringify(evtdata)}`));
+  }
+
 
 
   async function startCall() {
     try {
-      setMediaStream(videoCallContext.peerconn)
+      await setMediaStream(videoCallContext.peerconn)
       const jsep = await createOffer(videoCallContext.peerconn)
       //@ts-ignore
       videoCallContext.videohandle.call("loprice@loprice.co.tz", jsep)
@@ -195,22 +205,6 @@ export default function Calls() {
 
 
 
-
-
-  function handleRemoteCandidate(peerConnection, candidate) {
-    const iceCandidate = new RTCIceCandidate(candidate);
-
-
-    if (peerConnection.remoteDescription == null) {
-      //@ts-ignore
-      remoteCandidates.push(candidate);
-      console.log("---------------------pushing---candidate-------------------------")
-    } else {
-      peerConnection.addIceCandidate(candidate);
-      console.log("---------------------saving---candidate-------------------------")
-    }
-  };
-
   function processCandidates(peerConnection, remoteCandidates) {
     if (remoteCandidates.length < 1) { return; };
 
@@ -246,6 +240,7 @@ export default function Calls() {
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
               mirror={true}
               objectFit={'cover'}
+              //@ts-ignore
               streamURL={remotestream.toURL()}
               zOrder={0}
             />
@@ -261,6 +256,7 @@ export default function Calls() {
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
               mirror={true}
               objectFit={'cover'}
+              //@ts-ignore
               streamURL={localstream.toURL()}
               zOrder={0}
             />
@@ -318,6 +314,7 @@ export default function Calls() {
       peerConnection.addEventListener('icecandidateerror', event => {
         // You can ignore some candidate errors.
         // Connections can still be made even when errors occur.
+         console.log(event)
         console.log("----------------------icecandidateerror----stufF---------------")
       });
 
@@ -368,18 +365,15 @@ export default function Calls() {
 
 
   function handleOntrack(peerConnection) {
-    if (peerConnection !== null) {
+
       peerConnection.addEventListener('track', event => {
 
-        dispatch(setRemoteStream(event.streams[0]))
+        setRemotestream(event.streams[0])
         console.log(event)
         console.log("----------------------track---------------------------------")
 
       });
-    } else {
 
-      console.log("----------null---------peerconnection---------------")
-    }
   }
 
 
@@ -469,13 +463,11 @@ export default function Calls() {
     mediaStream.getTracks().forEach(
       track => peerConnection.addTrack(track, mediaStream)
     );
-
-    dispatch(setLocalStream(mediaStream))
+    //@ts-ignore
+    setLocalstream(mediaStream)
   }
 
-  async function setRemoteMediaStream(mediaStream) {
-    dispatch(setRemoteStream(mediaStream))
-  }
+
 }
 
 
