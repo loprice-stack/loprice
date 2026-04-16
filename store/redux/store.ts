@@ -1,10 +1,10 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
-import accountReducer from 'app/account/accountSlice'
+import accountReducer from 'components/conversations/account/accountSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import conversationsReducer from 'app/conversations/conversationsSlice'
-import contactsReducer from 'app/conversations/contacts/contactsSlice'
-import callsReducer from 'app/conversations/calls/callsSlice'
+import conversationsReducer from 'components/conversations/conversationsSlice'
+import contactsReducer from 'components/conversations/contacts/contactsSlice'
+import callsReducer from 'components/conversations/calls/callsSlice'
 import { createContext, useContext } from 'react'
 
 
@@ -61,9 +61,7 @@ export const store = configureStore({
 
 const janodeContext = {
   connection: null,
-  session: null,
-
-
+  session: null
 }
 
 const videoContext = {

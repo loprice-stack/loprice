@@ -1,18 +1,19 @@
-import { Mail } from '@tamagui/lucide-icons-2';
+
+
+import { Mails } from '@tamagui/lucide-icons-2';
 import Contents400_2 from 'components/Contents400_2';
 import Contents400_2_flex from 'components/Contents400_2_flex';
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import ContactsTypeCard from 'components/conversations/contacts/ContactsTypeCard';
 import LopriceContacts from 'components/conversations/contacts/LopriceContacts';
-import Mails from 'components/conversations/contacts/Mails';
 import MyContacts from 'components/conversations/contacts/MyContacts';
 import PublicContacts from 'components/conversations/contacts/PublicContacts';
+import { Stack } from 'expo-router';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
-
-
 import {
   Separator,
   useWindowDimensions,
+  View,
 } from 'tamagui'
 
 
@@ -25,6 +26,8 @@ export default function Conversations() {
 
 
   return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Stack.Screen options={{ title: "Conversations", headerShown: true }} />
     <Contents800_2_flexdirection>
       <Contents400_2>
         <ContactsTypeCard />
@@ -38,5 +41,6 @@ export default function Conversations() {
 
       </Contents400_2_flex>
     </Contents800_2_flexdirection>
+    </View>
   )
 }

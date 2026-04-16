@@ -16,6 +16,7 @@
   "dependencies": {
     "@config-plugins/react-native-webrtc": "^13.0.0",
     "@craftzdog/react-native-buffer": "^6.1.1",
+    "@kirenpaul/react-native-foreground-service-turbo": "^0.1.0",
     "@react-navigation/drawer": "^7.9.4",
     "@react-navigation/material-top-tabs": "^7.4.21",
     "@react-navigation/native": "^7.1.33",

@@ -1,6 +1,6 @@
 import { selectors } from '@playwright/test';
 import { Check, ChevronDown, ChevronUp, X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, setGenderAgeDialogOpen, updateAge, updateGender } from 'app/account/accountSlice';
+import { setFullnameDialogOpen, setGenderAgeDialogOpen, updateAge, updateGender } from 'components/conversations/account/accountSlice';
 import React from 'react';
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from 'store/redux/store';

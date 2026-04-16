@@ -1,172 +1,87 @@
-import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { Stack } from 'expo-router';
-import { _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
+
 import {
   Button,
   Separator,
   useWindowDimensions,
   View,
 } from 'tamagui'
+
+import Janode from 'janode';
+import VideoRoomPlugin from 'janode/src/plugins/videoroom-plugin';
+
+import { setConnection, setSession } from '../../../components/conversations/conversationsSlice';
+import { useContext, useEffect, useState } from 'react';
+import Contents400_2 from 'components/Contents400_2';
+import Contents400_2_flex from 'components/Contents400_2_flex';
+import { CALL_STATE_CALLING, CALL_STATE_IDDLE, CALL_STATE_INCOMMING, LOPRICE_JANUS_ICE_SERVER } from 'client/constants';
+import { setCallState, setLocalStream, setPeerConnection, setRemoteSdp, setRemoteStream, setVideoCallHandle } from '../../../components/conversations/calls/callsSlice';
+import VideoCallHandle from 'client/janus/videocall-plugin'
+import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
+import { _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
+import { janussession } from 'client/janus/janus';
+
 import {
-  ScreenCapturePickerView,
   RTCPeerConnection,
   RTCIceCandidate,
   RTCSessionDescription,
-  RTCView,
+  RTCRtpTransceiver,
+  RTCRtpReceiver,
+  RTCRtpSender,
+  RTCErrorEvent,
   MediaStream,
   MediaStreamTrack,
   mediaDevices,
-  registerGlobals
+  permissions,
+  registerGlobals,
+  RTCView,
 } from 'react-native-webrtc';
-import Contents400_2 from 'components/Contents400_2';
-import Contents400_2_flex from 'components/Contents400_2_flex';
-import { setLocalStream, setPeerConnection, setRemoteStream } from './callsSlice';
-import { LOPRICE_JANUS_ICE_SERVER } from 'client/constants';
-import { useContext, useState } from 'react';
-import { janussession } from 'client/janus/janus';
-import VideoCallHandle from 'client/janus/videocall-plugin'
-import Janode from 'janode';
+
+
 
 
 
 export default function Calls() {
 
-
   let remoteCandidates = [];
   const videoCallContext = useContext(_videohandle)
-
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const {
-    //callstate,
+    callstate,
     ringer,
     //videocallhandle,
     //peerconnection,
     //localstream,
     //remotestream,
     localsdp,
-    //remotesdp 
+    remotesdp
   } = useAppSelector(state => state.calls)
 
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
-  const [remotesdp, setRjsep] = useState(null)
-  const [callstate, setCallstate] = useState('iddle')
-const [localstream, setLocalstream] = useState(null)
-const [remotestream, setRemotestream] = useState(null)
-
-  async function getConnection() {
-
-    const session = await janussession()
-
-    const videohandle = await session.attach(VideoCallHandle)
-
-    let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
-    handleOntrack(pc)
-    handleCallOnstart(pc, videohandle)
-
-    eventCalling(videohandle)
-    eventIcomming(videohandle)
-    eventAccepted(videohandle)
-    eventTricle(videohandle)
-    eventMedia(videohandle)
-    videohandle.register("timo@loprice.co.tz")
-
-
-    videoCallContext.videohandle = videohandle
-    //@ts-ignore
-    videoCallContext.peerconn = pc
-    console.log("-------------------------videohandle--------------------------------")
-  }
-
-
-
-
-
-
-
-  function eventCalling(videohandle) {
-
-    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_CALLING, evtdata => {
-
-      console.log(JSON.stringify(evtdata))
-      console.log("-------------------------calling--------------------------------")
-    });
-  }
-
-  function eventIcomming(videohandle) {
-
-    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_INCOMMING, evtdata => {
-      const jsep = evtdata.jsep
-    
-      console.log("-------------------------icomming----jsep----------------------------")
-      ///dispatch(setCallState("incoming"))
-      //dispatch(setRemoteSdp(jsep))
-      setCallstate("incoming")
-      setRjsep(jsep)
-      console.log("-------------------------icomming--------------------------------")
-    });
-  }
-
-  function eventTricle(videohandle) {
-
-    videohandle.on(VideoCallHandle.EVENT.VIDEOCALL_TRICKLE, evtdata => {
-      if ((signalingstatechange == "have-local-offer")
-        || (signalingstatechange == "stable")) {
-
-        const completed = evtdata.complete
-        if (completed) {
-          //@ts-ignore
-          remoteCandidates.push(null);
-          console.log(remoteCandidates)
-          console.log("------------------null--------list------------------------------------")
-        } else {
-          const iceCandidate = new RTCIceCandidate(evtdata);
-          //@ts-ignore
-          remoteCandidates.push(iceCandidate);
-          console.log(remoteCandidates)
-          console.log("--------------------------list------------------------------------")
-        }
-      } else {
-        const iceCandidate = new RTCIceCandidate(evtdata);
-        //@ts-ignore
-        videoCallContext.peerconn.addIceCandidate(iceCandidate);
-      }
-    });
-  }
-
-
-
-  function eventAccepted(videohandle) {
-
-    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_ACCEPTED, evtdata => {
-      const jsep = evtdata.jsep
-
-      //dispatch(setRemoteSdp(jsep))
-      //dispatch(setCallState("accepted"))
-      setCallstate("accepted")
-      //setRjsep(jsep)
-      saveReceivedJsepAnswer(videoCallContext.peerconn, jsep)
-      console.log("-------------------------accepted--------------------------------")
-    });
-  }
-
-
-    function eventMedia(videohandle) {
-
-        // generic audiobridge events
-        videohandle.on(Janode.EVENT.HANDLE_WEBRTCUP, () => console.log(`${videohandle.name} webrtcup event`));
-        videohandle.on(Janode.EVENT.HANDLE_MEDIA, evtdata => console.log(` ${videohandle.name} media event ${JSON.stringify(evtdata)}`));
-        videohandle.on(Janode.EVENT.HANDLE_SLOWLINK, evtdata => console.log(`${videohandle.name} slowlink event ${JSON.stringify(evtdata)}`));
-  }
-
+  //const [remotesdp, setRjsep] = useState(null)
+  //const [callstate, setCallstate] = useState(CALL_STATE_IDDLE)
+  //const [peerconnection, setPeerConnection] = useState<RTCPeerConnection>(null)
+  const [localstream, setLocalstream] = useState(null)
+  const [remotestream, setRemotestream] = useState(null)
 
 
   async function startCall() {
     try {
-      await setMediaStream(videoCallContext.peerconn)
-      const jsep = await createOffer(videoCallContext.peerconn)
+      let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+      //@ts-ignore
+      videoCallContext.peerconn = pc
+      handleCallOnstart(pc, videoCallContext.videohandle)
+   
+      eventCalling(videoCallContext.videohandle)
+      eventAccepted(videoCallContext.videohandle)
+      eventTricle(videoCallContext.videohandle)
+      eventHangup(videoCallContext.videohandle)
+      await setMediaStream(pc)
+      const jsep = await createOffer(pc)
       //@ts-ignore
       videoCallContext.videohandle.call("loprice@loprice.co.tz", jsep)
+
     } catch (err) {
       console.log("Error starting a call")
     };
@@ -175,53 +90,163 @@ const [remotestream, setRemotestream] = useState(null)
 
   async function acceptCall() {
     try {
-      setMediaStream(videoCallContext.peerconn)
+      let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+      //@ts-ignore
+      videoCallContext.peerconn = pc
+      handleCallOnstart(pc, videoCallContext.videohandle)
+      eventAccepted(videoCallContext.videohandle)
+      eventTricle(videoCallContext.videohandle)
+      eventHangup(videoCallContext.videohandle)
+      await setMediaStream(videoCallContext.peerconn)
       const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
       //@ts-ignore
       videoCallContext.videohandle.accept(jsep)
+
     } catch (err) {
+      console.log(err)
       console.log("Error answering a call")
     };
   }
+
+
 
 
 
 
 
   async function hangupCall() {
-
     try {
       //@ts-ignore
       await videoCallContext.videohandle.hangup()
-      setPeerConnection(null)
-
+      stopAllStreams();
+      closePeerConnection(videoCallContext.peerconn)
     } catch (err) {
-      console.log("Error answering a call")
+      //close anyway
+      stopAllStreams();
+      closePeerConnection(videoCallContext.peerconn)
+      console.log("Error closing a call")
     };
   }
 
 
 
-
-
-
   function processCandidates(peerConnection, remoteCandidates) {
     if (remoteCandidates.length < 1) { return; };
-
     remoteCandidates.map(candidate => {
       peerConnection.addIceCandidate(candidate);
-       console.log(candidate)
+      console.log(candidate)
       console.log("---------------------saving--saved--remote---candidate-------------------------")
     });
-
     console.log(remoteCandidates)
     console.log("---------------------clearing--remote---candidate----list---------------------")
     remoteCandidates = [];
   };
 
 
+  
+
+  async function createOffer(peerConnection) {
+    try {
+      const offerDescription = await peerConnection.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
+        voiceActivityDetection: true
+      });
+      await peerConnection.setLocalDescription(offerDescription);
+      console.log(" Got offer jsep ")
+      return offerDescription
+    } catch (err) {
+      console.log("Error creating offer" + err)
+    };
+  }
+
+  async function createOfferAnser(peerConnection, r_jsep) {
+    try {
+      if (r_jsep.lenght !== 0) {
+        const offerDescription = new RTCSessionDescription(r_jsep);
+        await peerConnection.setRemoteDescription(offerDescription);
+        const answerDescription = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answerDescription);
+        console.log(" Got answer jsep ")
+        return answerDescription
+      } else {
+        console.log("No offer jsep is found")
+      }
+    } catch (err) {
+      console.log(err)
+    };
+  }
 
 
+  async function saveReceivedJsepAnswer(peerConnection, r_jsep) {
+
+    try {
+    // Use the received receivedAnswerDescription
+    const receivedAnswerDescription = new RTCSessionDescription(r_jsep);
+    console.log("Answer description object is ok")
+    console.log(peerConnection.signalingState)
+    console.log("-----------------signalingstatechange---------------")
+    await peerConnection.setRemoteDescription(receivedAnswerDescription);
+    console.log(" Saved answer jsep ")
+    } catch (err) {
+      console.log("---------------------------------answer---jse----error-----------------------")
+    };
+
+  }
+
+
+  async function setMediaStream(peerConnection) {
+    const mediaStream = await mediaDevices.getUserMedia({
+      audio: true,
+      video: {
+        frameRate: 30,
+        facingMode: 'user'
+      }
+    })
+    //@ts-ignore
+    setLocalstream(mediaStream)
+    mediaStream.getTracks().forEach(
+      track => peerConnection.addTrack(track, mediaStream)
+    );
+  }
+
+
+function stopAllStreams() {
+  if (localstream) {
+    //@ts-ignore
+    localstream.getTracks().forEach(track => track.stop());
+    setLocalstream(null)
+  }
+  if (remotestream) {
+    //@ts-ignore
+    remotestream.getTracks().forEach(track => track.stop());
+    setRemotestream(null)
+  }
+}
+
+function closePeerConnection(pc = videoCallContext.peerconn) {
+  if (!pc) return;
+  //@ts-ignore
+  pc.getSenders().forEach(sender => {
+    if (sender.track)
+      sender.track.stop();
+  });
+  //@ts-ignore
+  pc.getReceivers().forEach(receiver => {
+    if (receiver.track)
+      receiver.track.stop();
+  });
+  //@ts-ignore
+  pc.onnegotiationneeded = null;
+  //@ts-ignore
+  pc.onicecandidate = null;
+  //@ts-ignore
+  pc.oniceconnectionstatechange = null;
+  //@ts-ignore
+  pc.ontrack = null;
+  //@ts-ignore
+  pc.close();
+}
 
 
 
@@ -248,7 +273,6 @@ const [remotestream, setRemotestream] = useState(null)
         </Contents400_2>
         <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
         <Contents400_2_flex>
-          <Button onPress={() => getConnection()}>Start session </Button>
           <Button onPress={() => hangupCall()}>Hangup </Button>
           <Button style={{ backgroundColor: callstate == "incoming" ? "green" : "white" }} onPress={() => acceptCall()}>Answer </Button>
           {localstream && (
@@ -258,6 +282,7 @@ const [remotestream, setRemotestream] = useState(null)
               objectFit={'cover'}
               //@ts-ignore
               streamURL={localstream.toURL()}
+
               zOrder={0}
             />
           )}
@@ -267,9 +292,62 @@ const [remotestream, setRemotestream] = useState(null)
   )
 
 
+  function eventCalling(videohandle) {
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_CALLING, evtdata => {
+      dispatch(setCallState(CALL_STATE_CALLING))
+      console.log("-------------------------calling--------------------------------")
+    });
+  }
 
 
 
+
+  function eventTricle(videohandle) {
+
+    videohandle.on(VideoCallHandle.EVENT.VIDEOCALL_TRICKLE, evtdata => {
+      if ((signalingstatechange == "have-local-offer")
+        || (signalingstatechange == "stable")) {
+
+        const completed = evtdata.complete
+        if (completed) {
+          //@ts-ignore
+          remoteCandidates.push(null);
+          console.log(remoteCandidates)
+          console.log("------------------null--------list------------------------------------")
+        } else {
+
+          const iceCandidate = new RTCIceCandidate(evtdata);
+          //@ts-ignore
+          remoteCandidates.push(iceCandidate);
+          console.log(remoteCandidates)
+          console.log("--------------------------list------------------------------------")
+
+        }
+      } 
+    });
+  }
+
+
+
+  function eventAccepted(videohandle) {
+
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_ACCEPTED, evtdata => {
+      const jsep = evtdata.jsep
+      dispatch(setRemoteSdp(jsep))
+      saveReceivedJsepAnswer(videoCallContext.peerconn, jsep)
+      console.log("-------------------------accepted--------------------------------")
+    });
+  }
+
+
+  function eventHangup(videohandle) {
+
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_HANGUP, evtdata => {
+      const reason = evtdata.data.result.reason
+      console.log(reason)
+      console.log("-------------------------hungup--------------------------------")
+    });
+  }
 
 
 
@@ -277,11 +355,17 @@ const [remotestream, setRemotestream] = useState(null)
   function handleCallOnstart(peerConnection, vch) {
     if (peerConnection !== null) {
 
+      peerConnection.addEventListener('track', event => {
+        setRemotestream(event.streams[0])
+        console.log(event)
+        console.log("----------------------track---------------------------------")
+
+      });
+
       peerConnection.addEventListener('connectionstatechange', event => {
         switch (peerConnection.connectionState) {
           case 'closed':
             // You can handle the call being disconnected here.
-
             break;
         };
         console.log(peerConnection.connectionState)
@@ -302,11 +386,12 @@ const [remotestream, setRemotestream] = useState(null)
           console.log(candidate)
           // Send the event.candidate onto the person you're calling.
           // Keeping to Trickle ICE Standards, you should send the candidates immediately.
-        } catch (e) {
+        } catch (null_candidate) {
           vch.trickleeComplete()
-          console.log(e)
+          console.log(null_candidate)
           console.log(event)
         }
+
 
         console.log("----------------------icecandidate----stufF---------------")
       });
@@ -319,14 +404,15 @@ const [remotestream, setRemotestream] = useState(null)
       });
 
       peerConnection.addEventListener('iceconnectionstatechange', event => {
-        switch (peerConnection.iceConnectionState) {
-          case 'connected':
-          case 'completed':
-            // You can handle the call being connected here.
-            // Like setting the video streams to visible.
+        if (peerConnection.iceConnectionState === 'failed'
+          || peerConnection.iceConnectionState === 'disconnected'
+          || peerConnection.iceConnectionState === 'closed') {
+          closePeerConnection(peerConnection);
+        } else if (peerConnection.iceConnectionState === 'connected') {
 
-            break;
-        };
+        } else if (peerConnection.iceConnectionState === 'completed') {
+
+        }
         console.log(peerConnection.iceConnectionState)
         console.log("-----------------iceconnectionstatechange---------------")
       });
@@ -338,12 +424,11 @@ const [remotestream, setRemotestream] = useState(null)
 
       });
 
-
       peerConnection.addEventListener('signalingstatechange', event => {
         switch (peerConnection.signalingState) {
           case 'closed':
             // You can handle the call being disconnected here.
-           
+            
             break;
           case 'stable':
             // You can handle the call being disconnected here.
@@ -362,113 +447,13 @@ const [remotestream, setRemotestream] = useState(null)
     }
   }
 
-
-
-  function handleOntrack(peerConnection) {
-
-      peerConnection.addEventListener('track', event => {
-
-        setRemotestream(event.streams[0])
-        console.log(event)
-        console.log("----------------------track---------------------------------")
-
-      });
-
-  }
-
-
-
-
-
-  async function createOffer(peerConnection) {
-    try {
-
-      const offerDescription = await peerConnection.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true,
-        voiceActivityDetection: true
-      });
-      await peerConnection.setLocalDescription(offerDescription);
-
-      console.log(" Got offer jsep ")
-      return offerDescription
-    } catch (err) {
-      console.log("Error creating offer" + err)
-    };
-  }
-
-  async function createOfferAnser(peerConnection, r_jsep) {
-
-    try {
-      // Use the received offerDescription
-      if (r_jsep.lenght !== 0) {
-
-        const offerDescription = new RTCSessionDescription(r_jsep);
-        await peerConnection.setRemoteDescription(offerDescription);
-        const answerDescription = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answerDescription);
-
-        console.log(" Got answer jsep ")
-
-        return answerDescription
-      } else {
-
-        console.log("No offer jsep is found")
-      }
-
-    } catch (err) {
-      console.log(err)
-    };
-
-  }
-
-
-
-  async function saveReceivedJsepAnswer(peerConnection, r_jsep) {
-
-    //try {
-    // Use the received receivedAnswerDescription
-    //if (peerconnection !== null) {
-    const receivedAnswerDescription = new RTCSessionDescription(r_jsep);
-    console.log("Answer description object is ok")
-    console.log(peerConnection.signalingState)
-    console.log("-------------checking----signalingstatechange---------------")
-    await peerConnection.setRemoteDescription(receivedAnswerDescription);
-
-
-    console.log(" Saved answer jsep ")
-    //} else {
-
-    //  console.log("Cannot save received answer peerconection is null")
-    //}
-
-    //} catch (err) {
-    //  console.log("---------------------------------answer---jse----error-----------------------")
-    //};
-
-  }
-
-
-
-
-
-
-  async function setMediaStream(peerConnection) {
-
-    const mediaStream = await mediaDevices.getUserMedia({
-      audio: true,
-      video: true
-    })
-
-    mediaStream.getTracks().forEach(
-      track => peerConnection.addTrack(track, mediaStream)
-    );
-    //@ts-ignore
-    setLocalstream(mediaStream)
-  }
-
-
 }
+
+
+
+
+
+
 
 
 

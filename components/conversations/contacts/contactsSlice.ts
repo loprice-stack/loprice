@@ -15,7 +15,7 @@ export interface ContactsState {
 // Define the initial value for the slice state
 const initialState: ContactsState = {
     roaster: {
-     contact_type_openswitch: "mycontact",
+     contact_type_openswitch: "mycontacts",
     },
 
 

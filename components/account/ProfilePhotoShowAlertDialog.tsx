@@ -1,4 +1,4 @@
-import { setProfilePhotoAlertDialogOpen } from 'app/account/accountSlice';
+import { setProfilePhotoAlertDialogOpen } from 'components/conversations/account/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import { AlertDialog, Button, XStack, YStack, Image, useWindowDimensions } from 'tamagui'
 

@@ -1,6 +1,6 @@
 import { ChevronRight, Mail, MessageSquare } from "@tamagui/lucide-icons-2";
 import Account from "app/account";
-import { changeContactType } from "app/conversations/contacts/contactsSlice";
+import { changeContactType } from "components/conversations/contacts/contactsSlice";
 import { useAppDispatch } from "store/redux/store";
 import { YGroup, ListItem, useWindowDimensions } from "tamagui";
 

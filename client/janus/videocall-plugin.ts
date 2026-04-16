@@ -1,5 +1,7 @@
 'use strict';
 
+import { setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
+import { useRouter } from 'expo-router';
 /**
  * This module contains the implementation of the Record&Play plugin (ref. {@link https://janus.conf.meetecho.com/docs/videocall.html}).
  * 
@@ -11,6 +13,7 @@
 
 
 import Handle from 'janode/src/handle.js';
+import { store } from 'store/redux/store';
 const PLUGIN_ID = 'janus.plugin.videocall';
 
 /* These are the requests defined for the Janus RecordPlay API */
@@ -57,7 +60,6 @@ class VideoCallHandle extends Handle {
 
 
 
-
   /**
    * Create a Janode VideoCall handle.
    *
@@ -69,6 +71,7 @@ class VideoCallHandle extends Handle {
 
   constructor(session, id) {
     super(session, id);
+  
   }
 
   /**
@@ -79,7 +82,6 @@ class VideoCallHandle extends Handle {
    * @returns {Object} A falsy value for unhandled events, a truthy value for handled events
    */
   _handleMessage(janus_message) {
-
 
     const { janus, jsep, plugindata, transaction } = janus_message;
     if (plugindata && plugindata.data && plugindata.data.videocall) {
@@ -118,6 +120,11 @@ class VideoCallHandle extends Handle {
         case 'incomingcall':
           janode_event.data.result = message_data.result;
           janode_event.event = PLUGIN_EVENT.INCOMMING;
+
+          store.dispatch(setRemoteSdp(janode_event.data.jsep))
+          store.dispatch(setCallState(PLUGIN_EVENT.INCOMMING))
+         
+          console.log(janode_event.data.jsep)
           console.log("---------videocall-plugin--events----incomingcall---check--------------")
           break;
         case 'accepted':
@@ -182,7 +189,6 @@ class VideoCallHandle extends Handle {
       //@ts-ignore
       const emit = (this.ownsTransaction(transaction) === false);
 
-      
       if (!completed) {
         janode_event.data.sdpMid = sdpMid ;
         janode_event.data.sdpMLineIndex = sdpMLineIndex ;
@@ -254,12 +260,10 @@ class VideoCallHandle extends Handle {
    * @returns {Promise<module:streaming-plugin~RECORDPLAY_EVENT_STATUS>}
    */
   async call(user_id, jsep) {
-
     const body = {
       request: REQUEST_CALL,
       username: user_id
     };
-
     //@ts-ignore
     const response = await this.message(body, jsep);
     //@ts-ignore
@@ -273,7 +277,6 @@ class VideoCallHandle extends Handle {
 
 
   async tricklee(candidate) {
-
     //@ts-ignore
     const response = await this.trickle(candidate);
     //@ts-ignore
@@ -286,8 +289,6 @@ class VideoCallHandle extends Handle {
 
 
     async trickleeComplete() {
-
-
     //@ts-ignore
     const response = await this.trickleComplete()
     //@ts-ignore
@@ -301,12 +302,12 @@ class VideoCallHandle extends Handle {
 
 
 
-  async accept(_jsep) {
+  async accept(jsep) {
     const body = {
       request: REQUEST_ACCEPT
     };
     //@ts-ignore
-    const response = await this.message(body, _jsep);
+    const response = await this.message(body, jsep);
     //@ts-ignore
     const { event, data: evtdata } = this._getPluginEvent(response);;
     if (event === PLUGIN_EVENT.ACCEPTED || PLUGIN_EVENT.ERROR)
@@ -320,7 +321,6 @@ class VideoCallHandle extends Handle {
 
 
   async hangup() {
-
     const body = {
       request: REQUEST_HANGUP
     };
@@ -333,7 +333,6 @@ class VideoCallHandle extends Handle {
     const error = new Error(`unexpected response to ${body.request} request`);
     throw (error);
   }
-
 }
 
 

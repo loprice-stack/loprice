@@ -1,4 +1,4 @@
-import { setConnection } from 'app/conversations/conversationsSlice';
+import { setConnection } from 'components/conversations/conversationsSlice';
 import { LOPRICE_JANUS_ICE_SERVER, LOPRICE_JANUS_URL, LOPRICE_JANUS_URL_S } from 'client/constants';
 import Janode from 'janode';
 import { useAppDispatch } from 'store/redux/store';

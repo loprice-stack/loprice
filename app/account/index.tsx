@@ -8,20 +8,80 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import AccountCard from 'components/account/AccountCard'
 import Contents400_2_flex from 'components/Contents400_2_flex'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import { useAppDispatch, useAppSelector } from 'store/redux/store'
-import { setAddressDialogOpen, setProfilePhotoAlertDialogOpen } from './accountSlice'
+import { setAddressDialogOpen, setProfilePhotoAlertDialogOpen } from '../../components/conversations/account/accountSlice'
 import { ProfilePhotoShowAlertDialog } from 'components/account/ProfilePhotoShowAlertDialog'
-//import { useAppDispatch, useAppSelector } from 'store/redux/store'
+import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
+import { janussession } from 'client/janus/janus'
+import VideoCallHandle from 'client/janus/videocall-plugin'
+import { CALL_STATE_INCOMMING } from 'client/constants'
+import { setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice'
+import { useContext, useEffect } from 'react'
 
 export default function Account() {
 
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
-  const userinfo = useAppSelector(state => state.account.userinfo)
+  const { user_token, user_id } = useAppSelector(state => state.account.user)
+  const videoCallContext = useContext(_videohandle)
+  const sessionContext = useContext(_session)
+  const router = useRouter()
+
+
+
+    useEffect(() => {
+    getConnection()
+  }, [])
+
+  async function getConnection() {
+    if (user_token) {
+      if (sessionContext.session !== null) {
+        if (videoCallContext.videohandle !== null) {
+          eventIcomming(videoCallContext.videohandle)
+          //@ts-ignore
+          videoCallContext.videohandle.register(user_id)
+        } else {
+          //@ts-ignore
+          const videohandle = await sessionContext.session.attach(VideoCallHandle)
+          eventIcomming(videohandle)
+          videohandle.register(user_id)
+          videoCallContext.videohandle = videohandle
+
+        }
+
+      } else {
+        const session = await janussession();
+        const videohandle = await session.attach(VideoCallHandle)
+        eventIcomming(videohandle)
+        videohandle.register(user_id)
+        //@ts-ignore
+        sessionContext.session = session;
+        videoCallContext.videohandle = videohandle
+      }
+    } else {
+      sessionContext.session = null
+      videoCallContext.videohandle = null
+    }
+  }
+
+  function eventIcomming(videohandle) {
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_INCOMMING, evtdata => {
+      const jsep = evtdata.jsep
+      dispatch(setCallState(CALL_STATE_INCOMMING))
+      dispatch(setRemoteSdp(jsep))
+      //@ts-ignore
+      router.navigate('/conversations/calls')
+      console.log("-------------------------icomming--call------------------------------")
+    });
+  }
+
+
+
+
+
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
