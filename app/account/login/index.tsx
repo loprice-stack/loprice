@@ -19,9 +19,11 @@ import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import Contents400_2 from 'components/Contents400_2'
 import { Link, Stack, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import { updateLoginStatus } from '../../../components/conversations/account/accountSlice'
+import { updateLoginStatus } from '../../../components/account/accountSlice'
 import { accountLogin } from 'client/AxiosHttpClient'
-import { _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
+import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
+import { jidAsStringOf } from 'utils/utility'
+import { initializeVideoHandle } from 'client/janus/janus'
 
 
 export default function Login() {
@@ -35,15 +37,23 @@ export default function Login() {
   const [errorm, setErrorm] = React.useState("")
   const dispatch = useAppDispatch();
 
+  const sessionContext = useContext(_session)
+  const videoCallContext = useContext(_videohandle)
+  const { user_id, user_token } = useAppSelector(state => state.account.user)
 
 
 
 
   function login() {
+    console.log("----------------------login-------------------------")
     setIsloading(true);
-    accountLogin(username, password).then((response) => {
+    const _username = jidAsStringOf(username)
+    setUsername(_username);
+    accountLogin(_username, password).then(async (response) => {
       const token = response.data.user_token
+
       if (token) {
+
         dispatch(updateLoginStatus({
           "user_token": token,
           "user_id": response.data.user_id,
@@ -53,6 +63,8 @@ export default function Login() {
           "token_type": response.data.token_type,
           "access_level": response.data.access_level
         }))
+        await initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id)
+        router.back()
       } else {
         setErrorm(response.data.message)
         setIsopen(true)

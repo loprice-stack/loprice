@@ -1,5 +1,5 @@
 import { Badge, Barcode, Contact, Flag, Locate, Plus } from "@tamagui/lucide-icons-2";
-import { setAddressDialogOpen, setContactPDialogOpen, setFullnameDialogOpen, setNationalityDialogOpen, setPaymentsAccountDialogOpen, setTinDialogOpen } from "components/conversations/account/accountSlice";
+import { setAddressDialogOpen, setContactPDialogOpen, setFullnameDialogOpen, setNationalityDialogOpen, setPaymentsAccountDialogOpen, setTinDialogOpen } from "components/account/accountSlice";
 import { useAppDispatch, useAppSelector } from "store/redux/store";
 import { ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 

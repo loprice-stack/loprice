@@ -17,7 +17,7 @@ export default function Contents800_2_flexdirection({ children }: { children: Re
             width={width < 600 ? width : 800}
             background={'#fff'}
             // media query
-            gap={2}
+           
         >
             {children}
         </XStack>

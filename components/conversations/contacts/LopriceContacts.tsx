@@ -1,11 +1,16 @@
 import { Star, ChevronRight, Mail, Phone, MessageSquare } from "@tamagui/lucide-icons-2";
 import { View } from "react-native";
+import { useAppDispatch } from "store/redux/store";
 import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text } from "tamagui";
+import { setCaller, setCallState } from "../calls/callsSlice";
+import { CALL_STATE_START_CALL } from "utils/constants";
+import { useRouter } from "expo-router";
 
 export default function LopriceContacts() {
 
     const { width, height } = useWindowDimensions();
-
+    const dispatch = useAppDispatch();
+    const router = useRouter();
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40 }}>
             <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
@@ -47,7 +52,14 @@ export default function LopriceContacts() {
                                         size={'$1'} />
                                     <Phone
                                         cursor="pointer"
-                                        onPress={() => console.log("mail clicked")}
+                                        onPress={
+
+                                            () => {
+                                                //@ts-ignore
+                                                router.navigate('/conversations/calls')
+                                                dispatch(setCallState(CALL_STATE_START_CALL))
+                                                dispatch(setCaller("loprice@loprice.co.tz"))
+                                            }}
                                         size={'$1'} />
                                 </XStack>}
                         />
@@ -57,8 +69,8 @@ export default function LopriceContacts() {
                     <YGroup.Item>
                         <ListItem
                             gap="$3"
-                            title="Accounts"
-                            subTitle="accounts@loprice.co.tz"
+                            title="Test"
+                            subTitle="test@loprice.co.tz"
                             icon={<Avatar circular size='$6'>
                                 <Avatar.Image
                                     aria-label="Cam"
@@ -66,7 +78,27 @@ export default function LopriceContacts() {
                                 />
                                 <Avatar.Fallback bg="$blue10" />
                             </Avatar>}
-                            iconAfter={<XStack gap="$4"><Mail cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><MessageSquare cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /><Phone cursor="pointer" onPress={() => console.log("mail clicked")} size={'$1'} /></XStack>}
+                            iconAfter={
+                            <XStack gap="$4">
+                                <Mail cursor="pointer"
+                                 onPress={() => console.log("mail clicked")} size={'$1'}
+                                  />
+                                  <MessageSquare cursor="pointer" 
+                                  onPress={() => console.log("mail clicked")} 
+                                  size={'$1'} 
+                                  />
+                                  <Phone cursor="pointer" 
+                                        onPress={
+
+                                            () => {
+                                                //@ts-ignore
+                                                router.navigate('/conversations/calls')
+                                                dispatch(setCallState(CALL_STATE_START_CALL))
+                                                dispatch(setCaller("test@loprice.co.tz"))
+                                            }}
+                                  size={'$1'} 
+                                  />
+                                  </XStack>}
                         />
                     </YGroup.Item>
                     <Separator />

@@ -1,5 +1,5 @@
 import {  X } from '@tamagui/lucide-icons-2'
-import { setAddressDialogOpen, setFullnameDialogOpen, updateAddress, updateFirstname} from 'components/conversations/account/accountSlice';
+import { setAddressDialogOpen, setFullnameDialogOpen, updateAddress, updateFirstname} from 'components/account/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 
-type CallState = "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
+type CallState = "call" | "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
 type RingerState = "ringing" | "iddle"
 // Define the TS type for the counter slice's state
 export interface CallsState {
@@ -14,6 +14,8 @@ export interface CallsState {
     remotestream: any
     localsdp: any
     remotesdp: any
+    caller: string
+    callcontext: string
 }
 
 // Define the initial value for the slice state
@@ -26,6 +28,8 @@ const initialState: CallsState = {
     remotestream: null,
     localsdp: null,
     remotesdp: null,
+    caller: "",
+    callcontext: ""
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -37,11 +41,12 @@ export const callsSlice = createSlice({
     reducers: {
 
         ////////////////////////////////////calls//////////////////////////////////////
-
         setCallState: (state, action) => {
+       
             state.callstate = action.payload
-            //console.log("New state is: " + state.user.user_jid)
+            console.log("New state callstate is: " + state.callstate)
         },
+
         setRingerState: (state, action) => {
             state.ringer = action.payload
             //console.log("New state is: " + state.user.user_jid)
@@ -56,6 +61,7 @@ export const callsSlice = createSlice({
             state.peerconnection = action.payload
             //console.log("New state is: " + state.user.user_jid)
         },
+
         setLocalStream: (state, action) => {
             state.localstream = action.payload
             //console.log("New state is: " + state.user.user_jid)
@@ -65,13 +71,25 @@ export const callsSlice = createSlice({
             state.remotestream = action.payload
             //console.log("New state is: " + state.user.user_jid)
         },
+
         setLocalSdp: (state, action) => {
             state.localsdp = action.payload
             //console.log("New state is: " + state.user.user_jid)
         },
+
         setRemoteSdp: (state, action) => {
             state.remotesdp = action.payload
             //console.log("New state is: " + state.user.user_jid)
+        },
+
+        setCaller: (state, action) => {
+            state.caller = action.payload
+            //console.log("New state is: " + state.user.user_jid)
+        },
+
+        setCallContext: (state, action) => {
+            state.callcontext = action.payload
+            console.log("New state callcontext is: " + state.callcontext)
         },
 
     }
@@ -86,7 +104,9 @@ export const {
     setLocalStream,
     setRemoteStream,
     setLocalSdp,
-    setRemoteSdp
+    setRemoteSdp,
+    setCaller,
+    setCallContext
 } = callsSlice.actions
 
 // Export the slice reducer for use in the store configuration

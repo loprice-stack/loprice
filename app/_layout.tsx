@@ -10,6 +10,8 @@ import { LopriceProvider } from 'components/LopriceProvider'
 import { useTheme } from 'tamagui'
 import { Provider } from 'react-redux'
 import { store } from 'store/redux/store'
+import  CallAlertDialog  from 'components/conversations/calls/CallAlertDialogy'
+import LoginCreateAccountDiAlert from 'components/account/AccountAlertDialogy'
 
 
 
@@ -57,7 +59,10 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        <CallAlertDialog />
+        <LoginCreateAccountDiAlert/>
       <Stack>
+
         <Stack.Screen
           name="(drawer)"
           options={{

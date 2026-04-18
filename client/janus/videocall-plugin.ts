@@ -1,11 +1,12 @@
 'use strict';
 
-import { setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
-import { useRouter } from 'expo-router';
+import { CALL_STATE_INCOMMING } from 'utils/constants';
+import { setCallContext, setCaller, setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
+
 /**
- * This module contains the implementation of the Record&Play plugin (ref. {@link https://janus.conf.meetecho.com/docs/videocall.html}).
+ * This module contains the implementation of the VideoCall plugin (ref. {@link https://janus.conf.meetecho.com/docs/videocall.html}).
  * 
- * 
+ * Its just an ugly mimic of other plugin
  * 
  * @module videocall-plugin
  */
@@ -40,6 +41,7 @@ const PLUGIN_EVENT = {
   TRICKLE: 'videocall_trickle',
   ERROR: 'videocall_error',
   ERROR_CODE: 'videocall_error_code',
+  DETACHED: 'videocall_handle_detached'
 };
 
 
@@ -122,7 +124,9 @@ class VideoCallHandle extends Handle {
           janode_event.event = PLUGIN_EVENT.INCOMMING;
 
           store.dispatch(setRemoteSdp(janode_event.data.jsep))
-          store.dispatch(setCallState(PLUGIN_EVENT.INCOMMING))
+          store.dispatch(setCallContext(PLUGIN_ID))
+          store.dispatch(setCallState(CALL_STATE_INCOMMING))
+          store.dispatch(setCaller(janode_event.data.result.username))
          
           console.log(janode_event.data.jsep)
           console.log("---------videocall-plugin--events----incomingcall---check--------------")
@@ -213,6 +217,42 @@ class VideoCallHandle extends Handle {
         return janode_event;
       }
     }
+
+
+    
+    //handle dettached
+    if (janus == 'detached') {
+
+      /* Prepare an object for the output Janode event */
+      //@ts-ignore
+      const janode_event = this._newPluginEvent(janus_message);
+      const { session_id, sender } = janus_message;
+      /* The plugin will emit an event only if the handle does not own the transaction */
+      /* That means that a transaction has already been closed or this is an async event */
+      //@ts-ignore
+      const emit = (this.ownsTransaction(transaction) === false);
+
+    
+      janode_event.event = PLUGIN_EVENT.DETACHED;
+      janode_event.data.session_id = session_id;
+      janode_event.data.handle_id = sender
+
+      /* The event has been handled */
+      if (janode_event.event) {
+        /* Try to close the transaction */
+        //@ts-ignore
+        this.closeTransactionWithSuccess(transaction, janus_message);
+        /* If the transaction was not owned, emit the event */
+        //@ts-ignore
+        if (emit) this.emit(janode_event.event, janode_event.data);
+        console.log(janode_event);
+        console.log("----------videocall---events-----janode_event--detached---success-----")
+        return janode_event;
+      }
+    }
+
+
+
     
 
     /* The event has not been handled, return a falsy value */
@@ -353,5 +393,6 @@ export default {
     VIDEOCALL_UPDATE: PLUGIN_EVENT.UPDATE,
     VIDEOCALL_SIMULCAST: PLUGIN_EVENT.SIMULCAST,
     VIDEOCALL_ERROR: PLUGIN_EVENT.ERROR,
+    VIDEOCALL_DETACHED: PLUGIN_EVENT.DETACHED
   },
 };

@@ -17,8 +17,6 @@ export interface AccountState {
         user_type: string
         token_type: string
         access_level: number
-
-
     },
 
     userinfo: {
@@ -40,7 +38,9 @@ export interface AccountState {
         acname: string
         acnumber: string
         paymentacc_d_open: boolean
-    }
+    },
+
+    requirelogin_d_open: boolean
 
 }
 
@@ -87,7 +87,8 @@ const initialState: AccountState = {
         acnumber: "",
         paymentacc_d_open: false,
 
-    }
+    },
+    requirelogin_d_open: false
 
 }
 
@@ -103,7 +104,7 @@ export const accountSlice = createSlice({
 
         updateLoginStatus: (state, action) => {
             state.user = action.payload
-            //console.log("New state is: " + state.user.user_jid)
+            //console.log("New state account is: " + state.user)
         },
 
         setProfilePhotoEditDialogOpen: (state, action) => {
@@ -201,6 +202,13 @@ export const accountSlice = createSlice({
             state.userinfo.paymentacc_d_open = action.payload
         },
 
+
+
+        ////////////////////////////////////open dialog//////////////////////////////////////
+        setRequireLoginDialogOpen: (state, action) => {
+            state.requirelogin_d_open = action.payload
+        },
+
     }
 })
 
@@ -226,7 +234,8 @@ export const {
     updateAccountNumber,
     setPaymentsAccountDialogOpen,
     setProfilePhotoEditDialogOpen,
-    setProfilePhotoAlertDialogOpen
+    setProfilePhotoAlertDialogOpen,
+    setRequireLoginDialogOpen
 } = accountSlice.actions
 
 // Export the slice reducer for use in the store configuration

@@ -1,4 +1,4 @@
-import {  LOPRICE_API_URL_S, LOPRICE_URL_S } from "client/constants";
+import {  LOPRICE_API_URL_S, LOPRICE_URL_S } from "utils/constants";
 import axios from "axios";
 
 

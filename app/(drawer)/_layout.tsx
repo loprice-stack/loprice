@@ -13,7 +13,7 @@ import { useWindowDimensions } from 'tamagui';
 import { janussession } from 'client/janus/janus';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import { setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
-import { CALL_STATE_INCOMMING } from 'client/constants';
+import { CALL_STATE_INCOMMING } from 'utils/constants';
 
 
 
