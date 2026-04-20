@@ -7,7 +7,6 @@
       "dependencies": {
         "@config-plugins/react-native-webrtc": "^13.0.0",
         "@craftzdog/react-native-buffer": "^6.1.1",
-        "@kirenpaul/react-native-foreground-service-turbo": "^0.1.0",
         "@react-navigation/drawer": "^7.9.4",
         "@react-navigation/material-top-tabs": "^7.4.21",
         "@react-navigation/native": "^7.1.33",
@@ -406,8 +405,6 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
-
-    "@kirenpaul/react-native-foreground-service-turbo": ["@kirenpaul/react-native-foreground-service-turbo@0.1.0", "", { "peerDependencies": { "react": "*", "react-native": ">=0.68.0" } }, "sha512-pB9UPbE2iRhzA0komlbP0aWK1DrwSXnj0ETf/nskvNyf9cedfLm6wRk3EipDQD35C5k1Z5juZtGBLGDhBM4Eyw=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 

@@ -1,22 +1,17 @@
 import { Stack } from 'expo-router';
 
 import {
+  Avatar,
   Button,
-  Separator,
+  Label,
   useWindowDimensions,
   View,
   XStack,
+  YStack,
 } from 'tamagui'
 
-import Janode from 'janode';
-import VideoRoomPlugin from 'janode/src/plugins/videoroom-plugin';
-
-import { setConnection, setSession } from '../../../components/conversations/conversationsSlice';
-import { useContext, useEffect, useState } from 'react';
-import Contents400_2 from 'components/Contents400_2';
-import Contents400_2_flex from 'components/Contents400_2_flex';
-import { CALL_STATE_CALLING, CALL_STATE_IDDLE, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER } from 'utils/constants';
-import { setCallContext, setCallState, setLocalStream, setPeerConnection, setRemoteSdp, setRemoteStream, setVideoCallHandle } from '../../../components/conversations/calls/callsSlice';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER } from 'utils/constants';
+import { setCallContext, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -38,6 +33,7 @@ import {
   RTCView,
 } from 'react-native-webrtc-web-shim';
 import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
+import { useContext, useEffect, useState } from 'react';
 
 
 
@@ -60,20 +56,15 @@ export default function Calls() {
     localsdp,
     remotesdp
   } = useAppSelector(state => state.calls)
-
   const { user_id, user_token } = useAppSelector(state => state.account.user)
-
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
-  //const [remotesdp, setRjsep] = useState(null)
-  //const [callstate, setCallstate] = useState(CALL_STATE_IDDLE)
-  //const [peerconnection, setPeerConnection] = useState<RTCPeerConnection>(null)
   const [localstream, setLocalstream] = useState<MediaStream>(null)
   const [remotestream, setRemotestream] = useState<MediaStream>(null)
   const [remoteCandidates, setRemoteCandidates] = useState([])
   const [islisterning, setIsListerning] = useState(false)
 
   useEffect(() => {
-    dispatch(setCallContext('call_ui'))
+
     if (callstate == CALL_STATE_INCOMMING) {
       acceptCall()
     } else if (callstate == CALL_STATE_START_CALL) {
@@ -81,7 +72,7 @@ export default function Calls() {
     }
   }, [])
 
-
+  dispatch(setCallContext('call_ui'))
 
   async function startCall() {
     if (isLoggedIn(user_token)) {
@@ -180,6 +171,7 @@ export default function Calls() {
       console.log(" Remote stream closed ")
       closePeerConnection(videoCallContext.peerconn)
       console.log("We Hanguped successfully")
+      dispatch(setCallState(CALL_STATE_HANGUP))
     } catch (err) {
       //close anyway
       setLocalstream(null)
@@ -317,6 +309,21 @@ export default function Calls() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Calls", headerShown: false }} />
+      <YStack style={{ position: "absolute", display: remotestream ? 'none' : 'flex', }} items="center" gap="$6">
+        <Avatar circular size="$10">
+          <Avatar.Image
+            aria-label="Cam"
+            src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
+          />
+          <Avatar.Fallback bg="$blue10" />
+        </Avatar>
+        <Label style={{ alignSelf: 'center' }}>
+          {caller}
+        </Label>
+        <Label style={{ alignSelf: 'center' }}>
+          {callstate}
+        </Label>
+      </YStack>
       <Contents800_2_flexdirection>
         <View
           position="absolute"
@@ -325,7 +332,6 @@ export default function Calls() {
           style={{ width: width < 600 ? width : 800, height: height }}>
 
           {remotestream && (
-
             <RTCView
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
               mirror={true}
@@ -335,14 +341,12 @@ export default function Calls() {
               zOrder={0}
             />
           )}
-
         </View>
-
         <View
           position="absolute"
           //@ts-ignore
           bottom={2}
-          style={{ marginLeft: 8,marginBottom:120, width: 100, height: 150 }}>
+          style={{ marginLeft: 8, marginBottom: 120, width: 100, height: 150 }}>
           {localstream && (
             <RTCView
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
@@ -363,10 +367,26 @@ export default function Calls() {
         zIndex={999}
       >
         <XStack gap={8}>
-          <Button background={'red'} onPress={() => startCall()}>Call</Button>
-          <Button onPress={() => hangupCall()}>Hangup </Button>
-          <Button style={{ backgroundColor: callstate == "incoming" ? "green" : "white" }} onPress={() => acceptCall()}>Answer</Button>
-
+          <Button background={'red'} onPress={
+            //"call" | "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
+            () => {
+              ((callstate == 'incoming')
+                || (callstate == 'calling')
+                || (callstate == 'connecting')
+                || (callstate == 'connected')
+                || (callstate == 'accepted')) ?
+                hangupCall() : startCall()
+            }
+          }
+          >{((callstate == 'incoming')
+            || (callstate == 'calling')
+            || (callstate == 'connecting')
+            || (callstate == 'connected')
+            || (callstate == 'accepted')) ?
+            'Hangup' : 'Call'
+            }</Button>
+          <Button style={{ display: callstate == "incoming" ? "flex" : "none", backgroundColor: "green" }}
+            onPress={() => acceptCall()}>Answer</Button>
         </XStack>
       </View>
     </View>
@@ -388,8 +408,6 @@ export default function Calls() {
     });
   }
 
-
-
   function eventTricle(videohandle) {
     let remoCandidates = [];
     videohandle.on(VideoCallHandle.EVENT.VIDEOCALL_TRICKLE, evtdata => {
@@ -408,7 +426,6 @@ export default function Calls() {
           remoCandidates.push(iceCandidate);
           console.log(remoteCandidates)
           console.log("--------------------------list------------------------------------")
-
         }
       }
     });
@@ -456,7 +473,6 @@ export default function Calls() {
         setRemotestream(event.streams[0])
         console.log(event)
         console.log("----------------------track---------------------------------")
-
       });
 
       peerConnection.addEventListener('connectionstatechange', event => {

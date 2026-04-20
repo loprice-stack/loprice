@@ -1,6 +1,6 @@
 'use strict';
 
-import { CALL_STATE_INCOMMING } from 'utils/constants';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING } from 'utils/constants';
 import { setCallContext, setCaller, setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
 
 /**
@@ -117,6 +117,8 @@ class VideoCallHandle extends Handle {
         case 'calling':
           janode_event.data.result = message_data.result;
           janode_event.event = PLUGIN_EVENT.CALLING;
+
+          store.dispatch(setCallState(CALL_STATE_CALLING))
           console.log("---------videocall-plugin--events----calling---check--------------")
           break;
         case 'incomingcall':
@@ -144,6 +146,7 @@ class VideoCallHandle extends Handle {
         case 'hangup':
           janode_event.data.result = message_data.result;
           janode_event.event = PLUGIN_EVENT.HANGUP;
+           store.dispatch(setCallState(CALL_STATE_HANGUP))
           console.log("---------videocall-plugin--events----hangup---check--------------")
           break;
         case 'simulcast':
@@ -158,6 +161,7 @@ class VideoCallHandle extends Handle {
             janode_event.event = PLUGIN_EVENT.ERROR;
             janode_event.data = new Error(`${error_code} ${error}`);
             janode_event.data._code = error_code;
+               store.dispatch(setCallState('error'))
             /* In case of error, close a transaction */
             //@ts-ignore
             this.closeTransactionWithError(transaction, janode_event.data);

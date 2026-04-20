@@ -47,7 +47,6 @@ export default function SettingsHome() {
                 gap="$3"
                 cursor="pointer"
                 title="General"
-                subTitle="General app settings"
                 icon={Settings}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
@@ -57,7 +56,6 @@ export default function SettingsHome() {
                 gap="$3"
                 cursor="pointer"
                 title="Listings"
-                subTitle="Lists, searches, filters"
                 icon={LayoutList}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
@@ -67,7 +65,6 @@ export default function SettingsHome() {
                 gap="$3"
                 cursor="pointer"
                 title="Streams"
-                subTitle="Live, recorded, lists, searches views, filters"
                 icon={TvMinimalPlay}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
@@ -77,7 +74,6 @@ export default function SettingsHome() {
                 gap="$3"
                 cursor="pointer"
                 title="Calls"
-                subTitle="Video, audio, skin, themes"
                 icon={Video}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
@@ -87,7 +83,6 @@ export default function SettingsHome() {
                 gap="$3"
                 cursor="pointer"
                 title="Chat"
-                subTitle="Buble, Online status, Suscriptions"
                 icon={MessagesSquare}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
@@ -96,17 +91,16 @@ export default function SettingsHome() {
               <ListItem
                 gap="$3"
                 cursor="pointer"
-                title="Inmail" subTitle="Inbox, outbox, sent items"
+                title="Inmail"
                 icon={Mail}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
             <Separator />
             <YGroup.Item>
               <ListItem
-                gap="$3"
+                gap="$4"
                 cursor="pointer"
                 title="Account"
-                subTitle="Profile, name, coins"
                 icon={UserRoundCog}
                 iconAfter={ChevronRight} />
             </YGroup.Item>
