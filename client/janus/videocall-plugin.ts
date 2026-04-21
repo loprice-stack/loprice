@@ -1,7 +1,7 @@
 'use strict';
 
 import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING } from 'utils/constants';
-import { setCallContext, setCaller, setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
+import { setCallContext, setCaller, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice';
 
 /**
  * This module contains the implementation of the VideoCall plugin (ref. {@link https://janus.conf.meetecho.com/docs/videocall.html}).
@@ -15,6 +15,7 @@ import { setCallContext, setCaller, setCallState, setRemoteSdp } from 'component
 
 import Handle from 'janode/src/handle.js';
 import { store } from 'store/redux/store';
+import { setRequireRegisterDialogOpen } from 'components/account/accountSlice';
 const PLUGIN_ID = 'janus.plugin.videocall';
 
 /* These are the requests defined for the Janus RecordPlay API */
@@ -73,7 +74,7 @@ class VideoCallHandle extends Handle {
 
   constructor(session, id) {
     super(session, id);
-  
+
   }
 
   /**
@@ -85,102 +86,172 @@ class VideoCallHandle extends Handle {
    */
   _handleMessage(janus_message) {
 
-    const { janus, jsep, plugindata, transaction } = janus_message;
-    if (plugindata && plugindata.data && plugindata.data.videocall) {
+    console.log(janus_message)
 
-      //Got message
-      const message_data = plugindata.data;
-      const { videocall, error, error_code } = message_data;
+    const { janus, plugindata, transaction } = janus_message;
 
-      /* Prepare an object for the output Janode event */
-      //@ts-ignore
-      const janode_event = this._newPluginEvent(janus_message);
 
-      /* The plugin will emit an event only if the handle does not own the transaction */
-      /* That means that a transaction has already been closed or this is an async event */
-      //@ts-ignore
-      const emit = (this.ownsTransaction(transaction) === false);
-      const result = message_data.result.event;
+    //handle events
+    if (janus == 'event') {
+      //hack event to handle error first
+      const error_codee = janus_message.plugindata.data.error_code;
+      if (typeof error_codee !== 'number') {
+        //handle video call events
+        if (plugindata.data.videocall) {
 
-      switch (result) {
 
-        case 'list':
-          janode_event.data.list = message_data.result.list;
-          janode_event.event = PLUGIN_EVENT.LIST;
-          console.log("---------videocall-plugin--events----list---check--------------")
-          break;
-        case "registered":
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.REGISTRED;
-          console.log("---------videocall-plugin--events----registered---check--------------")
-          break;
-        case 'calling':
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.CALLING;
+          //Got message
+          const message_data = plugindata.data;
 
-          store.dispatch(setCallState(CALL_STATE_CALLING))
-          console.log("---------videocall-plugin--events----calling---check--------------")
-          break;
-        case 'incomingcall':
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.INCOMMING;
+          /* Prepare an object for the output Janode event */
+          //@ts-ignore
+          const janode_event = this._newPluginEvent(janus_message);
 
-          store.dispatch(setRemoteSdp(janode_event.data.jsep))
-          store.dispatch(setCallContext(PLUGIN_ID))
-          store.dispatch(setCallState(CALL_STATE_INCOMMING))
-          store.dispatch(setCaller(janode_event.data.result.username))
-         
-          console.log(janode_event.data.jsep)
-          console.log("---------videocall-plugin--events----incomingcall---check--------------")
-          break;
-        case 'accepted':
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.ACCEPTED;
-          console.log("---------videocall-plugin--events----accepted---check--------------")
-          break;
-        case 'update':
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.UPDATE;
-          console.log("---------videocall-plugin--events----update---check--------------")
-          break;
-        case 'hangup':
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.HANGUP;
-           store.dispatch(setCallState(CALL_STATE_HANGUP))
-          console.log("---------videocall-plugin--events----hangup---check--------------")
-          break;
-        case 'simulcast':
-          janode_event.data.result = message_data.result;
-          janode_event.event = PLUGIN_EVENT.SIMULCAST;
-          console.log("---------videocall-plugin--events----simulcast---check--------------")
-          break;
-        /* Generic events (error, notifications ...) */
-        case 'event':
-          /* VideoCall Error */
-          if (error) {
-            janode_event.event = PLUGIN_EVENT.ERROR;
-            janode_event.data = new Error(`${error_code} ${error}`);
-            janode_event.data._code = error_code;
-               store.dispatch(setCallState('error'))
-            /* In case of error, close a transaction */
-            //@ts-ignore
-            this.closeTransactionWithError(transaction, janode_event.data);
-            break;
+
+
+          /* The plugin will emit an event only if the handle does not own the transaction */
+          /* That means that a transaction has already been closed or this is an async event */
+          //@ts-ignore
+          const emit = (this.ownsTransaction(transaction) === false);
+
+
+          const result = message_data.result.event;
+          if (typeof result !== undefined) {
+            switch (result) {
+
+              case 'list':
+                janode_event.data.list = message_data.result.list;
+                janode_event.event = PLUGIN_EVENT.LIST;
+                console.log("---------videocall-plugin--events----list---check--------------")
+                break;
+              case "registered":
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.REGISTRED;
+                console.log("---------videocall-plugin--events----registered---check--------------")
+                break;
+              case 'calling':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.CALLING;
+
+                store.dispatch(setCallState(CALL_STATE_CALLING))
+                console.log("---------videocall-plugin--events----calling---check--------------")
+                break;
+              case 'incomingcall':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.INCOMMING;
+
+                store.dispatch(setRemoteSdp(janode_event.data.jsep))
+                store.dispatch(setCallContext(PLUGIN_ID))
+                store.dispatch(setCallState(CALL_STATE_INCOMMING))
+                store.dispatch(setCaller(janode_event.data.result.username))
+
+                console.log(janode_event.data.jsep)
+                console.log("---------videocall-plugin--events----incomingcall---check--------------")
+                break;
+              case 'accepted':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.ACCEPTED;
+                console.log("---------videocall-plugin--events----accepted---check--------------")
+                break;
+              case 'update':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.UPDATE;
+                console.log("---------videocall-plugin--events----update---check--------------")
+                break;
+              case 'hangup':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.HANGUP;
+                store.dispatch(setCallState(CALL_STATE_HANGUP))
+                console.log("---------videocall-plugin--events----hangup---check--------------")
+                break;
+              case 'simulcast':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.SIMULCAST;
+                console.log("---------videocall-plugin--events----simulcast---check--------------")
+                break;
+              /* Generic events (error, notifications ...) */
+              default:
+                console.log("---------videocall-plugin--events----default---check--------------")
+                break;
+
+            }
+
           }
 
-      }
 
-      /* The event has been handled */
-      if (janode_event.event) {
-        /* Try to close the transaction */
+          /* The event has been handled */
+          if (janode_event.event) {
+            /* Try to close the transaction */
+            //@ts-ignore
+            this.closeTransactionWithSuccess(transaction, janus_message);
+            /* If the transaction was not owned, emit the event */
+            //@ts-ignore
+            if (emit) this.emit(janode_event.event, janode_event.data);
+            console.log(janode_event);
+            console.log("----------videocall---events-----janode_event-----success-----")
+            return janode_event;
+          }
+        }
+
+      } else {
+
+        //handle all own and disowned errors
         //@ts-ignore
-        this.closeTransactionWithSuccess(transaction, janus_message);
-        /* If the transaction was not owned, emit the event */
+        const janode_event = this._newPluginEvent(janus_message);
+
+
         //@ts-ignore
-        if (emit) this.emit(janode_event.event, janode_event.data);
-        console.log(janode_event);
-        console.log("----------videocall---events-----janode_event-----success-----")
-        return janode_event;
+        const emit = (this.ownsTransaction(transaction) === false);
+
+
+        /* Handle VideoCall Error */
+        switch (error_codee) {
+
+          //register a username before calling
+          case 473:
+            janode_event.data.error = janus_message.plugindata.data.error;
+            janode_event.data.error_code = janus_message.plugindata.data.error_code;
+            janode_event.event = PLUGIN_EVENT.ERROR;
+            store.dispatch(setCallState('error'))
+            store.dispatch(setRequireRegisterDialogOpen(true))
+            console.log("---------videocall-plugin--events----error_code--473---check--------------")
+            break;
+          //user name is taken when you want to register
+          case 476:
+            janode_event.data.error = janus_message.plugindata.data.error;
+            janode_event.data.error_code = janus_message.plugindata.data.error_code;
+            janode_event.event = PLUGIN_EVENT.ERROR;
+            store.dispatch(setCallState('error'))
+            store.dispatch(setCallErrorDialogOpen(true))
+            store.dispatch(setCallErrorMessage(janus_message.plugindata.data.error))
+            console.log("---------videocall-plugin--events----error_code--476---check--------------")
+            break;
+
+          //user name doesnt exist when you try to call it
+          case 478:
+            janode_event.data.error = janus_message.plugindata.data.error;
+            janode_event.data.error_code = janus_message.plugindata.data.error_code;
+            janode_event.event = PLUGIN_EVENT.ERROR;
+            store.dispatch(setCallState('error'))
+            store.dispatch(setCallErrorDialogOpen(true))
+            store.dispatch(setCallErrorMessage(janus_message.plugindata.data.error))
+            console.log("---------videocall-plugin--events----error_code--478---check--------------")
+            break;
+        }
+
+
+        /* The event has been handled */
+        if (janode_event.event) {
+          /* Try to close the transaction */
+          //@ts-ignore
+          this.closeTransactionWithSuccess(transaction, janus_message);
+          /* If the transaction was not owned, emit the event */
+          //@ts-ignore
+          if (emit) this.emit(janode_event.event, janode_event.data);
+          console.log(janode_event);
+          console.log("----------videocall---events-----janode_event--error-----")
+          return janode_event;
+        }
       }
     }
 
@@ -198,8 +269,8 @@ class VideoCallHandle extends Handle {
       const emit = (this.ownsTransaction(transaction) === false);
 
       if (!completed) {
-        janode_event.data.sdpMid = sdpMid ;
-        janode_event.data.sdpMLineIndex = sdpMLineIndex ;
+        janode_event.data.sdpMid = sdpMid;
+        janode_event.data.sdpMLineIndex = sdpMLineIndex;
         janode_event.data.candidate = candidate;
       }
       else {
@@ -222,8 +293,6 @@ class VideoCallHandle extends Handle {
       }
     }
 
-
-    
     //handle dettached
     if (janus == 'detached') {
 
@@ -236,7 +305,7 @@ class VideoCallHandle extends Handle {
       //@ts-ignore
       const emit = (this.ownsTransaction(transaction) === false);
 
-    
+
       janode_event.event = PLUGIN_EVENT.DETACHED;
       janode_event.data.session_id = session_id;
       janode_event.data.handle_id = sender
@@ -255,18 +324,10 @@ class VideoCallHandle extends Handle {
       }
     }
 
-
-
-    
-
     /* The event has not been handled, return a falsy value */
     return null;
   }
 
-
-  /*----------*/
-  /* USER API */
-  /*----------*/
 
   /* These are the APIs that users need to work with the videocall plugin */
 
@@ -311,7 +372,7 @@ class VideoCallHandle extends Handle {
     //@ts-ignore
     const response = await this.message(body, jsep);
     //@ts-ignore
-    const { event, data: evtdata } = this._getPluginEvent(response);;
+    const { event, data: evtdata } = this._getPluginEvent(response);
     if (event === PLUGIN_EVENT.CALLING || PLUGIN_EVENT.ERROR)
       return evtdata;
     const error = new Error(`unexpected response to ${body.request} request`);
@@ -332,7 +393,7 @@ class VideoCallHandle extends Handle {
   }
 
 
-    async trickleeComplete() {
+  async trickleeComplete() {
     //@ts-ignore
     const response = await this.trickleComplete()
     //@ts-ignore

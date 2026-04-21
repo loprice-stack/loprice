@@ -11,7 +11,7 @@ import {
 } from 'tamagui'
 
 import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER } from 'utils/constants';
-import { setCallContext, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
+import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -34,6 +34,8 @@ import {
 } from 'react-native-webrtc-web-shim';
 import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { useContext, useEffect, useState } from 'react';
+import RegisterCallIdAlertDialogy from 'components/account/RegisterCallIdAlertDialogy';
+import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
 
 
 
@@ -158,7 +160,9 @@ export default function Calls() {
         //close anyway
         stopAllStreams();
         closePeerConnection(videoCallContext.peerconn)
+        dispatch(setCallState(CALL_STATE_HANGUP))
         console.log("Error closing a call")
+       
       };
     }
   }
@@ -251,18 +255,27 @@ export default function Calls() {
 
 
   async function setMediaStream(peerConnection) {
-    const mediaStream = await mediaDevices.getUserMedia({
-      audio: true,
-      video: {
-        frameRate: 30,
-        facingMode: 'user'
-      }
-    })
-    //@ts-ignore
-    setLocalstream(mediaStream)
-    mediaStream.getTracks().forEach(
-      track => peerConnection.addTrack(track, mediaStream)
-    );
+
+
+    try {
+      const mediaStream = await mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+          frameRate: 30,
+          facingMode: 'user'
+        }
+      })
+      //@ts-ignore
+      setLocalstream(mediaStream)
+      mediaStream.getTracks().forEach(
+        track => peerConnection.addTrack(track, mediaStream)
+      );
+    } catch (err) {
+      dispatch(setCallErrorDialogOpen(true))
+      dispatch(setCallErrorMessage("Device in use"))
+       console.log(err)
+    }
+
   }
 
 
@@ -310,6 +323,8 @@ export default function Calls() {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Calls", headerShown: false }} />
       <YStack style={{ position: "absolute", display: remotestream ? 'none' : 'flex', }} items="center" gap="$6">
+        <RegisterCallIdAlertDialogy/>
+        <CallErrorAlertDialogy/>
         <Avatar circular size="$10">
           <Avatar.Image
             aria-label="Cam"

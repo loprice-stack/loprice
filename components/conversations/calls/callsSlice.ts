@@ -16,6 +16,9 @@ export interface CallsState {
     remotesdp: any
     caller: string
     callcontext: string
+
+        callerror_d_open: boolean
+         callerror_message: string
 }
 
 // Define the initial value for the slice state
@@ -29,7 +32,10 @@ const initialState: CallsState = {
     localsdp: null,
     remotesdp: null,
     caller: "",
-    callcontext: ""
+    callcontext: "",
+
+         callerror_d_open: false,
+         callerror_message: ""
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -92,6 +98,15 @@ export const callsSlice = createSlice({
             console.log("New state callcontext is: " + state.callcontext)
         },
 
+
+        setCallErrorDialogOpen: (state, action) => {
+            state.callerror_d_open = action.payload
+        },
+
+        setCallErrorMessage: (state, action) => {
+            state.callerror_message = action.payload
+        },
+
     }
 })
 
@@ -106,7 +121,8 @@ export const {
     setLocalSdp,
     setRemoteSdp,
     setCaller,
-    setCallContext
+    setCallContext, setCallErrorDialogOpen,
+    setCallErrorMessage
 } = callsSlice.actions
 
 // Export the slice reducer for use in the store configuration

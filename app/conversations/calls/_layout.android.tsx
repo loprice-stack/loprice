@@ -32,6 +32,8 @@ import {
   registerGlobals,
   RTCView,
 } from 'react-native-webrtc';
+import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
+import RegisterCallIdAlertDialogy from 'components/account/RegisterCallIdAlertDialogy';
 
 
 
@@ -158,6 +160,7 @@ export default function Calls() {
         //close anyway
         stopAllStreams();
         closePeerConnection(videoCallContext.peerconn)
+        dispatch(setCallState(CALL_STATE_HANGUP))
         console.log("Error closing a call")
       };
     }
@@ -316,7 +319,9 @@ export default function Calls() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Calls", headerShown: false }} />
-      <YStack style={{ position:"absolute", display: remotestream ? 'none' : 'flex',}} items="center" gap="$6">
+      <YStack style={{ position: "absolute", display: remotestream ? 'none' : 'flex', }} items="center" gap="$6">
+        <RegisterCallIdAlertDialogy />
+        <CallErrorAlertDialogy />
         <Avatar circular size="$10">
           <Avatar.Image
             aria-label="Cam"
@@ -327,7 +332,7 @@ export default function Calls() {
         <Label style={{ alignSelf: 'center' }}>
           {caller}
         </Label>
-                <Label style={{ alignSelf: 'center' }}>
+        <Label style={{ alignSelf: 'center' }}>
           {callstate}
         </Label>
       </YStack>

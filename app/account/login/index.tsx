@@ -73,15 +73,20 @@ export default function Login() {
       setIsloading(false);
       //console.log(token)
     }).catch((error) => {
-      const er = error.response.data.detail
-      if (er) {
-        setErrorm(error.response.data.detail)
-      } else {
-        setErrorm("Unkown error")
+      try {
+        const er = error.response.data.detail
+        if (er) {
+          setErrorm(error.response.data.detail)
+        } else {
+          setErrorm("Unkown error")
+        }
+        setIsloading(false);
+        setIsopen(true)
+      } catch (er) {
+        setErrorm("There is a problem with your connection! Please try again");
+        setIsloading(false);
+        setIsopen(true)
       }
-      setIsloading(false);
-      setIsopen(true)
-      console.log(error)
     })
   }
 

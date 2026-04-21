@@ -62,6 +62,7 @@ export const store = configureStore({
 const janodeContext = {
   connection: null,
   session: null
+  
 }
 
 const videoContext = {
