@@ -12,7 +12,7 @@ import { Provider } from 'react-redux'
 import { store } from 'store/redux/store'
 import  CallAlertDialog  from 'components/conversations/calls/CallAlertDialogy'
 import LoginCreateAccountDiAlert from 'components/account/AccountAlertDialogy'
-
+import 'react-native-gesture-handler';
 
 
 export const unstable_settings = {

@@ -13,7 +13,7 @@ import { setCaller, setCallState } from "../calls/callsSlice";
 import { CALL_STATE_START_CALL } from "utils/constants";
 
 
-export default function MyContacts() {
+export default function GroupContacts() {
 
     const router = useRouter();
     const { width, height } = useWindowDimensions();
@@ -40,6 +40,8 @@ export default function MyContacts() {
                 console.log(error)
             })
     }
+
+
 
 
     const MoreButtonsMenu = (user_idd) => {
@@ -86,7 +88,7 @@ export default function MyContacts() {
                                 </Menu.ItemIcon>
                             </Menu.Item>
                             <Menu.Separator />
-                            <Menu.Item
+                                                        <Menu.Item
                                 cursor="pointer"
                                 onPress={() => {            //@ts-ignore
                                     router.navigate('/conversations/contact/' + user_idd)
@@ -107,11 +109,7 @@ export default function MyContacts() {
                             <Menu.Separator />
                             <Menu.Item
                                 cursor="pointer"
-                                onPress={() => {
-                                    deleteContacts(messageContext.xmpp, user_id, user_idd)
-                                    loadContacts(contact_type_openswitch)
-                                    console.log("deleted succcesssfullly")
-                                }}
+                                onPress={() => { console.log("Delete clicked " + user_idd) }}
                                 key="delete">
                                 <Menu.ItemTitle cursor="pointer" color="red">Delete</Menu.ItemTitle>
                                 <Menu.ItemIcon
@@ -134,12 +132,22 @@ export default function MyContacts() {
 
 
 
+
+
+
+
+
+
+
+
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40 }}>
+
             <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: "100%" }}>
                 <CreateContactDialogy />
+
                 <XStack gap={'$4'} style={{ alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
-                    <Text >My Contacts</Text>
+                    <Text >{contact_type_openswitch}</Text>
                     <Plus cursor="pointer"
                         onPress={() => dispatch(setCreateContactDialogOpen(true))} style={{ alignSelf: 'flex-end' }} />
                 </XStack>
@@ -152,42 +160,48 @@ export default function MyContacts() {
                     width={width < 600 ? width - 40 : 390}
                     size="$5"
                 >
-                        {contacts.map((contact: ContactsObject) => (<YGroup.Item>
-                            <ListItem
-                              
-                                title={contact.name ? contact.name : getJidLocal(contact.jid).toUpperCase()}
-                                subTitle={contact.jid}
-                                icon={<Avatar
-                                    cursor="pointer"
+                    {contacts.map((contact: ContactsObject) => (<YGroup.Item>
+                        <ListItem
+                            gap="$3"
+                            title={contact.name ? contact.name : getJidLocal(contact.jid).toUpperCase()}
+                            subTitle={contact.jid}
+                            icon={<Avatar
+                                cursor="pointer"
+                                onPress={() => {
+                                    deleteContacts(messageContext.xmpp, user_id, contact.jid)
+                                    loadContacts('grp')
+                                    console.log("deleted succcesssfullly")
+                                }}
+                                circular size="$6">
+                                <Avatar.Image
+                                    aria-label="Nate Wienert"
+                                    src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?&w=100&h=100&dpr=2&q=80"
+                                />
+                                <Avatar.Fallback delayMs={600} bg="$blue10" />
+                            </Avatar>}
+                            iconAfter={
+                                <XStack gap="$4">
+                                    <Phone
+                                        cursor="pointer"
+                                        onPress={
+                                            () => {
+                                                //@ts-ignore
+                                                router.navigate('/conversations/calls')
+                                                dispatch(setCallState(CALL_STATE_START_CALL))
+                                                dispatch(setCaller(contact.jid))
+                                            }}
+                                        size={'$1'} />
+                                    <MessageSquare
+                                        cursor="pointer"
+                                        onPress={() => console.log("mail clicked")}
+                                        size={'$1'} />
 
-                                    circular size="$6">
-                                    <Avatar.Image
-                                        aria-label="Nate Wienert"
-                                        src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?&w=100&h=100&dpr=2&q=80"
-                                    />
-                                    <Avatar.Fallback delayMs={600} bg="$blue10" />
-                                </Avatar>}
-                                iconAfter={
-                                    <XStack gap="$4">
-                                        <Phone
-                                            cursor="pointer"
-                                            onPress={
-                                                () => {
-                                                    //@ts-ignore
-                                                    router.navigate('/conversations/calls')
-                                                    dispatch(setCallState(CALL_STATE_START_CALL))
-                                                    dispatch(setCaller(contact.jid))
-                                                }}
-                                            size={'$1'} />
-                                        <MessageSquare
-                                            cursor="pointer"
-                                            onPress={() => console.log("mail clicked")}
-                                            size={'$1'} />
-                                        {MoreButtonsMenu(contact.jid)}
-                                    </XStack>}
-                            />
-                            <Separator gap={'$10'} />
-                        </YGroup.Item>))}
+                                    {MoreButtonsMenu(contact.jid)}
+
+                                </XStack>}
+                        />
+                        <Separator gap={'$10'} />
+                    </YGroup.Item>))}
                 </YGroup>
             </ScrollView>
         </View>

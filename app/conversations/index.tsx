@@ -1,11 +1,13 @@
 
 
-import { Mails } from '@tamagui/lucide-icons-2';
+
 import Contents400_2 from 'components/Contents400_2';
 import Contents400_2_flex from 'components/Contents400_2_flex';
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import ContactsTypeCard from 'components/conversations/contacts/ContactsTypeCard';
+import GroupContacts from 'components/conversations/contacts/GroupContacts';
 import LopriceContacts from 'components/conversations/contacts/LopriceContacts';
+import Mails from 'components/conversations/contacts/Mails';
 import MyContacts from 'components/conversations/contacts/MyContacts';
 import PublicContacts from 'components/conversations/contacts/PublicContacts';
 import { Stack } from 'expo-router';
@@ -34,11 +36,9 @@ export default function Conversations() {
       </Contents400_2>
       <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
       <Contents400_2_flex>
-        {contacts == "mycontacts"
-          ? <MyContacts /> : contacts == "lopricecontacts"
-            ? <LopriceContacts /> : contacts == "publiccontacts"
-              ? <PublicContacts /> : <Mails />}
-
+        {contacts == "My contacts"
+          ? <MyContacts /> : contacts == " Loprice "
+            ? <LopriceContacts /> : <GroupContacts /> }
       </Contents400_2_flex>
     </Contents800_2_flexdirection>
     </View>

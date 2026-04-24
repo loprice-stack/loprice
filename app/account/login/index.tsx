@@ -21,7 +21,7 @@ import { Link, Stack, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { updateLoginStatus } from '../../../components/account/accountSlice'
 import { accountLogin } from 'client/AxiosHttpClient'
-import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
+import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
 import { jidAsStringOf } from 'utils/utility'
 import { initializeVideoHandle } from 'client/janus/janus'
 
@@ -39,6 +39,7 @@ export default function Login() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
+     const messageContext = useContext(_message)
   const { user_id, user_token } = useAppSelector(state => state.account.user)
 
 
@@ -49,6 +50,7 @@ export default function Login() {
     setIsloading(true);
     const _username = jidAsStringOf(username)
     setUsername(_username);
+    //dispatch(set)
     accountLogin(_username, password).then(async (response) => {
       const token = response.data.user_token
 
@@ -59,11 +61,12 @@ export default function Login() {
           "user_id": response.data.user_id,
           "email": response.data.email,
           "image_url": response.data.image_url,
+          "password": password,
           "user_type": response.data.user_type,
           "token_type": response.data.token_type,
           "access_level": response.data.access_level
         }))
-        await initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id)
+        await initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, _username, password)
         router.back()
       } else {
         setErrorm(response.data.message)

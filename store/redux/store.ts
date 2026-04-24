@@ -72,10 +72,18 @@ const videoContext = {
 
 }
 
+const messageContext = {
+  xmpp: null,
+  xmppopen: false,
+  online: false
+
+}
+
 
 
 export const _session = createContext(janodeContext)
 export const _videohandle = createContext(videoContext)
+export const _message = createContext(messageContext)
 
 
 

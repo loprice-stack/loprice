@@ -10,7 +10,9 @@ export default function Mails() {
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40 }}>
             <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
-                <Text>Mails</Text>
+                <XStack gap={'$4'} style={{ alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
+                    <Text>Mails</Text>
+                </XStack>
                 <YGroup
                     self="center"
                     borderWidth={1}

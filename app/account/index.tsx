@@ -14,7 +14,7 @@ import Contents400_2_flex from 'components/Contents400_2_flex'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { setAddressDialogOpen, setProfilePhotoAlertDialogOpen } from '../../components/account/accountSlice'
 import { ProfilePhotoShowAlertDialog } from 'components/account/ProfilePhotoShowAlertDialog'
-import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
+import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
 import { initializeVideoHandle, janussession } from 'client/janus/janus'
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import { CALL_STATE_INCOMMING } from 'utils/constants'
@@ -25,15 +25,16 @@ export default function Account() {
 
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
-  const { user_token, user_id } = useAppSelector(state => state.account.user)
+  const { user_token, user_id, password } = useAppSelector(state => state.account.user)
   const videoCallContext = useContext(_videohandle)
   const sessionContext = useContext(_session)
+  const messageContext = useContext(_message)
   const router = useRouter()
 
 
 
   useEffect(() => {
-   initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id  )
+   initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password  )
   }, [])
 
 

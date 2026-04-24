@@ -5,15 +5,15 @@ import { AlertDialog, Button, useWindowDimensions, XStack, YStack } from 'tamagu
 import { setRequireLoginDialogOpen } from './accountSlice';
 
 
-export default function LoginCreateAccountDiAlert() {
-  const { width, height } = useWindowDimensions();
+export default function AccountAlertDialogy() {
+    const { width, height } = useWindowDimensions();
     const router = useRouter();
     const { requirelogin_d_open } = useAppSelector(state => state.account)
     const dispatch = useAppDispatch();
 
 
     return (
-        <AlertDialog  open={requirelogin_d_open ? true : false} >
+        <AlertDialog open={requirelogin_d_open ? true : false} >
 
             <AlertDialog.Portal>
                 <AlertDialog.Overlay
@@ -24,7 +24,7 @@ export default function LoginCreateAccountDiAlert() {
                     backgroundColor="$background"
                     enterStyle={{ opacity: 0 }}
                     exitStyle={{ opacity: 0 }}
-                   
+
                 />
                 <AlertDialog.Content
                     elevate
@@ -44,39 +44,39 @@ export default function LoginCreateAccountDiAlert() {
                     scale={1}
                     opacity={1}
                     y={0}
-                     width={width < 600 ? width -20 : 600}
+                    width={width < 600 ? width - 20 : 600}
                 >
                     <YStack gap="$4">
                         <AlertDialog.Title>Login is required</AlertDialog.Title>
                         <AlertDialog.Description>
                             Please login with your account first. Or create one to get started.
-                            </AlertDialog.Description>
-                            <AlertDialog.Description>
+                        </AlertDialog.Description>
+                        <AlertDialog.Description>
                             Creating account is simple.
-                                Just type your name or email, create and then you have the account
-                            </AlertDialog.Description>
-                            <XStack gap="$3" justify="flex-end">
-                                <Button
-                                    onPress={
-                                        //@ts-ignore
-                                        () => {
-                                            router.navigate('/account/login')
-                                            dispatch(setRequireLoginDialogOpen(false))
-                                        }}
-                                    theme="accent">Login</Button>
-                                <Button
-                                    onPress={
-                                        //@ts-ignore
-                                        () => {
-                                            router.navigate('/account/create')
-                                            dispatch(setRequireLoginDialogOpen(false))
-                                        }}
-                                    theme="accent">Create account</Button>
-                                <Button onPress={
+                            Just type your name or email, create and then you have the account
+                        </AlertDialog.Description>
+                        <XStack gap="$3" justify="flex-end">
+                            <Button
+                                onPress={
                                     //@ts-ignore
-                                    () => dispatch(setRequireLoginDialogOpen(false))}
-                                >Cancel</Button>
-                            </XStack>
+                                    () => {
+                                        router.navigate('/account/login')
+                                        dispatch(setRequireLoginDialogOpen(false))
+                                    }}
+                                theme="accent">Login</Button>
+                            <Button
+                                onPress={
+                                    //@ts-ignore
+                                    () => {
+                                        router.navigate('/account/create')
+                                        dispatch(setRequireLoginDialogOpen(false))
+                                    }}
+                                theme="accent">Create account</Button>
+                            <Button onPress={
+                                //@ts-ignore
+                                () => dispatch(setRequireLoginDialogOpen(false))}
+                            >Cancel</Button>
+                        </XStack>
                     </YStack>
                 </AlertDialog.Content>
             </AlertDialog.Portal>

@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { LOPRICE_URL } from "utils/constants";
 
 
@@ -108,8 +109,8 @@ export function getJidLocal(jid: any) {
 
 
 
-export function jidAsStringOf(username: any) {
-  username = username.toLowerCase();
+export function jidAsStringOf(_username: string) {
+  let username = _username.toLowerCase();
   
   if (username.includes("@" + LOPRICE_URL )) {
    
@@ -164,7 +165,7 @@ export const generateResource = (length: number) => {
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
-  return `${'Loprice' + result}`;
+  return `${'Loprice_' + Platform.OS + '_' + result}`;
 };
 
 export function getUsage(byteusage: number) {

@@ -6,7 +6,8 @@ const { Logger } = Janode;
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { getXmppClient } from 'client/xmpp/xmpp';
-import { jidAsStringOf } from 'utils/utility';
+import { xml } from "@xmpp/client";
+import { generateResource, jidAsStringOf } from 'utils/utility';
 
 export async function janussession() {
     //const dispatch = useAppDispatch();
@@ -24,7 +25,7 @@ export async function janussession() {
 }
 
 
-export async function initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id) {
+export async function initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password) {
     if (user_token) {
         if ((sessionContext.session !== null) || (videoCallContext.videohandle !== null)) {
             if (videoCallContext.videohandleattached) {
@@ -59,10 +60,20 @@ export async function initializeVideoHandle(sessionContext, videoCallContext, us
             videoCallContext.videohandle = videohandle
             videoCallContext.videohandleattached = true
 
+            //const id = jidAsStringOf(user_id)
+            let res = generateResource(3)
+            const xmpp = getXmppClient(user_id, password, res)
 
-            const id = jidAsStringOf(user_id)
-            const xmpp = getXmppClient(id, 'test', 56)
             xmpp.on("status", (status) => {
+
+                if (status == 'open') {
+                    messageContext.xmppopen = true
+                } else if (status == 'online') {
+                    // Makes itself available
+                     xmpp.send(xml("presence"));
+                } else {
+                    messageContext.xmppopen = false
+                }
                 console.log(status);
                 console.log("----------------xmpp---status---------------------");
             });
@@ -76,7 +87,20 @@ export async function initializeVideoHandle(sessionContext, videoCallContext, us
                 console.error(err);
                 console.log("----------------xmpp---error---------------------");
             });
-            await xmpp.start()
+
+            if (messageContext.xmpp == null) {
+                await xmpp.start()
+                messageContext.xmpp = xmpp
+            } else {
+
+                if (!messageContext.xmppopen) {
+                    await xmpp.stop()
+                    await xmpp.start()
+                    messageContext.xmpp = xmpp
+                }
+
+            }
+
 
         }
     } else {

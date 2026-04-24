@@ -42,6 +42,7 @@ export interface AccountState {
 
     requirelogin_d_open: boolean
     requireregister_d_open: boolean
+    enable_editing: boolean
 }
 
 // Define the initial value for the slice state
@@ -89,7 +90,8 @@ const initialState: AccountState = {
 
     },
     requirelogin_d_open: false,
-    requireregister_d_open: false
+    requireregister_d_open: false,
+    enable_editing: false
 
 }
 
@@ -214,6 +216,10 @@ export const accountSlice = createSlice({
             state.requireregister_d_open = action.payload
         },
 
+        setEditingState: (state, action) => {
+            state.enable_editing = action.payload
+        },
+
     }
 })
 
@@ -241,7 +247,8 @@ export const {
     setProfilePhotoEditDialogOpen,
     setProfilePhotoAlertDialogOpen,
     setRequireLoginDialogOpen,
-    setRequireRegisterDialogOpen
+    setRequireRegisterDialogOpen,
+    setEditingState
 } = accountSlice.actions
 
 // Export the slice reducer for use in the store configuration

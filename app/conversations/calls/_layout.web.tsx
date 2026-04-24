@@ -14,7 +14,7 @@ import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE
 import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
-import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
+import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
 import { initializeVideoHandle, isLoggedIn, janussession } from 'client/janus/janus';
 
 import {
@@ -45,6 +45,7 @@ export default function Calls() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
+   const messageContext = useContext(_message)
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const {
@@ -58,7 +59,7 @@ export default function Calls() {
     localsdp,
     remotesdp
   } = useAppSelector(state => state.calls)
-  const { user_id, user_token } = useAppSelector(state => state.account.user)
+  const { user_id, user_token, password } = useAppSelector(state => state.account.user)
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
   const [localstream, setLocalstream] = useState<MediaStream>(null)
   const [remotestream, setRemotestream] = useState<MediaStream>(null)
@@ -100,7 +101,7 @@ export default function Calls() {
           videoCallContext.videohandle.call(caller, jsep)
           console.log("--------starting-----a-----calll------------")
         } else {
-          initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id)
+          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
           console.log("-------------------initializing-----handle--------")
         }
       } catch (err) {
@@ -134,7 +135,7 @@ export default function Calls() {
           //@ts-ignore
           videoCallContext.videohandle.accept(jsep)
         } else {
-          initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id)
+          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
           console.log("-------------------initializing-----handle--------")
         }
       } catch (err) {

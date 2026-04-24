@@ -2,14 +2,14 @@ import { Baby, ChevronRight, Moon, Plus, Star, User2 } from "@tamagui/lucide-ico
 import { Avatar, Image, ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 import Contents400_2 from "../Contents400_2";
 import { useAppDispatch, useAppSelector } from "store/redux/store";
-import {  setProfilePhotoEditDialogOpen, setFullnameDialogOpen, setGenderAgeDialogOpen } from "components/account/accountSlice";
+import { setProfilePhotoEditDialogOpen, setFullnameDialogOpen, setGenderAgeDialogOpen, setProfilePhotoAlertDialogOpen } from "components/account/accountSlice";
 
 
 export default function UserInfoCard() {
 
     const { width, height } = useWindowDimensions();
     const dispatch = useAppDispatch();
-    const user = useAppSelector(state => state.account.user)
+    const { user, enable_editing } = useAppSelector(state => state.account)
 
     return (
         <Contents400_2>
@@ -26,9 +26,10 @@ export default function UserInfoCard() {
                     <ListItem
                         gap="$3"
                         subTitle={user.user_id}
-                        iconAfter={<Plus 
+                        iconAfter={<Plus
+                            display={enable_editing ? 'flex' : 'none'}
                             cursor="pointer"
-                           onPress={() => dispatch(setProfilePhotoEditDialogOpen(true))} />}
+                            onPress={() => dispatch(setProfilePhotoEditDialogOpen(true))} />}
 
                     >
                         <Avatar
@@ -42,7 +43,11 @@ export default function UserInfoCard() {
                             }}
                             self={'flex-start'}
                             margin={20}
-                            onPress={() => dispatch(setProfilePhotoEditDialogOpen(true))}
+                            onPress={
+                                () => !enable_editing
+                                    ? dispatch(setProfilePhotoAlertDialogOpen(true))
+                                    : dispatch(setProfilePhotoEditDialogOpen(true))
+                            }
 
                             size="$10">
                             <Avatar.Image
@@ -61,7 +66,10 @@ export default function UserInfoCard() {
                         title="Full name"
                         subTitle="Loprice Limited"
                         icon={User2}
-                        iconAfter={<Plus  cursor="pointer" onPress={() => dispatch(setFullnameDialogOpen(true))} />}
+                        iconAfter={<Plus
+                            display={enable_editing ? 'flex' : 'none'}
+                            cursor="pointer"
+                            onPress={() => dispatch(setFullnameDialogOpen(true))} />}
 
                     />
                 </YGroup.Item>
@@ -72,7 +80,10 @@ export default function UserInfoCard() {
                         title="Gender and age"
                         subTitle="Me, 4"
                         icon={Baby}
-                        iconAfter={<Plus  cursor="pointer" onPress={() => dispatch(setGenderAgeDialogOpen(true))} />}
+                        iconAfter={<Plus
+                            display={enable_editing ? 'flex' : 'none'}
+                            cursor="pointer"
+                            onPress={() => dispatch(setGenderAgeDialogOpen(true))} />}
 
                     />
                 </YGroup.Item>
