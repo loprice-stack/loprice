@@ -130,7 +130,12 @@ export default function LopriceContacts() {
                                         size={'$1'} />
                                     <MessageSquare
                                         cursor="pointer"
-                                        onPress={() => console.log("mail clicked")}
+                                                         onPress={
+                                                 () => {
+                                                     //@ts-ignore
+                                                     router.navigate('/conversations/messages')
+                                                     dispatch(setCaller("loprice@loprice.co.tz"))
+                                                 }}
                                         size={'$1'} />
 
                                     {MoreButtonsMenu("loprice@loprice.co.tz")}
@@ -168,7 +173,12 @@ export default function LopriceContacts() {
                                     />
 
                                     <MessageSquare cursor="pointer"
-                                        onPress={() => console.log("mail clicked")}
+                                                         onPress={
+                                                 () => {
+                                                     //@ts-ignore
+                                                     router.navigate('/conversations/messages')
+                                                     dispatch(setCaller("accounts@loprice.co.tz"))
+                                                 }}
                                         size={'$1'}
                                     />
 
@@ -207,7 +217,12 @@ export default function LopriceContacts() {
                                     />
 
                                     <MessageSquare cursor="pointer"
-                                        onPress={() => console.log("mail clicked")}
+                                                         onPress={
+                                                 () => {
+                                                     //@ts-ignore
+                                                     router.navigate('/conversations/messages')
+                                                     dispatch(setCaller("customercare@loprice.co.tz"))
+                                                 }}
                                         size={'$1'}
                                     />
                                     {MoreButtonsMenu("customercare@loprice.co.tz")}

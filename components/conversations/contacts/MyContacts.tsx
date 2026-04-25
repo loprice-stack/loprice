@@ -189,7 +189,13 @@ export default function MyContacts() {
                                             size={'$1'} />
                                         <MessageSquare
                                             cursor="pointer"
-                                            onPress={() => console.log("mail clicked")}
+                                            onPress={
+                                                () => {
+                                                    //@ts-ignore
+                                                    router.navigate('/conversations/messages')
+                                                    dispatch(setCallState(CALL_STATE_START_CALL))
+                                                    dispatch(setCaller(contact.jid))
+                                                }}
                                             size={'$1'} />
 
                                         {MoreButtonsMenu(contact.jid)}

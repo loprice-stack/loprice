@@ -120,11 +120,13 @@ export default function Calls() {
     if (isLoggedIn(user_token)) {
       try {
         if (videoCallContext.videohandleattached) {
-          dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+          if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+            dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+          }
           let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
-          //if (!islisterning) {
+
           handleCallOnstart(pc, videoCallContext.videohandle)
           eventIcomming(videoCallContext.videohandle)
           eventAccepted(videoCallContext.videohandle)
@@ -354,7 +356,7 @@ export default function Calls() {
             <RTCView
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
               mirror={true}
-              objectFit={'contain'}
+              objectFit={'cover'}
               //@ts-ignore
               streamURL={remotestream}
               zOrder={0}

@@ -10,8 +10,8 @@ import {
   YStack,
 } from 'tamagui'
 import { useContext, useEffect, useState } from 'react';
-import { CALL_STATE_CALLING, CALL_STATE_HANGUP,  CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER } from 'utils/constants';
-import { setCallContext, setCallState,   setRemoteSdp } from '../../../components/conversations/calls/callsSlice';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
+import { setCallContext, setCallState, setRemoteSdp } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -43,7 +43,7 @@ export default function Calls() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
-   const messageContext = useContext(_message)
+  const messageContext = useContext(_message)
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const {
@@ -75,7 +75,9 @@ export default function Calls() {
     }
   }, [])
 
-    dispatch(setCallContext('call_ui'))
+  if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+    dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+  }
 
   async function startCall() {
     if (isLoggedIn(user_token)) {
@@ -84,7 +86,7 @@ export default function Calls() {
           let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
-          //if (!islisterning) {
+
           handleCallOnstart(pc, videoCallContext.videohandle)
           eventIcomming(videoCallContext.videohandle)
           eventCalling(videoCallContext.videohandle)
@@ -94,7 +96,7 @@ export default function Calls() {
           eventDetached(videoCallContext.videohandle)
           setIsListerning(true)
           console.log("--------setting----alll-------listerner------------")
-          //}
+
           await setMediaStream(pc)
           const jsep = await createOffer(pc)
           //@ts-ignore
@@ -117,7 +119,9 @@ export default function Calls() {
     if (isLoggedIn(user_token)) {
       try {
         if (videoCallContext.videohandleattached) {
-          dispatch(setCallContext('call_ui'))
+          if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+            dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+          }
           let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
@@ -169,7 +173,7 @@ export default function Calls() {
 
   async function hangupCallRemote() {
     try {
-   
+
       //@ts-ignore
       setLocalstream(null)
       console.log(" Local stream closed ")
@@ -338,40 +342,28 @@ export default function Calls() {
         </Label>
       </YStack>
       <Contents800_2_flexdirection>
-        <View
-          position="absolute"
-          //@ts-ignore
-          bottom={2}
-          style={{ width: width < 600 ? width : 800, height: height }}>
-          {remotestream && (
+        {remotestream && (
+          <>
             <RTCView
-              style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+              style={{ position: "absolute", zIndex: 10, backgroundColor: 'black', width: width, height: height }}
               mirror={true}
-              objectFit={'contain'}
+              objectFit={'cover'}
               //@ts-ignore
               streamURL={remotestream.toURL()}
               zOrder={0}
             />
-          )}
 
-        </View>
-        <View
-          position="absolute"
-          //@ts-ignore
-          bottom={2}
-          style={{ marginLeft: 8, marginBottom: 120, width: 100, height: 150 }}>
-          {localstream && (
             <RTCView
-              style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+              style={{ zIndex: 100, position: "absolute", bottom: 1, backgroundColor: 'black', marginLeft: 10, marginBottom: 120, width: 100, height: 150 }}
               mirror={true}
               objectFit={'cover'}
               //@ts-ignore
               streamURL={localstream.toURL()}
-              zOrder={0}
+              zOrder={100}
             />
-          )}
-        </View>
-      </Contents800_2_flexdirection>
+          </>
+        )}
+
       <View
         style={{ marginBottom: 40 }}
         position="absolute"
@@ -380,7 +372,10 @@ export default function Calls() {
         zIndex={999}
       >
         <XStack gap={8}>
-          <Button background={'red'} onPress={
+          <Button 
+          style={{background:'$red10'}} 
+          
+          onPress={
             //"call" | "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
             () => {
               ((callstate == 'incoming')
@@ -398,9 +393,14 @@ export default function Calls() {
             || (callstate == 'accepted')) ?
             'Hangup' : 'Call'
             }</Button>
-          <Button style={{ display: callstate == "incoming" ? "flex" : "none", backgroundColor: "green" }} onPress={() => acceptCall()}>Answer</Button>
+          <Button 
+          style={{ display: callstate == "incoming" ? "flex" : "none", backgroundColor: "green" }} 
+          onPress={() => acceptCall()}
+          >Answer</Button>
         </XStack>
       </View>
+      </Contents800_2_flexdirection>
+
     </View>
   )
 
@@ -461,7 +461,7 @@ export default function Calls() {
     videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_HANGUP, evtdata => {
       const reason = evtdata.result.reason
       const username = evtdata.result.username
-  
+
       console.log(reason)
       console.log(username)
       hangupCallRemote()

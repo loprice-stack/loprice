@@ -20,7 +20,6 @@ export async function getxmppitems(iqresults) {
 ////////////////////////////////////contacts/////////////////////////////////////////////////
 
 
-
 export async function parseContactItems(iq) {
     const items = await getxmppitems(iq)
     const itemss = []
@@ -40,7 +39,6 @@ export async function parseContactItems(iq) {
     })
     return itemss
 }
-
 
 export async function parseContactGroups(iq) {
     const items = await getxmppitems(iq)
@@ -68,7 +66,6 @@ export async function parseContactGroups(iq) {
     return groupss
 }
 
-
 export async function parseContactGroupItems(iq, groupv) {
     const items = await getxmppitems(iq)
     const itemss = []
@@ -77,8 +74,6 @@ export async function parseContactGroupItems(iq, groupv) {
         const name = item.attrs.name
         const subscription = item.attrs.subscription
         const group = item.getChild("group")
-
-
         if (group !== undefined) {
             const groupt = group.text()
             if (groupv == groupt) {
@@ -88,20 +83,12 @@ export async function parseContactGroupItems(iq, groupv) {
                     "name": name,
                     "subscription": subscription,
                     "group": group ? group.text() : ""
-
                 })
             }
-
         }
-
-
     })
     return itemss
 }
-
-
-
-
 
 export async function createContacts(xmpp, jid, jidcontact, name, group) {
 
@@ -114,7 +101,6 @@ export async function createContacts(xmpp, jid, jidcontact, name, group) {
                     name: name
                 },
                     xml("group", {},
-
                         group)
                 )
             )
@@ -122,13 +108,6 @@ export async function createContacts(xmpp, jid, jidcontact, name, group) {
     )
     return iq
 }
-
-
-
-
-
-
-
 
 export async function getContacts(xmpp, jid) {
     const { iqCaller } = xmpp;
@@ -142,7 +121,6 @@ export async function getContacts(xmpp, jid) {
     )
     return iq
 }
-
 
 export async function deleteContacts(xmpp, jid, jidcontact) {
     const { iqCaller } = xmpp;
@@ -158,4 +136,17 @@ export async function deleteContacts(xmpp, jid, jidcontact) {
         )
     )
     return iq
+}
+
+
+
+/////////////////////////////////////message///////////////////////////////////////////////
+
+export function message_stanza(jidwith: string, body: string, type) {
+  return xml(
+    "message",
+    { type: type, to: jidwith },
+
+    xml("body", {}, body)
+  );
 }

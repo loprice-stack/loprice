@@ -422,9 +422,6 @@ class VideoCallHandle extends Handle {
   }
 
 
-
-
-
   async hangup() {
     const body = {
       request: REQUEST_HANGUP
@@ -439,8 +436,6 @@ class VideoCallHandle extends Handle {
     throw (error);
   }
 }
-
-
 
 
 export default {

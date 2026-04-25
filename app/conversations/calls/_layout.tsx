@@ -1,25 +1,26 @@
 import { Stack } from 'expo-router';
 
 import {
+  Avatar,
   Button,
-  Separator,
+  Label,
   useWindowDimensions,
   View,
+  XStack,
+  YStack,
 } from 'tamagui'
 
-import Janode from 'janode';
-import VideoRoomPlugin from 'janode/src/plugins/videoroom-plugin';
-
-import { setConnection, setSession } from '../../../components/conversations/conversationsSlice';
-import { useContext, useEffect, useState } from 'react';
-import Contents400_2 from 'components/Contents400_2';
-import Contents400_2_flex from 'components/Contents400_2_flex';
-import { CALL_STATE_CALLING, CALL_STATE_IDDLE, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER } from 'utils/constants';
-import { setCallContext, setCallState, setLocalStream, setPeerConnection, setRemoteSdp, setRemoteStream, setVideoCallHandle } from '../../../components/conversations/calls/callsSlice';
+import { CALL_STATE_CALLING, 
+  CALL_STATE_HANGUP, CALL_STATE_INCOMMING, 
+  CALL_STATE_START_CALL, 
+  LOPRICE_JANUS_ICE_SERVER,
+   LOPRICE_UI_CONTEXT_CALL
+   } from 'utils/constants';
+import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
-import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import { initializeVideoHandle, janussession } from 'client/janus/janus';
+import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
+import { initializeVideoHandle, isLoggedIn } from 'client/janus/janus';
 
 import {
   RTCPeerConnection,
@@ -36,7 +37,9 @@ import {
   registerGlobals,
   RTCView,
 } from 'react-native-webrtc-web-shim';
-import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
+import { useContext, useEffect, useState } from 'react';
+import RegisterCallIdAlertDialogy from 'components/account/RegisterCallIdAlertDialogy';
+import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
 
 
 
@@ -46,6 +49,7 @@ export default function Calls() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
+   const messageContext = useContext(_message)
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const {
@@ -59,19 +63,15 @@ export default function Calls() {
     localsdp,
     remotesdp
   } = useAppSelector(state => state.calls)
-
-  const { user_id, user_token } = useAppSelector(state => state.account.user)
-
+  const { user_id, user_token, password } = useAppSelector(state => state.account.user)
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
-  //const [remotesdp, setRjsep] = useState(null)
-  //const [callstate, setCallstate] = useState(CALL_STATE_IDDLE)
-  //const [peerconnection, setPeerConnection] = useState<RTCPeerConnection>(null)
   const [localstream, setLocalstream] = useState<MediaStream>(null)
   const [remotestream, setRemotestream] = useState<MediaStream>(null)
   const [remoteCandidates, setRemoteCandidates] = useState([])
+  const [islisterning, setIsListerning] = useState(false)
 
   useEffect(() => {
-    dispatch(setCallContext('call_ui'))
+
     if (callstate == CALL_STATE_INCOMMING) {
       acceptCall()
     } else if (callstate == CALL_STATE_START_CALL) {
@@ -79,62 +79,78 @@ export default function Calls() {
     }
   }, [])
 
+  if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+    dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+  }
 
 
   async function startCall() {
-    if (user_token) {
+    if (isLoggedIn(user_token)) {
       try {
-        let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
-        //@ts-ignore
-        videoCallContext.peerconn = pc
-        handleCallOnstart(pc, videoCallContext.videohandle)
-        eventIcomming(videoCallContext.videohandle)
-        eventCalling(videoCallContext.videohandle)
-        eventAccepted(videoCallContext.videohandle)
-        eventTricle(videoCallContext.videohandle)
-        eventHangup(videoCallContext.videohandle)
-        await setMediaStream(pc)
-        const jsep = await createOffer(pc)
-        //@ts-ignore
-        videoCallContext.videohandle.call(caller, jsep)
-
+        if (videoCallContext.videohandleattached) {
+          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+          //@ts-ignore
+          videoCallContext.peerconn = pc
+          //if (!islisterning) {
+          handleCallOnstart(pc, videoCallContext.videohandle)
+          eventIcomming(videoCallContext.videohandle)
+          eventCalling(videoCallContext.videohandle)
+          eventAccepted(videoCallContext.videohandle)
+          eventTricle(videoCallContext.videohandle)
+          eventHangup(videoCallContext.videohandle)
+          eventDetached(videoCallContext.videohandle)
+          setIsListerning(true)
+          console.log("--------setting----alll-------listerner------------")
+          //}
+          await setMediaStream(pc)
+          const jsep = await createOffer(pc)
+          //@ts-ignore
+          videoCallContext.videohandle.call(caller, jsep)
+          console.log("--------starting-----a-----calll------------")
+        } else {
+          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+          console.log("-------------------initializing-----handle--------")
+        }
       } catch (err) {
         console.log(err)
-        videoCallContext.peerconn = null
-        initializeVideoHandle(sessionContext, videoCallContext, user_token, user_id)
         console.log("Error starting a call")
       };
-    } else {
-      dispatch(setRequireLoginDialogOpen(true))
     }
   }
 
 
   async function acceptCall() {
 
-    if (user_token) {
+    if (isLoggedIn(user_token)) {
       try {
-        dispatch(setCallContext('call_ui'))
-        let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
-        //@ts-ignore
-        videoCallContext.peerconn = pc
-        handleCallOnstart(pc, videoCallContext.videohandle)
-        eventAccepted(videoCallContext.videohandle)
-        eventTricle(videoCallContext.videohandle)
-        eventHangup(videoCallContext.videohandle)
-        await setMediaStream(videoCallContext.peerconn)
-        const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
-        //@ts-ignore
-        videoCallContext.videohandle.accept(jsep)
+        if (videoCallContext.videohandleattached) {
+          if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+            dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+          }
+          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+          //@ts-ignore
+          videoCallContext.peerconn = pc
 
-
+          handleCallOnstart(pc, videoCallContext.videohandle)
+          eventIcomming(videoCallContext.videohandle)
+          eventAccepted(videoCallContext.videohandle)
+          eventTricle(videoCallContext.videohandle)
+          eventHangup(videoCallContext.videohandle)
+          eventDetached(videoCallContext.videohandle)
+          setIsListerning(true)
+          //}
+          await setMediaStream(videoCallContext.peerconn)
+          const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
+          //@ts-ignore
+          videoCallContext.videohandle.accept(jsep)
+        } else {
+          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+          console.log("-------------------initializing-----handle--------")
+        }
       } catch (err) {
         console.log(err)
         console.log("Error answering a call")
       };
-
-    } else {
-      dispatch(setRequireLoginDialogOpen(true))
     }
   }
 
@@ -143,21 +159,21 @@ export default function Calls() {
 
 
   async function hangupCall() {
-    if (user_token){
-    try {
-      //@ts-ignore
-      await videoCallContext.videohandle.hangup()
-      stopAllStreams();
-      closePeerConnection(videoCallContext.peerconn)
-      console.log("Hangup successfully")
-    } catch (err) {
-      //close anyway
-      stopAllStreams();
-      closePeerConnection(videoCallContext.peerconn)
-      console.log("Error closing a call")
-    };
-       }else{
-      dispatch(setRequireLoginDialogOpen(true))
+    if (isLoggedIn(user_token)) {
+      try {
+        //@ts-ignore
+        await videoCallContext.videohandle.hangup()
+        stopAllStreams();
+        closePeerConnection(videoCallContext.peerconn)
+        console.log("Hangup successfully")
+      } catch (err) {
+        //close anyway
+        stopAllStreams();
+        closePeerConnection(videoCallContext.peerconn)
+        dispatch(setCallState(CALL_STATE_HANGUP))
+        console.log("Error closing a call")
+       
+      };
     }
   }
 
@@ -169,6 +185,7 @@ export default function Calls() {
       console.log(" Remote stream closed ")
       closePeerConnection(videoCallContext.peerconn)
       console.log("We Hanguped successfully")
+      dispatch(setCallState(CALL_STATE_HANGUP))
     } catch (err) {
       //close anyway
       setLocalstream(null)
@@ -248,18 +265,27 @@ export default function Calls() {
 
 
   async function setMediaStream(peerConnection) {
-    const mediaStream = await mediaDevices.getUserMedia({
-      audio: true,
-      video: {
-        frameRate: 30,
-        facingMode: 'user'
-      }
-    })
-    //@ts-ignore
-    setLocalstream(mediaStream)
-    mediaStream.getTracks().forEach(
-      track => peerConnection.addTrack(track, mediaStream)
-    );
+
+
+    try {
+      const mediaStream = await mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+          frameRate: 30,
+          facingMode: 'user'
+        }
+      })
+      //@ts-ignore
+      setLocalstream(mediaStream)
+      mediaStream.getTracks().forEach(
+        track => peerConnection.addTrack(track, mediaStream)
+      );
+    } catch (err) {
+      dispatch(setCallErrorDialogOpen(true))
+      dispatch(setCallErrorMessage("Device in use"))
+       console.log(err)
+    }
+
   }
 
 
@@ -305,10 +331,30 @@ export default function Calls() {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Stack.Screen options={{ title: "Calls", headerShown: true }} />
+      <Stack.Screen options={{ title: "Calls", headerShown: false }} />
+      <YStack style={{ position: "absolute", display: remotestream ? 'none' : 'flex', }} items="center" gap="$6">
+        <RegisterCallIdAlertDialogy/>
+        <CallErrorAlertDialogy/>
+        <Avatar circular size="$10">
+          <Avatar.Image
+            aria-label="Cam"
+            src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
+          />
+          <Avatar.Fallback bg="$blue10" />
+        </Avatar>
+        <Label style={{ alignSelf: 'center' }}>
+          {caller}
+        </Label>
+        <Label style={{ alignSelf: 'center' }}>
+          {callstate}
+        </Label>
+      </YStack>
       <Contents800_2_flexdirection>
-        <Contents400_2>
-          <Button background={'red'} onPress={() => startCall()}>Call</Button>
+        <View
+          position="absolute"
+          //@ts-ignore
+          bottom={2}
+          style={{ width: width < 600 ? width : 800, height: height }}>
 
           {remotestream && (
             <RTCView
@@ -320,12 +366,12 @@ export default function Calls() {
               zOrder={0}
             />
           )}
-
-        </Contents400_2>
-        <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
-        <Contents400_2_flex>
-          <Button onPress={() => hangupCall()}>Hangup </Button>
-          <Button style={{ backgroundColor: callstate == "incoming" ? "green" : "white" }} onPress={() => acceptCall()}>Answer</Button>
+        </View>
+        <View
+          position="absolute"
+          //@ts-ignore
+          bottom={2}
+          style={{ marginLeft: 8, marginBottom: 120, width: 100, height: 150 }}>
           {localstream && (
             <RTCView
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
@@ -336,8 +382,38 @@ export default function Calls() {
               zOrder={0}
             />
           )}
-        </Contents400_2_flex>
+        </View>
       </Contents800_2_flexdirection>
+      <View
+        style={{ marginBottom: 40 }}
+        position="absolute"
+        //@ts-ignore
+        bottom={20}
+        zIndex={999}
+      >
+        <XStack gap={8}>
+          <Button background={'red'} onPress={
+            //"call" | "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
+            () => {
+              ((callstate == 'incoming')
+                || (callstate == 'calling')
+                || (callstate == 'connecting')
+                || (callstate == 'connected')
+                || (callstate == 'accepted')) ?
+                hangupCall() : startCall()
+            }
+          }
+          >{((callstate == 'incoming')
+            || (callstate == 'calling')
+            || (callstate == 'connecting')
+            || (callstate == 'connected')
+            || (callstate == 'accepted')) ?
+            'Hangup' : 'Call'
+            }</Button>
+          <Button style={{ display: callstate == "incoming" ? "flex" : "none", backgroundColor: "green" }}
+            onPress={() => acceptCall()}>Answer</Button>
+        </XStack>
+      </View>
     </View>
   )
 
@@ -357,37 +433,30 @@ export default function Calls() {
     });
   }
 
-
-
   function eventTricle(videohandle) {
     let remoCandidates = [];
     videohandle.on(VideoCallHandle.EVENT.VIDEOCALL_TRICKLE, evtdata => {
       if ((signalingstatechange == "have-local-offer")
         || (signalingstatechange == "stable")) {
-
         const completed = evtdata.complete
         if (completed) {
           //@ts-ignore
           remoCandidates.push(null);
-
           setRemoteCandidates(remoCandidates)
           console.log(remoteCandidates)
           console.log("------------------null--------list------------------------------------")
         } else {
-
           const iceCandidate = new RTCIceCandidate(evtdata);
           //@ts-ignore
           remoCandidates.push(iceCandidate);
           console.log(remoteCandidates)
           console.log("--------------------------list------------------------------------")
-
         }
       }
     });
   }
 
   function eventAccepted(videohandle) {
-
     videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_ACCEPTED, evtdata => {
       const jsep = evtdata.jsep
       dispatch(setRemoteSdp(jsep))
@@ -399,31 +468,36 @@ export default function Calls() {
 
 
   function eventHangup(videohandle) {
-
     videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_HANGUP, evtdata => {
       const reason = evtdata.result.reason
       const username = evtdata.result.username
       console.log(reason)
       console.log(username)
-
       hangupCallRemote()
       console.log("-------------------------hangupCallRemote--------------------------------")
     });
   }
 
 
-
+  function eventDetached(videohandle) {
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_DETACHED, evtdata => {
+      const session_id = evtdata.session_id
+      const handle_id = evtdata.handle_id
+      videoCallContext.videohandleattached = false
+      console.log(session_id)
+      console.log(handle_id)
+      console.log("-------------------------videocall--handle---detached------------------------------")
+    });
+  }
 
 
 
   function handleCallOnstart(peerConnection, vch) {
     if (peerConnection !== null) {
-
       peerConnection.addEventListener('track', event => {
         setRemotestream(event.streams[0])
         console.log(event)
         console.log("----------------------track---------------------------------")
-
       });
 
       peerConnection.addEventListener('connectionstatechange', event => {
@@ -446,7 +520,6 @@ export default function Calls() {
             "sdpMLineIndex": event.candidate.sdpMLineIndex,
             "sdpMid": event.candidate.sdpMid
           }
-
           vch.tricklee(candidate)
           console.log(candidate)
           // Send the event.candidate onto the person you're calling.
@@ -456,8 +529,6 @@ export default function Calls() {
           console.log(null_candidate)
           console.log(event)
         }
-
-
         console.log("----------------------icecandidate----stufF---------------")
       });
 
@@ -474,9 +545,7 @@ export default function Calls() {
           || peerConnection.iceConnectionState === 'closed') {
           closePeerConnection(peerConnection);
         } else if (peerConnection.iceConnectionState === 'connected') {
-
         } else if (peerConnection.iceConnectionState === 'completed') {
-
         }
         console.log(peerConnection.iceConnectionState)
         console.log("-----------------iceconnectionstatechange---------------")
@@ -493,7 +562,6 @@ export default function Calls() {
         switch (peerConnection.signalingState) {
           case 'closed':
             // You can handle the call being disconnected here.
-
             break;
           case 'stable':
             // You can handle the call being disconnected here.
@@ -504,14 +572,24 @@ export default function Calls() {
         console.log(peerConnection.signalingState)
         console.log("-----------------signalingstatechange---------------")
       });
-
-
     } else {
-
       console.log("----------null---------peerconnection---------------")
     }
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
