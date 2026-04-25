@@ -1,12 +1,11 @@
-import { ChevronRight, Group, Mail, MessageSquare, Plus, X } from "@tamagui/lucide-icons-2";
-import Account from "app/account";
-import { getContacts, parseContactItems, createContacts, parseContactGroups } from "client/xmpp/xmlutilty";
-import { changeContactType, pushConctactGroupList, setCreateContactDialogOpen, setCreateContactGroupDialogOpen, updateConctactGroupList, updateConctactList } from "components/conversations/contacts/contactsSlice";
-import { useContext, useEffect, useState } from "react";
+import { ChevronRight, Group, MessageSquare, Plus, RefreshCcw, X } from "@tamagui/lucide-icons-2";
+import { getContacts, parseContactGroupItems, parseContactGroups } from "client/xmpp/xmlutilty";
+import { changeContactTypeOpenSwitch, setContactGroupIsLoading, setCreateContactGroupDialogOpen, updateConctactGroupList, updateConctactList } from "components/conversations/contacts/contactsSlice";
+import { useContext, useEffect } from "react";
 import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
-import { YGroup, ListItem, useWindowDimensions, XStack, Text, ScrollView, Separator, Adapt, Button, Dialog, Fieldset, Input, Label, Sheet, Unspaced } from "tamagui";
-import { jidAsStringOf } from "utils/utility";
+import { YGroup, ListItem, useWindowDimensions, XStack, Text, ScrollView, Separator, YStack, Spinner } from "tamagui";
 import { CreateContactGroupDialogy } from "./CreateContactGroupDialogy";
+import { loadContacts } from "client/xmpp/xmppcontracts";
 
 export default function ContactsTypeCard() {
 
@@ -14,9 +13,9 @@ export default function ContactsTypeCard() {
     const { width, height } = useWindowDimensions();
     const dispatch = useAppDispatch();
 
-    
+
     const { user_id } = useAppSelector(state => state.account.user)
-    const { groups, create_contact_group_d_open } = useAppSelector(state => state.contacts.roaster)
+    const { groups, contact_type_openswitch, contact_group_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
 
 
@@ -26,6 +25,7 @@ export default function ContactsTypeCard() {
 
 
     function loadContactsgGroups() {
+        dispatch(setContactGroupIsLoading(true))
         getContacts(messageContext.xmpp, user_id)
             .then((iq) => {
 
@@ -37,16 +37,18 @@ export default function ContactsTypeCard() {
                     );
 
 
-
+                    dispatch(setContactGroupIsLoading(false))
                     dispatch(updateConctactGroupList(uniqGroupss))
                     console.log(groupss)
                     console.log("----------------------items---my--contacts---groups---------------------")
                 }).catch((error) => {
+                    dispatch(setContactGroupIsLoading(false))
                     dispatch(updateConctactGroupList([]))
                     console.log(error)
                     console.log("--------items---my--contacts---error---parsing---group---------")
                 })
             }).catch((error) => {
+                dispatch(setContactGroupIsLoading(false))
                 dispatch(updateConctactGroupList([]))
                 console.log(error)
                 console.log("-----------items---my--contacts--error--fetching--contacts-----------")
@@ -57,14 +59,10 @@ export default function ContactsTypeCard() {
 
 
 
-
-
-
     return (
         <ScrollView style={{ marginTop: width < 600 ? 10 : 40, width: width < 600 ? width - 40 : 390, height: width < 600 ? 80 : height - 40 }}>
             <CreateContactGroupDialogy />
             <YGroup
-
                 borderWidth={1}
                 borderColor="$borderColor"
                 rounded="$4"
@@ -72,26 +70,56 @@ export default function ContactsTypeCard() {
                 width={width < 600 ? width - 40 : 390}
                 size="$4"
             >
-
                 <YGroup.Item>
                     <ListItem
                         gap="$3" icon={Group}>
                         <XStack gap={'$4'} style={{ alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
                             <Text >Contact group</Text>
                             <Plus
-                                onPress={() => dispatch(setCreateContactGroupDialogOpen(true))}
+                                onPress={() => {
+                                    dispatch(setCreateContactGroupDialogOpen(true))
+                                    dispatch(updateConctactGroupList([]))
+                                    loadContactsgGroups()
+                                }}
                                 cursor="pointer"
                                 style={{ alignSelf: 'flex-end' }} />
+                            <XStack
+                            >
+                                <Spinner style={{ display: contact_group_isloading ? 'flex' : 'none' }} size="small" color="$green11" />
+                                <RefreshCcw
+                                    display={contact_group_isloading ? 'none' : 'flex'}
+                                    onPress={() => loadContactsgGroups()}
+                                    cursor="pointer" color={'$accent6'} />
+                            </XStack>
                         </XStack>
                     </ListItem>
                 </YGroup.Item>
                 <YGroup.Item>
-                    <ListItem cursor="pointer" onPress={() => dispatch(changeContactType("My contacts"))} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
+                    <ListItem
+                        cursor="pointer"
+                        onPress={
+                            () => {
+                                dispatch(changeContactTypeOpenSwitch("My contacts"))
+                                dispatch(updateConctactList([]))
+                                dispatch(updateConctactGroupList([]))
+                                loadContactsgGroups()
+                                loadContacts("My contacts", messageContext.xmpp, user_id)
+
+
+                            }}
+                        gap="$3" icon={MessageSquare}
+                        iconAfter={ChevronRight}>
                         My contacts
                     </ListItem>
                 </YGroup.Item>
                 <YGroup.Item>
-                    <ListItem cursor="pointer" onPress={() => dispatch(changeContactType(" Loprice "))} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
+                    <ListItem cursor="pointer"
+                        onPress={() => {
+                            dispatch(changeContactTypeOpenSwitch(" Loprice "))
+                            dispatch(updateConctactList([]))
+                            dispatch(updateConctactGroupList([]))
+                            loadContactsgGroups()
+                        }} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
                         Loprice
                     </ListItem>
                 </YGroup.Item>
@@ -102,10 +130,16 @@ export default function ContactsTypeCard() {
                         return (<YGroup.Item>
                             <ListItem
                                 cursor="pointer"
-                                id={index.toString()}
+                                key={index.toString()}
                                 onPress={
-                                    () => {dispatch(changeContactType(group.name))
-                                    dispatch(updateConctactList([]))}}
+                                    () => {
+                                        dispatch(changeContactTypeOpenSwitch(group.name))
+                                        dispatch(updateConctactList([]))
+                                        loadContacts(group.name, messageContext.xmpp, user_id)
+                                        //dispatch(updateConctactGroupList([]))
+                                        //loadContactsgGroups()
+                                        console.log("Clicked " + group.name)
+                                    }}
                                 gap="$3"
                                 icon={Group}
                                 iconAfter={ChevronRight}>

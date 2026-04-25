@@ -44,7 +44,7 @@ export default function LopriceContacts() {
                                 onPress={() => {            //@ts-ignore
                                     router.navigate('/conversations/contact/mail')
                                 }}
-                                key="info">
+                                key="mail">
                                 <Menu.ItemTitle cursor="pointer">Mail</Menu.ItemTitle>
                                 <Menu.ItemIcon
                                     androidIconName={"ic_menu_mail"}

@@ -1,16 +1,16 @@
-import { Star, ChevronRight, Moon, Phone, MessageSquare, Plus, Mail, MoreVertical, Delete, Info } from "@tamagui/lucide-icons-2";
+import { Phone, MessageSquare, Plus, Mail, MoreVertical, Delete, Info, RefreshCcw } from "@tamagui/lucide-icons-2";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
-import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu } from "tamagui";
+import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu, Spinner, YStack } from "tamagui";
 import { CreateContactDialogy } from "./CreateContactDialogy";
-import { setFullnameDialogOpen } from "components/account/accountSlice";
 import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
-import { ContactsObject, setCreateContactDialogOpen, setMoreButtonsContactMenuOpen, updateConctactList } from "./contactsSlice";
-import { useContext, useEffect } from "react";
-import { deleteContacts, getContacts, parseContactGroupItems, parseContactItems } from "client/xmpp/xmlutilty";
+import { ContactsObject, setContactIsLoading, setCreateContactDialogOpen, updateConctactList } from "./contactsSlice";
+import { useContext, useEffect, useState } from "react";
+import { deleteContacts, getContacts, parseContactGroupItems } from "client/xmpp/xmlutilty";
 import { getJidLocal } from "utils/utility";
 import { setCaller, setCallState } from "../calls/callsSlice";
 import { CALL_STATE_START_CALL } from "utils/constants";
+import { loadContacts } from "client/xmpp/xmppcontracts";
 
 
 export default function GroupContacts() {
@@ -18,28 +18,14 @@ export default function GroupContacts() {
     const router = useRouter();
     const { width, height } = useWindowDimensions();
     const dispatch = useAppDispatch();
-    const { contacts, contact_type_openswitch } = useAppSelector(state => state.contacts.roaster)
+    const { contacts, contact_type_openswitch, contact_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
     const { user_id } = useAppSelector(state => state.account.user)
-
+    //const [isloading, setIsloading] = useState(false)
 
     useEffect(() => {
-        loadContacts(contact_type_openswitch)
+        loadContacts(contact_type_openswitch, messageContext.xmpp, user_id)
     }, [])
-
-
-    function loadContacts(grp) {
-        getContacts(messageContext.xmpp, user_id)
-            .then((iq) => {
-                parseContactGroupItems(iq,grp).then((items) => {
-                    dispatch(updateConctactList(items))
-                    console.log(items)
-                    console.log("----------------------items---my--contacts------------------------------------")
-                })
-            }).catch((error) => {
-                console.log(error)
-            })
-    }
 
 
 
@@ -88,12 +74,12 @@ export default function GroupContacts() {
                                 </Menu.ItemIcon>
                             </Menu.Item>
                             <Menu.Separator />
-                                                        <Menu.Item
+                            <Menu.Item
                                 cursor="pointer"
                                 onPress={() => {            //@ts-ignore
                                     router.navigate('/conversations/contact/' + user_idd)
                                 }}
-                                key="info">
+                                key="mail">
                                 <Menu.ItemTitle cursor="pointer">Mail</Menu.ItemTitle>
                                 <Menu.ItemIcon
                                     androidIconName={"ic_menu_mail"}
@@ -109,7 +95,11 @@ export default function GroupContacts() {
                             <Menu.Separator />
                             <Menu.Item
                                 cursor="pointer"
-                                onPress={() => { console.log("Delete clicked " + user_idd) }}
+                                onPress={() => {
+                                    deleteContacts(messageContext.xmpp, user_id, user_idd)
+                                    loadContacts(contact_type_openswitch, messageContext.xmpp, user_id)
+                                    console.log("deleted succcesssfullly")
+                                }}
                                 key="delete">
                                 <Menu.ItemTitle cursor="pointer" color="red">Delete</Menu.ItemTitle>
                                 <Menu.ItemIcon
@@ -132,26 +122,34 @@ export default function GroupContacts() {
 
 
 
-
-
-
-
-
-
-
-
     return (
-        <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40 }}>
-
-            <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: "100%" }}>
+        <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40, height: height }}>
+            <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
                 <CreateContactDialogy />
-
                 <XStack gap={'$4'} style={{ alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
                     <Text >{contact_type_openswitch}</Text>
                     <Plus cursor="pointer"
-                        onPress={() => dispatch(setCreateContactDialogOpen(true))} style={{ alignSelf: 'flex-end' }} />
+                        onPress={() => dispatch(setCreateContactDialogOpen(true))} />
                 </XStack>
+                <Separator gap={'$10'} />
+                <YStack
+                    style={{ display: contact_isloading ? 'flex' : 'none', height: height - 60 }}
+                    p="$3" gap="$4" items="center">
+                    <Spinner size="large" color="$green11" />
+                </YStack>
+                <YStack
+                    style={{ display: contact_isloading ? 'none' : contacts.length !== 0 ? 'none' : 'flex', height: height - 60 }}
+                    p="$3" gap="$4" items="center">
+                    <XStack
+                        p="$3" gap="$4" items="center">
+                        <Text >List is empty</Text>
+                        <RefreshCcw
+                            onPress={() => loadContacts(contact_type_openswitch, messageContext.xmpp, user_id)}
+                            cursor="pointer" color={'$accent6'} />
+                    </XStack>
+                </YStack>
                 <YGroup
+                    style={{ display: contact_isloading ? 'none' : 'flex' }}
                     self="center"
                     borderWidth={1}
                     borderColor="$borderColor"
@@ -160,52 +158,48 @@ export default function GroupContacts() {
                     width={width < 600 ? width - 40 : 390}
                     size="$5"
                 >
-                    {contacts.map((contact: ContactsObject) => (<YGroup.Item>
-                        <ListItem
-                            gap="$3"
-                            title={contact.name ? contact.name : getJidLocal(contact.jid).toUpperCase()}
-                            subTitle={contact.jid}
-                            icon={<Avatar
-                                cursor="pointer"
-                                onPress={() => {
-                                    deleteContacts(messageContext.xmpp, user_id, contact.jid)
-                                    loadContacts('grp')
-                                    console.log("deleted succcesssfullly")
-                                }}
-                                circular size="$6">
-                                <Avatar.Image
-                                    aria-label="Nate Wienert"
-                                    src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?&w=100&h=100&dpr=2&q=80"
-                                />
-                                <Avatar.Fallback delayMs={600} bg="$blue10" />
-                            </Avatar>}
-                            iconAfter={
-                                <XStack gap="$4">
-                                    <Phone
-                                        cursor="pointer"
-                                        onPress={
-                                            () => {
-                                                //@ts-ignore
-                                                router.navigate('/conversations/calls')
-                                                dispatch(setCallState(CALL_STATE_START_CALL))
-                                                dispatch(setCaller(contact.jid))
-                                            }}
-                                        size={'$1'} />
-                                    <MessageSquare
-                                        cursor="pointer"
-                                        onPress={() => console.log("mail clicked")}
-                                        size={'$1'} />
+                    {contacts.map((contact: ContactsObject, index) => {
+                        return (<YGroup.Item>
+                            <ListItem
+                                gap="$3"
+                                title={contact.name ? contact.name : getJidLocal(contact.jid).toUpperCase()}
+                                subTitle={contact.jid}
+                                key={index.toString()}
+                                icon={<Avatar
+                                    cursor="pointer"
+                                    circular size="$6">
+                                    <Avatar.Image
+                                        aria-label="Nate Wienert"
+                                        src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?&w=100&h=100&dpr=2&q=80"
+                                    />
+                                    <Avatar.Fallback delayMs={600} bg="$blue10" />
+                                </Avatar>}
+                                iconAfter={
+                                    <XStack gap="$4">
+                                        <Phone
+                                            cursor="pointer"
+                                            onPress={
+                                                () => {
+                                                    //@ts-ignore
+                                                    router.navigate('/conversations/calls')
+                                                    dispatch(setCallState(CALL_STATE_START_CALL))
+                                                    dispatch(setCaller(contact.jid))
+                                                }}
+                                            size={'$1'} />
+                                        <MessageSquare
+                                            cursor="pointer"
+                                            onPress={() => console.log("mail clicked")}
+                                            size={'$1'} />
 
-                                    {MoreButtonsMenu(contact.jid)}
+                                        {MoreButtonsMenu(contact.jid)}
 
-                                </XStack>}
-                        />
-                        <Separator gap={'$10'} />
-                    </YGroup.Item>))}
+                                    </XStack>}
+                            />
+                            <Separator gap={'$10'} />
+                        </YGroup.Item>)
+                    })}
                 </YGroup>
             </ScrollView>
         </View>
     )
 }
-
-

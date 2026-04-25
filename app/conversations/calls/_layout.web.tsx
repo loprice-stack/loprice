@@ -10,7 +10,7 @@ import {
   YStack,
 } from 'tamagui'
 
-import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER } from 'utils/constants';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
 import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
@@ -75,7 +75,10 @@ export default function Calls() {
     }
   }, [])
 
-  dispatch(setCallContext('call_ui'))
+  if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+    dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+  }
+
 
   async function startCall() {
     if (isLoggedIn(user_token)) {
@@ -117,7 +120,7 @@ export default function Calls() {
     if (isLoggedIn(user_token)) {
       try {
         if (videoCallContext.videohandleattached) {
-          dispatch(setCallContext('call_ui'))
+          dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
           let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc

@@ -17,6 +17,8 @@ export interface ContactsState {
         contacts: []
         groups: []
         contact_type_openswitch: string
+        contact_isloading: boolean
+        contact_group_isloading: boolean
         create_contact_d_open: boolean
         create_contact_group_d_open: boolean
         more_buttons_contact_menu_open: boolean
@@ -32,6 +34,8 @@ const initialState: ContactsState = {
         contacts: [],
         groups: [],
         contact_type_openswitch: "My contacts",
+        contact_isloading: false,
+        contact_group_isloading: false,
         create_contact_d_open: false,
         create_contact_group_d_open: false,
         more_buttons_contact_menu_open: false
@@ -50,8 +54,18 @@ export const contactsSlice = createSlice({
 
         ////////////////////////////////////contacts//////////////////////////////////////
 
-        changeContactType: (state, action) => {
+        changeContactTypeOpenSwitch: (state, action) => {
             state.roaster.contact_type_openswitch = action.payload
+        },
+
+        setContactIsLoading: (state, action) => {
+            state.roaster.contact_isloading = action.payload
+            console.log("New state is " + state.roaster.contact_isloading)
+        },
+
+        setContactGroupIsLoading: (state, action) => {
+            state.roaster.contact_group_isloading = action.payload
+            console.log("New state is " + state.roaster.contact_group_isloading)
         },
 
         setCreateContactDialogOpen: (state, action) => {
@@ -59,7 +73,7 @@ export const contactsSlice = createSlice({
             console.log("New state is " + state.roaster.create_contact_d_open)
         },
 
-                setCreateContactGroupDialogOpen: (state, action) => {
+        setCreateContactGroupDialogOpen: (state, action) => {
             state.roaster.create_contact_group_d_open = action.payload
             console.log("New state is " + state.roaster.create_contact_group_d_open)
         },
@@ -91,7 +105,9 @@ export const contactsSlice = createSlice({
 
 // Export the generated action creators for use in components
 export const {
-    changeContactType,
+    changeContactTypeOpenSwitch,
+    setContactIsLoading,
+    setContactGroupIsLoading,
     setCreateContactDialogOpen,
     updateConctactList,
     setMoreButtonsContactMenuOpen,

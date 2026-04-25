@@ -1,5 +1,5 @@
 import { ChevronDown, X } from '@tamagui/lucide-icons-2'
-import { createContacts, getContacts, parseContactItems } from 'client/xmpp/xmlutilty';
+import { createContacts, getContacts, parseContactGroupItems, parseContactItems } from 'client/xmpp/xmlutilty';
 import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'components/account/accountSlice';
 import { useContext, useState } from 'react'
 import { _message, useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -37,23 +37,21 @@ export function CreateContactDialogy() {
 
 
 
-    function loadContacts() {
+    function loadContacts(grp) {
 
         getContacts(messageContext.xmpp, user_id)
             .then((iq) => {
-                parseContactItems(iq).then((items) => {
+                parseContactGroupItems(iq, grp).then((items) => {
                     dispatch(updateConctactList(items))
+   
                     console.log(items)
-                    console.log("----------------------items---my--contacts------------------------------------")
+                    console.log("----------------------items---loaded--from---goups---------------------------------")
                 })
             }).catch((error) => {
+
                 console.log(error)
-                console.log("----------------------items----error-----my--contacts------------------------------------")
-                
             })
     }
-
-
 
 
 
@@ -160,7 +158,7 @@ export function CreateContactDialogy() {
                                     if (contact_type_openswitch.toLowerCase() !== "loprice"){
                                     createContacts(messageContext.xmpp, user_id, jidaccount, name, contact_type_openswitch)
                                     dispatch(setCreateContactDialogOpen(false))
-                                    loadContacts()
+                                    loadContacts(contact_type_openswitch)
                                     }
 
                                 }}
