@@ -17,8 +17,8 @@ export interface CallsState {
     caller: string
     callcontext: string
 
-        callerror_d_open: boolean
-         callerror_message: string
+    callerror_d_open: boolean
+    callerror_message: string
 }
 
 // Define the initial value for the slice state
@@ -34,8 +34,8 @@ const initialState: CallsState = {
     caller: "",
     callcontext: "",
 
-         callerror_d_open: false,
-         callerror_message: ""
+    callerror_d_open: false,
+    callerror_message: ""
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -48,7 +48,7 @@ export const callsSlice = createSlice({
 
         ////////////////////////////////////calls//////////////////////////////////////
         setCallState: (state, action) => {
-       
+
             state.callstate = action.payload
             console.log("New state callstate is: " + state.callstate)
         },

@@ -1,149 +1,289 @@
-import { Stack } from 'expo-router';
+import { Icon, router, Stack } from 'expo-router';
 
 import {
   Avatar,
-  Button,
-  Card,
-  H2,
   Label,
-  Paragraph,
-  useWindowDimensions,
   View,
   XStack,
-  Image,
-  YStack,
+  Spinner,
+  Text
 } from 'tamagui'
-
-import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
-import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp } from '../../../components/conversations/calls/callsSlice';
-import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import { initializeVideoHandle, isLoggedIn, janussession } from 'client/janus/janus';
-
-import {
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  RTCRtpTransceiver,
-  RTCRtpReceiver,
-  RTCRtpSender,
-  RTCErrorEvent,
-  MediaStream,
-  MediaStreamTrack,
-  mediaDevices,
-  permissions,
-  registerGlobals,
-  RTCView,
-} from 'react-native-webrtc-web-shim';
-import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import RegisterCallIdAlertDialogy from 'components/account/RegisterCallIdAlertDialogy';
-import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
-
-
-import { GiftedChat } from 'react-native-gifted-chat'
+import { Actions, Bubble, BubbleProps, GiftedChat, IMessage, InputToolbar, InputToolbarProps, MessageText, MessageTextProps, useColorScheme } from 'react-native-gifted-chat'
 import { useHeaderHeight } from '@react-navigation/elements'
-import { sendChatMessage } from 'client/xmpp/xmppcontracts';
-import { RefreshCcw } from '@tamagui/lucide-icons-2';
+import { getCoversation, getMoreCoversation, sendChatMessage } from 'client/xmpp/xmppcontracts';
+import { ArrowLeft, Phone, Plus, RefreshCcw } from '@tamagui/lucide-icons-2';
+import { pushMessage, setMamFin, setMessages, setMessagesIsLoading } from 'components/conversations/messages/messagesSlice';
+import { Platform } from 'react-native';
+import React from 'react';
+import { parseFin } from 'client/xmpp/xmlutilty';
+import { isXmppNotNull } from 'client/janus/janus';
 
 
-
-
+//StatusBar.setHidden(true)
 export default function Message() {
-
-  const sessionContext = useContext(_session)
-  const videoCallContext = useContext(_videohandle)
+  const colorScheme = useColorScheme()
+  const isDark = colorScheme === 'dark'
   const messageContext = useContext(_message)
-  const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
-  const { caller } = useAppSelector(state => state.calls)
-  const { user_id } = useAppSelector(state => state.account.user)
-
-
-
-
-  const [messages, setMessages] = useState([])
-
-  // keyboardVerticalOffset = distance from screen top to GiftedChat container
-  // useHeaderHeight() returns status bar + navigation header height
+  const { caller, remotesdp } = useAppSelector(state => state.calls)
+  const { user_id, password } = useAppSelector(state => state.account.user)
+  const { messages, messages_isloading, mam_fin, } = useAppSelector(state => state.messages)
   const headerHeight = useHeaderHeight()
 
   useEffect(() => {
-
-    setMessages([
-      //@ts-ignore
-      {
-        _id: caller,
-        text: 'Hello developer ' + caller,
-        createdAt: new Date(),
-        user: {
-          _id: caller,
-          name: 'John Doe',
-          avatar: 'http://picsum.photos/200/300',
-        },
-      },
-    ])
+    if (mam_fin.last == undefined) {
+      loadConversation();
+    }
   }, [])
+
+
+  function loadConversation() {
+    if (isXmppNotNull(messageContext, user_id, password)) {
+      dispatch(setMessages([]))
+      dispatch(setMessagesIsLoading(true))
+      getCoversation(messageContext.xmpp, user_id, caller, 100).then((response) => {
+        dispatch(setMessagesIsLoading(false))
+        parseFin(response).then((fn) => {
+          dispatch(setMamFin(fn))
+          console.log(fn)
+          console.log("--------------------conversation---fin--------------------")
+        }).catch((error) => {
+          console.log(error)
+          console.log("--------------------conversation--fi--error---------------------")
+        })
+      }).catch((error) => {
+        dispatch(setMessagesIsLoading(false))
+        console.log(error)
+        console.log("---------------conversation----error-------------------")
+      })
+    }
+  }
+
+  function loadMoreConversation() {
+    if (isXmppNotNull(messageContext, user_id, password)) {
+      let afterid = mam_fin.last !== undefined ? mam_fin.last : ""
+      dispatch(setMessagesIsLoading(true))
+      getMoreCoversation(messageContext.xmpp, user_id, caller, 100, afterid).then((response) => {
+        dispatch(setMessagesIsLoading(false))
+        parseFin(response).then((fn) => {
+          dispatch(setMamFin(fn))
+          console.log(fn)
+          console.log("--------------------conversation---fin--------------------")
+        }).catch((error) => {
+          console.log(error)
+          console.log("--------------------conversation--fi--error---------------------")
+        })
+      }).catch((error) => {
+        dispatch(setMessagesIsLoading(false))
+        console.log(error)
+        console.log("---------------conversation----error-------------------")
+      })
+    }
+  }
+
+  function isCloseToTop({ contentOffset }) {
+    return contentOffset.y <= 100; // 100px from top
+  }
 
   const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    )
+    dispatch(pushMessage(messages[0]))
 
-    console.log(messages)
-    console.log("---------------------------message-----gifted-------------------------")
-//@ts-ignore
-    sendChatMessage(messageContext.xmpp, user_id, messages[0].text).then((response) => {
-      console.log(response)
-      console.log("---------------------------message-----response-------------------------")
-    })
-
-
-
-
-
+    if (isXmppNotNull(messageContext, user_id, password)) {
+      //@ts-ignore
+      sendChatMessage(messageContext.xmpp, caller, messages[0].text, remotesdp).then((response) => {
+        console.log(response)
+        console.log("---------------------------message-----response-------------------------")
+      })
+    }
 
   }, [])
 
+  function onLongPressMessage(message) {
+    console.log(message)
+    console.log("--------------------------Message presed-----------------------")
+  }
 
+  const renderActions = (props) => (
+    <Actions
+      {...props}
+      options={{
+        ['Send Photo']: () => {
+          console.log('Send Photo');
+        },
+        ['Cancel']: () => {
+          console.log('Cancel');
+        },
+      }}
+      icon={() => <Plus size={24} />}
+      onSend={(args) => console.log(args)}
+    />
+  )
+
+  const renderBubble = (props: BubbleProps<IMessage>) => (
+    <Bubble
+      {...props}
+      // renderTime={() => <Text>Time</Text>}
+      // renderTicks={() => <Text>Ticks</Text>}
+      containerStyle={{
+        left: {
+          alignSelf: 'stretch', // Forces wrap to full container width  
+          maxWidth: "100%",
+        },
+        right: {
+          alignSelf: 'stretch', // Forces wrap to full container width  
+          maxWidth: "100%",
+        },
+      }}
+      wrapperStyle={{
+        left: {
+          alignSelf: 'stretch', // Forces wrap to full container width
+          // backgroundColor: '#d2e6e1', // Custom color for sent messages
+
+        },
+        right: {
+          alignSelf: 'stretch',
+          backgroundColor: '#04AA6D', // Custom color for sent messages 
+
+        },
+      }}
+
+    />
+  )
+
+  // Define the loading view
+  const renderChatFooter = () => messages_isloading ? (
+    <Spinner size='large' color='#21c485' />
+  ) : (<XStack
+    display={messages.length == 0 ? 'flex' : 'none'}
+    self={'center'}
+    p="$3" gap="$4" items="center">
+    <Text >List is empty</Text>
+    <RefreshCcw
+      onPress={() => loadConversation()}
+      cursor="pointer" color={'$accent6'} />
+  </XStack>);
+
+  const renderMessageText = (props: MessageTextProps<IMessage>) => (
+    <MessageText
+      {...props}
+      textStyle={{
+        //left: { color: 'red' },
+        //right: { color: 'green' },
+      }}
+      linkStyle={{
+        left: { color: 'orange' },
+        right: { color: 'orange' },
+      }}
+      customTextStyle={{ fontSize: 14, lineHeight: 24 }}
+    />
+  )
+
+  // These are React components (not render functions) so they can use hooks
+  const RenderInputToolbar = React.memo((props: InputToolbarProps<IMessage>) => {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          //backgroundColor: isDark ? '#1a1a1a' : '#222B45',
+          paddingTop: 6,
+        }}
+        primaryStyle={{ alignItems: 'center' }}
+      />
+    )
+  })
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Stack.Screen options={{  title: caller, headerShown: true, header: () => {
-return (                       <YStack
-background={'darkviolet'}
-                             p="$3" gap="$4" items="center">
-                            <XStack
-                                p="$3" gap="$4" items="center">
-                              
-                                <RefreshCcw
-                                    onPress={undefined}
-                                    cursor="pointer" color={'$accent6'} />
-                            </XStack>
-                        </YStack>)
-      },}} />
- 
-      <Contents800_2_flexdirection>
-    <GiftedChat
-      messages={messages}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: user_id,
-      }}
-      keyboardAvoidingViewProps={{ keyboardVerticalOffset: headerHeight }}
-    />
-      </Contents800_2_flexdirection>
+      <Stack.Screen options={{
+        title: caller, headerShown: true, header: () => {
+          return (
+            <View
+              style={{ marginTop: Platform.OS == 'web' ? undefined : 20, height: 70, alignItems: 'stretch', alignContent: 'space-between' }}
+              background={"#fff"}
+            >
+              <XStack
+                style={{ height: 70, alignSelf: 'flex-start' }}
+                background={"#fff"}
+                p="$3" gap="$4" >
+                <ArrowLeft
+                  onPress={() => {
+                    router.back()
+                  }}
+                  self={'center'}
+                  cursor="pointer" color={'$accent6'} />
+                <Avatar
+                  self={'center'}
+                  cursor="pointer"
+                  circular size="$4">
+                  <Avatar.Image src="http://picsum.photos/200/300" />
+                  <Avatar.Fallback
+                    //@ts-ignore
+                    bc="red" />
+                </Avatar>
+                <Label
+                  self={'center'}
+                  htmlFor="name">{caller}</Label>
+              </XStack>
+              <XStack
+                style={{ height: 70, position: 'absolute', alignSelf: 'flex-end', alignItems: 'center' }}
+                background={"#fff"}
+                p="$3" gap="$0" >
+                <Phone
+                  self={'center'}
+                  marginEnd={30}
+                  onPress={() => {
+                    //@ts-ignore
+                    router.navigate('/conversations/calls')
+                  }}
+                  cursor="pointer" color={'$accent6'} />
+              </XStack>
+            </View>
 
+          )
+        },
+      }} />
+
+      <Contents800_2_flexdirection>
+        <View style={{ flex: 1, marginBottom: Platform.OS == 'web' ? undefined : 50 }}>
+          <GiftedChat
+            renderBubble={renderBubble}
+            renderInputToolbar={RenderInputToolbar}
+            messagesContainerStyle={{ backgroundColor: isDark ? '#1a1a1a' : '#ffff' }}
+            isScrollToBottomEnabled={true}
+            isInverted={false}
+            messages={messages}
+            onLongPressMessage={onLongPressMessage}
+            renderChatFooter={renderChatFooter}
+            renderMessageText={renderMessageText}
+            listProps={{
+              scrollEventThrottle: 400,
+              onScroll: (ev) => {
+                if (isCloseToTop(ev)) {
+                  if (mam_fin.last !== undefined) {
+                    loadMoreConversation();
+                  }
+
+                  console.log(ev)
+                  console.log("------------------close--to--top-----------------------------")
+                }
+              }
+            }}
+            //@ts-ignore
+            renderActions={renderActions}
+            //@ts-ignore
+            onSend={_messages => onSend(_messages)}
+            user={{
+              _id: 1,
+            }}
+            keyboardAvoidingViewProps={{ keyboardVerticalOffset: headerHeight }}
+          />
+        </View>
+      </Contents800_2_flexdirection>
     </View>
   )
-
-
-
-
-
-
-
 }
 
 

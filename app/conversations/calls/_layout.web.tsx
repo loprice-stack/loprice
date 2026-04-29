@@ -15,7 +15,7 @@ import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallSta
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import { initializeVideoHandle, isLoggedIn, janussession } from 'client/janus/janus';
+import { initializeLopriceServices, isLoggedIn, janussession } from 'client/janus/janus';
 
 import {
   RTCPeerConnection,
@@ -104,7 +104,7 @@ export default function Calls() {
           videoCallContext.videohandle.call(caller, jsep)
           console.log("--------starting-----a-----calll------------")
         } else {
-          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
           console.log("-------------------initializing-----handle--------")
         }
       } catch (err) {
@@ -140,7 +140,7 @@ export default function Calls() {
           //@ts-ignore
           videoCallContext.videohandle.accept(jsep)
         } else {
-          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
           console.log("-------------------initializing-----handle--------")
         }
       } catch (err) {
@@ -357,8 +357,8 @@ export default function Calls() {
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
               mirror={true}
               objectFit={'cover'}
-              //@ts-ignore
-              streamURL={remotestream}
+             
+              stream={remotestream}
               zOrder={0}
             />
           )}
@@ -373,8 +373,8 @@ export default function Calls() {
               style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
               mirror={true}
               objectFit={'cover'}
-              //@ts-ignore
-              streamURL={localstream}
+          
+              stream={localstream}
               zOrder={0}
             />
           )}

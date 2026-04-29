@@ -12,14 +12,11 @@ import { Stack, useRouter } from 'expo-router'
 import AccountCard from 'components/account/AccountCard'
 import Contents400_2_flex from 'components/Contents400_2_flex'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import { setAddressDialogOpen, setProfilePhotoAlertDialogOpen } from '../../components/account/accountSlice'
+import { setProfilePhotoAlertDialogOpen } from '../../components/account/accountSlice'
 import { ProfilePhotoShowAlertDialog } from 'components/account/ProfilePhotoShowAlertDialog'
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
-import { initializeVideoHandle, janussession } from 'client/janus/janus'
-import VideoCallHandle from 'client/janus/videocall-plugin'
-import { CALL_STATE_INCOMMING } from 'utils/constants'
-import { setCallState, setRemoteSdp } from 'components/conversations/calls/callsSlice'
 import { useContext, useEffect } from 'react'
+import { initializeLopriceServices } from 'client/janus/janus'
 
 export default function Account() {
 
@@ -34,7 +31,7 @@ export default function Account() {
 
 
   useEffect(() => {
-   initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password  )
+    initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
   }, [])
 
 

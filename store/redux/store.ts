@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import conversationsReducer from 'components/conversations/conversationsSlice'
 import contactsReducer from 'components/conversations/contacts/contactsSlice'
 import callsReducer from 'components/conversations/calls/callsSlice'
+import messagesReducer from 'components/conversations/messages/messagesSlice'
 import { createContext, useContext } from 'react'
 
 
@@ -15,7 +16,8 @@ export const store = configureStore({
     account: accountReducer,
     conversations: conversationsReducer,
     contacts: contactsReducer,
-    calls: callsReducer
+    calls: callsReducer,
+    messages: messagesReducer
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -62,7 +64,7 @@ export const store = configureStore({
 const janodeContext = {
   connection: null,
   session: null
-  
+
 }
 
 const videoContext = {

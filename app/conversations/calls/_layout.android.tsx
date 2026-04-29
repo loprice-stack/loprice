@@ -15,7 +15,7 @@ import { setCallContext, setCallState, setRemoteSdp } from '../../../components/
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import { initializeVideoHandle, isLoggedIn } from 'client/janus/janus';
+import {  initializeLopriceServices, isLoggedIn } from 'client/janus/janus';
 
 import {
   RTCPeerConnection,
@@ -103,7 +103,7 @@ export default function Calls() {
           videoCallContext.videohandle.call(caller, jsep)
           console.log("--------starting-----a-----calll------------")
         } else {
-          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
           console.log("-------------------initializing-----handle--------")
         }
       } catch (err) {
@@ -139,7 +139,7 @@ export default function Calls() {
           //@ts-ignore
           videoCallContext.videohandle.accept(jsep)
         } else {
-          initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
           console.log("-------------------initializing-----handle--------")
         }
       } catch (err) {

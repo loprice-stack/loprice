@@ -14,7 +14,7 @@ export default function ContactsTypeCard() {
     const dispatch = useAppDispatch();
 
 
-    const { user_id } = useAppSelector(state => state.account.user)
+    const { user_id, password } = useAppSelector(state => state.account.user)
     const { groups, contact_type_openswitch, contact_group_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
 
@@ -103,7 +103,7 @@ export default function ContactsTypeCard() {
                                 dispatch(updateConctactList([]))
                                 dispatch(updateConctactGroupList([]))
                                 loadContactsgGroups()
-                                loadContacts("My contacts", messageContext.xmpp, user_id)
+                             loadContacts(contact_type_openswitch, messageContext, user_id, password)
 
 
                             }}
@@ -135,7 +135,7 @@ export default function ContactsTypeCard() {
                                     () => {
                                         dispatch(changeContactTypeOpenSwitch(group.name))
                                         dispatch(updateConctactList([]))
-                                        loadContacts(group.name, messageContext.xmpp, user_id)
+                                        loadContacts(contact_type_openswitch, messageContext, user_id, password)
                                         //dispatch(updateConctactGroupList([]))
                                         //loadContactsgGroups()
                                         console.log("Clicked " + group.name)
