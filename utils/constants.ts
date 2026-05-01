@@ -5,9 +5,9 @@ export const LOPRICE_URL_S_P5443 = "https://loprice.co.tz:5443"
 export const LOPRICE_API_URL_S = "https://api.loprice.co.tz"
 export const LOPRICE_API2_URL_S = "https://api2.loprice.co.tz"
 export const LOPRICE_JANUS_URL ="ws://streams.loprice.co.tz:8188/"
-export const LOPRICE_JANUS_URL_S ="wss://video.loprice.co.tz:8989"
+export const LOPRICE_JANUS_URL_S ="wss://streams.loprice.co.tz:8989"
 export const LOPRICE_JANUS_ICE_SERVER =[{ urls: "stun:loprice.co.tz:3478" }]
-
+export const LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY = "FLWPUBK-5171e2160a027de04132fb8bae05ec41-X";
 
 
 
@@ -71,7 +71,7 @@ export const RESIDENTIAL_TYPE = [
 
 ];
 
-//Residential types
+//Room count
 export const RESIDENTIAL_ROOMS = [
 
   {
