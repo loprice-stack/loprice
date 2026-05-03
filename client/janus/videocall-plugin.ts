@@ -234,7 +234,7 @@ class VideoCallHandle extends Handle {
             janode_event.event = PLUGIN_EVENT.ERROR;
             store.dispatch(setCallState('error'))
             store.dispatch(setCallErrorDialogOpen(true))
-            store.dispatch(setCallErrorMessage(janus_message.plugindata.data.error))
+            store.dispatch(setCallErrorMessage(janus_message.plugindata.data.error + " or is offline"))
             console.log("---------videocall-plugin--events----error_code--478---check--------------")
             break;
         }

@@ -15,7 +15,7 @@ import { setCallContext, setCallState, setRemoteSdp } from '../../../components/
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import {  initializeLopriceServices, isLoggedIn } from 'client/janus/janus';
+import {  initializeLopriceServices, isLoggedIn, isVideoCallHandlePluged } from 'client/janus/janus';
 
 import {
   RTCPeerConnection,
@@ -80,9 +80,9 @@ export default function Calls() {
   }
 
   async function startCall() {
-    if (isLoggedIn(user_token)) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
-        if (videoCallContext.videohandleattached) {
+
           let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
@@ -102,10 +102,7 @@ export default function Calls() {
           //@ts-ignore
           videoCallContext.videohandle.call(caller, jsep)
           console.log("--------starting-----a-----calll------------")
-        } else {
-          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
-          console.log("-------------------initializing-----handle--------")
-        }
+
       } catch (err) {
         console.log(err)
         console.log("Error starting a call")
@@ -116,9 +113,9 @@ export default function Calls() {
 
   async function acceptCall() {
 
-    if (isLoggedIn(user_token)) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
-        if (videoCallContext.videohandleattached) {
+  
           if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
             dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
           }
@@ -138,10 +135,7 @@ export default function Calls() {
           const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
           //@ts-ignore
           videoCallContext.videohandle.accept(jsep)
-        } else {
-          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
-          console.log("-------------------initializing-----handle--------")
-        }
+
       } catch (err) {
         console.log(err)
         console.log("Error answering a call")
@@ -154,7 +148,7 @@ export default function Calls() {
 
 
   async function hangupCall() {
-    if (isLoggedIn(user_token)) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
         //@ts-ignore
         await videoCallContext.videohandle.hangup()

@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { router, Stack, useFocusEffect } from 'expo-router';
 
 import {
   Avatar,
@@ -15,7 +15,7 @@ import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallSta
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import { initializeLopriceServices, isLoggedIn, janussession } from 'client/janus/janus';
+import { initializeLopriceServices, isLoggedIn, isVideoCallHandlePluged, janussession } from 'client/janus/janus';
 
 import {
   RTCPeerConnection,
@@ -33,7 +33,7 @@ import {
   RTCView,
 } from 'react-native-webrtc-web-shim';
 import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import RegisterCallIdAlertDialogy from 'components/account/RegisterCallIdAlertDialogy';
 import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
 
@@ -75,15 +75,28 @@ export default function Calls() {
     }
   }, [])
 
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Screen is now in focus (user may have come back to it)');
+    }, [])
+  );
+
+
   if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
     dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
   }
 
 
+  function backNavigationListener(){
+  
+  }
+
+
+
   async function startCall() {
-    if (isLoggedIn(user_token)) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
-        if (videoCallContext.videohandleattached) {
+
           let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
@@ -103,10 +116,7 @@ export default function Calls() {
           //@ts-ignore
           videoCallContext.videohandle.call(caller, jsep)
           console.log("--------starting-----a-----calll------------")
-        } else {
-          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
-          console.log("-------------------initializing-----handle--------")
-        }
+
       } catch (err) {
         console.log(err)
         console.log("Error starting a call")
@@ -114,12 +124,11 @@ export default function Calls() {
     }
   }
 
-
   async function acceptCall() {
 
-    if (isLoggedIn(user_token)) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
-        if (videoCallContext.videohandleattached) {
+
           if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
             dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
           }
@@ -139,20 +148,13 @@ export default function Calls() {
           const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
           //@ts-ignore
           videoCallContext.videohandle.accept(jsep)
-        } else {
-          initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
-          console.log("-------------------initializing-----handle--------")
-        }
+
       } catch (err) {
         console.log(err)
         console.log("Error answering a call")
       };
     }
   }
-
-
-
-
 
   async function hangupCall() {
     if (isLoggedIn(user_token)) {
@@ -193,8 +195,6 @@ export default function Calls() {
     };
   }
 
-
-
   function processCandidates(peerConnection, remoteCandidates) {
     if (remoteCandidates.length < 1) { return; };
     remoteCandidates.map(candidate => {
@@ -206,9 +206,6 @@ export default function Calls() {
     console.log("---------------------clearing--remote---candidate----list---------------------")
     setRemoteCandidates([]);
   };
-
-
-
 
   async function createOffer(peerConnection) {
     try {
@@ -242,7 +239,6 @@ export default function Calls() {
     };
   }
 
-
   async function saveReceivedJsepAnswer(peerConnection, r_jsep) {
 
     try {
@@ -259,9 +255,7 @@ export default function Calls() {
 
   }
 
-
   async function setMediaStream(peerConnection) {
-
 
     try {
       const mediaStream = await mediaDevices.getUserMedia({
@@ -283,7 +277,6 @@ export default function Calls() {
     }
 
   }
-
 
   async function stopAllStreams() {
     if (localstream !== null) {
@@ -324,7 +317,6 @@ export default function Calls() {
     pc.close();
   }
 
-
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Calls", headerShown: false }} />
@@ -351,13 +343,11 @@ export default function Calls() {
           //@ts-ignore
           bottom={2}
           style={{ width: width < 600 ? width : 800, height: height }}>
-
           {remotestream && (
             <RTCView
-              style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+              style={{ backgroundColor: 'black', width : 800, height: height  }}
               mirror={true}
               objectFit={'cover'}
-             
               stream={remotestream}
               zOrder={0}
             />
@@ -366,14 +356,13 @@ export default function Calls() {
         <View
           position="absolute"
           //@ts-ignore
-          bottom={2}
-          style={{ marginLeft: 8, marginBottom: 120, width: 100, height: 150 }}>
+          bottom={60}
+          style={{ marginLeft: 8, width: 100, height: 150 }}>
           {localstream && (
             <RTCView
-              style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+              style={{ backgroundColor: 'black', width: 100, height: 150 }}
               mirror={true}
               objectFit={'cover'}
-          
               stream={localstream}
               zOrder={0}
             />
@@ -381,10 +370,9 @@ export default function Calls() {
         </View>
       </Contents800_2_flexdirection>
       <View
-        style={{ marginBottom: 40 }}
         position="absolute"
         //@ts-ignore
-        bottom={20}
+        bottom={5}
         zIndex={999}
       >
         <XStack gap={8}>

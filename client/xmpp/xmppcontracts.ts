@@ -8,19 +8,19 @@ import { isXmppNotNull } from "client/janus/janus"
 
 /////////////////////////////////////contacts///////////////////////////////////////////////
 
-export function loadContacts(grp,messageContext , user_id, password) {
-    if (isXmppNotNull(messageContext.xmpp, user_id, password)) {
-    store.dispatch(setContactIsLoading(true))
-    getContacts(messageContext.xmpp, user_id)
-        .then((iq) => {
-            parseContactGroupItems(iq, grp).then((items) => {
-                store.dispatch(updateConctactList(items))
+export function loadContacts(messageContext, user_id, user_token, password, grp) {
+    if (isXmppNotNull(messageContext, user_id, user_token, password)) {
+        store.dispatch(setContactIsLoading(true))
+        getContacts(messageContext.xmpp, user_id)
+            .then((iq) => {
+                parseContactGroupItems(iq, grp).then((items) => {
+                    store.dispatch(updateConctactList(items))
+                    store.dispatch(setContactIsLoading(false))
+                })
+            }).catch((error) => {
                 store.dispatch(setContactIsLoading(false))
+                console.log(error)
             })
-        }).catch((error) => {
-            store.dispatch(setContactIsLoading(false))
-            console.log(error)
-        })
     }
 }
 
@@ -28,13 +28,19 @@ export function loadContacts(grp,messageContext , user_id, password) {
 /////////////////////////////////////message///////////////////////////////////////////////
 
 
-export async function sendChatMessage(xmpp: any, jidwith: string, body: string) {
-    return await xmpp.send(message_iq_stanza(jidwith, body, XMPP_MESSAGE_TYPE_CHAT))
+export async function sendChatMessage(messageContext: any, user_id, user_token, password, jidwith: string, body: string) {
+    if (isXmppNotNull(messageContext, user_id, user_token, password)) {
+        return await messageContext.xmpp.send(message_iq_stanza(jidwith, body, XMPP_MESSAGE_TYPE_CHAT))
+    }
 }
-export async function getCoversation(xmpp: any, jid: string, jidwith: string, max: number) {
-    return await getMessageConversation(xmpp, jid, jidwith, max)
+export async function getCoversation(messageContext: any, user_id, user_token, password, jidwith: string, max: number) {
+    if (isXmppNotNull(messageContext, user_id, user_token, password)) {
+        return await getMessageConversation(messageContext.xmpp, user_id, jidwith, max)
+    }
 }
 
-export async function getMoreCoversation(xmpp: any, jid: string, jidwith: string, max: number, aftreid: string) {
-    return await getMoreMessageConversation(xmpp, jid, jidwith, max, aftreid)
+export async function getMoreCoversation(messageContext: any, user_id, user_token, password, jidwith: string, max: number, aftreid: string) {
+    if (isXmppNotNull(messageContext, user_id, user_token, password)) {
+        return await getMoreMessageConversation(messageContext.xmpp, user_id, jidwith, max, aftreid)
+    }
 }

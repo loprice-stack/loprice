@@ -50,15 +50,14 @@ const initialState: AccountState = {
     user: {
         user_token: undefined,
         password: "",
-        user_id: "loprice@loprice.co.tz",
-        email: "loprice@loprice.co.tz",
-        image_url: "https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80",
+        user_id: "",
+        email: "",
+        image_url: "",
         profileimage_d_open: false,
         profileimage_a_d_open: false,
         user_type: "owner",
         token_type: "bearer",
         access_level: 1,
-
     },
 
     userinfo: {
@@ -107,8 +106,29 @@ export const accountSlice = createSlice({
 
         updateLoginStatus: (state, action) => {
             state.user = action.payload
-            //console.log("New state account is: " + state.user)
+            console.log("New state account is: " + state.user.password)
         },
+
+        updateUserId: (state, action) => {
+            state.user.user_id = action.payload
+            console.log("New state account is: " + state.user.user_id)
+        },
+
+        updateEmail: (state, action) => {
+            state.user.email = action.payload
+            console.log("New state account is: " + state.user.email)
+        },
+
+        updatePassword: (state, action) => {
+            state.user.password = action.payload
+            console.log("New state account is: " + state.user.password)
+        },
+
+        updateUserToken: (state, action) => {
+            state.user.user_token = action.payload
+            console.log("New state account is: " + state.user.user_token)
+        },
+
 
         setProfilePhotoEditDialogOpen: (state, action) => {
             state.user.profileimage_d_open = action.payload
@@ -226,6 +246,10 @@ export const accountSlice = createSlice({
 // Export the generated action creators for use in components
 export const {
     updateLoginStatus,
+    updateUserId,
+    updateEmail,
+    updatePassword,
+    updateUserToken,
     updateFirstname,
     updatesecondname,
     updateLastname,

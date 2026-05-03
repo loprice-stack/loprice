@@ -6,7 +6,7 @@ import {
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import Contents400_2 from 'components/Contents400_2'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useGlobalSearchParams, useLocalSearchParams } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch } from 'store/redux/store'
 import UserInfoCard from 'components/account/UserInfoCard'
@@ -24,7 +24,7 @@ import { ProfilePhotoEditorDialog } from 'components/account/ProfilePhotoEditorD
 export default function UserId() {
 
 
-  const { user_id } = useLocalSearchParams<{ user_id: string }>();
+  const { user_id } = useGlobalSearchParams<{ user_id: string }>();
 
 
   const { width, height } = useWindowDimensions();

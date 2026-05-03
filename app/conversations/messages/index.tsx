@@ -20,31 +20,43 @@ import { Platform } from 'react-native';
 import React from 'react';
 import { parseFin } from 'client/xmpp/xmlutilty';
 import { isXmppNotNull } from 'client/janus/janus';
+import { getXmppMiddleWhere } from 'client/xmpp/xmpp';
 
 
 //StatusBar.setHidden(true)
 export default function Message() {
+
+
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
   const messageContext = useContext(_message)
   const dispatch = useAppDispatch();
   const { caller, remotesdp } = useAppSelector(state => state.calls)
-  const { user_id, password } = useAppSelector(state => state.account.user)
+  const { user_id, password, user_token } = useAppSelector(state => state.account.user)
+  const user = useAppSelector(state => state.account.user)
   const { messages, messages_isloading, mam_fin, } = useAppSelector(state => state.messages)
   const headerHeight = useHeaderHeight()
+  //const middleware = getXmppMiddleWhere(messageContext.xmpp)
 
   useEffect(() => {
     if (mam_fin.last == undefined) {
       loadConversation();
     }
+
+    //middleware.use((ctx, next) => {
+
+    //  console.log(ctx)
+    //   console.log("-----------------------middleware------------------------------")
+    // });
   }, [])
 
 
+
   function loadConversation() {
-    if (isXmppNotNull(messageContext, user_id, password)) {
+
       dispatch(setMessages([]))
       dispatch(setMessagesIsLoading(true))
-      getCoversation(messageContext.xmpp, user_id, caller, 100).then((response) => {
+      getCoversation(messageContext,user_id, user_token, password , caller, 100).then((response) => {
         dispatch(setMessagesIsLoading(false))
         parseFin(response).then((fn) => {
           dispatch(setMamFin(fn))
@@ -59,14 +71,14 @@ export default function Message() {
         console.log(error)
         console.log("---------------conversation----error-------------------")
       })
-    }
+    
   }
 
   function loadMoreConversation() {
-    if (isXmppNotNull(messageContext, user_id, password)) {
+     
       let afterid = mam_fin.last !== undefined ? mam_fin.last : ""
       dispatch(setMessagesIsLoading(true))
-      getMoreCoversation(messageContext.xmpp, user_id, caller, 100, afterid).then((response) => {
+      getMoreCoversation(messageContext, user_id, user_token, password , caller, 100, afterid).then((response) => {
         dispatch(setMessagesIsLoading(false))
         parseFin(response).then((fn) => {
           dispatch(setMamFin(fn))
@@ -81,7 +93,7 @@ export default function Message() {
         console.log(error)
         console.log("---------------conversation----error-------------------")
       })
-    }
+    
   }
 
   function isCloseToTop({ contentOffset }) {
@@ -90,14 +102,12 @@ export default function Message() {
 
   const onSend = useCallback((messages = []) => {
     dispatch(pushMessage(messages[0]))
-
-    if (isXmppNotNull(messageContext, user_id, password)) {
       //@ts-ignore
-      sendChatMessage(messageContext.xmpp, caller, messages[0].text, remotesdp).then((response) => {
+      sendChatMessage(messageContext, user_id, user_token, password , caller, messages[0].text).then((response) => {
         console.log(response)
         console.log("---------------------------message-----response-------------------------")
       })
-    }
+    
 
   }, [])
 

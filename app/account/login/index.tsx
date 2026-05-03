@@ -17,21 +17,22 @@ import {
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import Contents400_2 from 'components/Contents400_2'
-import { Link, Stack, useRouter } from 'expo-router'
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import { updateLoginStatus } from '../../../components/account/accountSlice'
+import { updateLoginStatus, updatePassword, updateUserId } from '../../../components/account/accountSlice'
 import { accountLogin } from 'client/AxiosHttpClient'
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
 import { jidAsStringOf } from 'utils/utility'
-import { initializeVideoHandle } from 'client/janus/janus'
+import { initializeLopriceServices } from 'client/janus/janus'
+
 
 
 export default function Login() {
 
   const router = useRouter()
   const { width, height } = useWindowDimensions();
-  const [username, setUsername] = React.useState("")
-  const [password, setPassword] = React.useState("")
+  //const [username, setUsername] = React.useState("")
+  //const [password, setPassword] = React.useState("")
   const [isloading, setIsloading] = React.useState(false)
   const [isopen, setIsopen] = React.useState(false)
   const [errorm, setErrorm] = React.useState("")
@@ -39,23 +40,28 @@ export default function Login() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
-     const messageContext = useContext(_message)
-  const { user_id, user_token } = useAppSelector(state => state.account.user)
-
+  const messageContext = useContext(_message)
+  const { user_id, email, password, user_token } = useAppSelector(state => state.account.user)
+  const { _username, _password, from } = useLocalSearchParams();
 
 
 
   function login() {
-    console.log("----------------------login-------------------------")
+
+    if (user_id == "") {
+      setErrorm("Please enter your account! ");
+      setIsloading(false);
+      setIsopen(true)
+      return
+    }
+
     setIsloading(true);
-    const _username = jidAsStringOf(username)
-    setUsername(_username);
-    //dispatch(set)
-    accountLogin(_username, password).then(async (response) => {
+    const _username_ = jidAsStringOf(user_id)
+    dispatch(updateUserId(_username_))
+    accountLogin(_username_, password).then(async (response) => {
+
       const token = response.data.user_token
-
       if (token) {
-
         dispatch(updateLoginStatus({
           "user_token": token,
           "user_id": response.data.user_id,
@@ -66,15 +72,17 @@ export default function Login() {
           "token_type": response.data.token_type,
           "access_level": response.data.access_level
         }))
-        await initializeVideoHandle(sessionContext, videoCallContext, messageContext, user_token, _username, password)
-        router.back()
+        await initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, _username_, password)
+        console.log(response.data)
+        //@ts-ignore
+        router.navigate('/')
+        console.log("----------------------login--success-----------------------")
       } else {
         setErrorm(response.data.message)
         setIsopen(true)
         console.log(response.data)
       }
       setIsloading(false);
-      //console.log(token)
     }).catch((error) => {
       try {
         const er = error.response.data.detail
@@ -147,8 +155,8 @@ export default function Login() {
             <Image
               self={'center'}
               src={width < 600 ? require("../../../assets/images/favicon.png") : 'https://picsum.photos/200/300'}
-              width={width < 600 ? 150 : 350}
-              height={width < 600 ? 150 : 350}
+              width={width < 600 ? 120 : 350}
+              height={width < 600 ? 120 : 350}
               onLoad={() => { }}
               onLayout={(e) => { }}
               objectFit="contain"
@@ -167,13 +175,15 @@ export default function Login() {
                   theme="surface1"
                   size={'$4'}
                   placeholder={'Username'}
-                  onChangeText={(text) => setUsername(text)}
+                  value={user_id}
+                  onChangeText={(text) => dispatch(updateUserId(text))}
                 />
                 <Input
                   theme="surface1"
                   size={'$4'}
                   placeholder={'Password'}
-                  onChangeText={(text) => setPassword(text)}
+                  value={password}
+                  onChangeText={(text) => dispatch(updatePassword(text))}
                 />
                 <Form.Trigger style={{ marginTop: 16 }} asChild>
                   <Button
@@ -186,7 +196,6 @@ export default function Login() {
                   onPress={() => router.navigate('/account/create')}
                   size="$3" variant="outlined">
                   <Text fontSize={14} >Create new account</Text>
-
                 </Button>
                 <Button
                   onPress={() => router.navigate('/account/forgot')}

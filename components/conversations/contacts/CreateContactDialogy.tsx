@@ -21,6 +21,7 @@ import {
 } from 'tamagui'
 import { jidAsStringOf } from 'utils/utility';
 import { setCreateContactDialogOpen, updateConctactList } from './contactsSlice';
+import { isXmppNotNull } from 'client/janus/janus';
 
 
 
@@ -30,7 +31,7 @@ export function CreateContactDialogy() {
     const userinfo = useAppSelector(state => state.account.userinfo)
     const messageContext = useContext(_message)
     const { create_contact_d_open, contact_type_openswitch } = useAppSelector(state => state.contacts.roaster)
-    const { user_id } = useAppSelector(state => state.account.user)
+    const {user_id, user_token, password} = useAppSelector(state => state.account.user)
     const [account, setAccount] = useState('')
     const [name, setName] = useState('')
 
@@ -39,18 +40,20 @@ export function CreateContactDialogy() {
 
     function loadContacts(grp) {
 
-        getContacts(messageContext.xmpp, user_id)
-            .then((iq) => {
-                parseContactGroupItems(iq, grp).then((items) => {
-                    dispatch(updateConctactList(items))
-   
-                    console.log(items)
-                    console.log("----------------------items---loaded--from---goups---------------------------------")
-                })
-            }).catch((error) => {
+        if (isXmppNotNull( messageContext, user_id, user_token, password )) {
+            getContacts(messageContext.xmpp, user_id)
+                .then((iq) => {
+                    parseContactGroupItems(iq, grp).then((items) => {
+                        dispatch(updateConctactList(items))
 
-                console.log(error)
-            })
+                        console.log(items)
+                        console.log("----------------------items---loaded--from---goups---------------------------------")
+                    })
+                }).catch((error) => {
+
+                    console.log(error)
+                })
+        }
     }
 
 

@@ -13,7 +13,12 @@ export async function accountLogin(username: any, password: any) {
 
 //create
 
-
+export async function createAccount(username: any, password: any) {
+  return await axiosLogin().post("/token/",
+    { "username": username, "password": password },
+    {}
+  )
+}
 //update
 
 

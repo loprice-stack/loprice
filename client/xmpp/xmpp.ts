@@ -1,5 +1,5 @@
-import { client, xml,jid } from "@xmpp/client";
-import { generateResource } from "utils/utility";
+import { Client, client, xml, jid } from "@xmpp/client";
+import middleware from "@xmpp/middleware";
 
 
 export function getXmppClient(user_name, password, resources) {
@@ -14,3 +14,8 @@ export function getXmppClient(user_name, password, resources) {
 
 }
 
+export function getXmppMiddleWhere(xmpp) {
+ // const client = new Client();
+  const app = middleware({ entity: xmpp });
+  return app
+}

@@ -1,23 +1,29 @@
-import { updateLoginStatus } from 'components/account/accountSlice';
+import { updateLoginStatus, updateUserToken } from 'components/account/accountSlice';
 import { Link, useRouter } from 'expo-router'
-import { useAppDispatch, useAppSelector } from 'store/redux/store';
+import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
 import type { CardProps } from 'tamagui'
 import { Text, Button, Card, H2, Paragraph, YStack, Form } from 'tamagui'
 import { ProfilePhotoShowAlertDialog } from './ProfilePhotoShowAlertDialog';
+import { stopLopriceServices } from 'client/janus/janus';
+import { useContext } from 'react';
 
 export default function AccountCard(props: CardProps) {
 
     const router = useRouter();
 
     const dispatch = useAppDispatch();
-    const user = useAppSelector(state => state.account.user)
+    const {user_id, user_type} = useAppSelector(state => state.account.user)
+  const sessionContext = useContext(_session)
+  const videoCallContext = useContext(_videohandle)
+  const messageContext = useContext(_message)
 
+  
     return (
     
         <Card size="$4" borderWidth={1} borderColor="$borderColor" {...props}>
             <Card.Header items={'center'} p="$4">
-                <H2>{user.user_type}</H2>
-                <Paragraph>{user.user_id} </Paragraph>
+                <H2>{user_type}</H2>
+                <Paragraph>{user_id} </Paragraph>
             </Card.Header>
             <YStack items="center" gap="$6">
                 {props.children}
@@ -34,17 +40,11 @@ export default function AccountCard(props: CardProps) {
                     <Button.Text fontSize={14} >Settings</Button.Text>
                 </Button>
                 <Form
-                    onSubmit={() => {
-                        console.log('clicked');
-                        dispatch(updateLoginStatus({
-                            "user_token": undefined,
-                            "user_id": "loprice@loprice.co.tz",
-                            "email": "loprice@loprice.co.tz",
-                            "image_url": "",
-                            "user_type": "owner",
-                            "token_type": "bearer",
-                            "access_level": 1
-                        }))
+                    onSubmit={async () => {
+              
+                        dispatch(updateUserToken(undefined))
+
+                         stopLopriceServices(sessionContext, videoCallContext, messageContext)
                     }}
                 >
                     <Form.Trigger asChild >

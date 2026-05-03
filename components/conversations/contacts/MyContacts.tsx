@@ -11,6 +11,7 @@ import { getJidLocal } from "utils/utility";
 import { setCaller, setCallState } from "../calls/callsSlice";
 import { CALL_STATE_START_CALL } from "utils/constants";
 import { loadContacts } from "client/xmpp/xmppcontracts";
+import { setMessages } from "../messages/messagesSlice";
 
 
 export default function MyContacts() {
@@ -20,11 +21,12 @@ export default function MyContacts() {
     const dispatch = useAppDispatch();
     const { contacts, contact_type_openswitch, contact_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
-    const { user_id, password } = useAppSelector(state => state.account.user)
+    const { user_id, password, user_token } = useAppSelector(state => state.account.user)
+    const {caller}= useAppSelector(state => state.calls)
     //const [isloading, setIsloading] = useState(false)
 
     useEffect(() => {
-        loadContacts(contact_type_openswitch, messageContext, user_id, password)
+        loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
     }, [])
 
 
@@ -98,7 +100,7 @@ export default function MyContacts() {
                                 cursor="pointer"
                                 onPress={() => {
                                     deleteContacts(messageContext.xmpp, user_id, user_idd)
-                                     loadContacts(contact_type_openswitch, messageContext, user_id, password)
+                                    loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
                                     console.log("deleted succcesssfullly")
                                 }}
                                 key="delete">
@@ -145,7 +147,7 @@ export default function MyContacts() {
                         p="$3" gap="$4" items="center">
                         <Text >List is empty</Text>
                         <RefreshCcw
-                            onPress={() => loadContacts(contact_type_openswitch, messageContext, user_id, password)}
+                            onPress={() => loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch) }
                             cursor="pointer" color={'$accent6'} />
                     </XStack>
                 </YStack>
@@ -194,7 +196,15 @@ export default function MyContacts() {
                                                     //@ts-ignore
                                                     router.navigate('/conversations/messages')
                                                     dispatch(setCallState(CALL_STATE_START_CALL))
+                                                    if (contact.jid !== caller){
+                                                        dispatch(setMessages([]))
+                                                        console.log(contact.jid)
+                                                        console.log(caller)
+                                                        console.log("-------contact.jid-----caller------------------------")
+                                                    }
                                                     dispatch(setCaller(contact.jid))
+
+                                                    
                                                 }}
                                             size={'$1'} />
 

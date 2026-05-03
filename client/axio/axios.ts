@@ -1,8 +1,8 @@
-import {  LOPRICE_API_URL_S, LOPRICE_URL_S } from "utils/constants";
+import {  LOPRICE_API3_URL_S, LOPRICE_API_URL_S, LOPRICE_URL_S } from "utils/constants";
 import axios from "axios";
 
 
-
+////////////////////////////////////API///////////////////////////////////////////////////
 export function axiosLogin() {
 
   const instance = axios.create({
@@ -60,6 +60,78 @@ export function axio3(access_token: string) {
   const instance = axios.create({
     method: 'post', // default
     baseURL: LOPRICE_API_URL_S,
+    //timeout: 10000,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": LOPRICE_URL_S,
+      "Authorization": "Bearer " + access_token
+    },
+  });
+
+  return instance;
+}
+
+
+
+////////////////////////////////////API3///////////////////////////////////////////////////
+export function axiosLogin3() {
+
+  const instance = axios.create({
+    baseURL: LOPRICE_API3_URL_S,
+    //timeout: 10000,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": LOPRICE_URL_S,
+    },
+  });
+
+  return instance;
+}
+
+
+
+export function axio_api3() {
+  //TODO implementation of multiple axios and non axios client istances for multiple users.
+  // ie Normal users for demonstration, Credit and Subscription user and Platform(Task) Tasker users or workers
+  const instance = axios.create({
+    method: 'post', // default
+    baseURL: LOPRICE_API3_URL_S,
+    //timeout: 10000,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": LOPRICE_URL_S,
+    },
+  });
+
+  return instance;
+}
+
+export function axio2_api3(access_token: string) {
+  //TODO implementation of multiple axios and non axios client istances for multiple users.
+  // ie Normal users for demonstration, Credit and Subscription user and Platform(Task) Tasker users or workers
+  const instance = axios.create({
+    method: 'post', // default
+    baseURL: LOPRICE_API3_URL_S,
+    //timeout: 10000,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": LOPRICE_URL_S,
+      "Authorization": "Bearer " + access_token
+    },
+  });
+
+  return instance;
+}
+
+export function axio3_api3(access_token: string) {
+  //TODO implementation of multiple axios and non axios client istances for multiple users.
+  // ie Normal users for demonstration, Credit and Subscription user and Platform(Task) Tasker users or workers
+  const instance = axios.create({
+    method: 'post', // default
+    baseURL: LOPRICE_API3_URL_S,
     //timeout: 10000,
     headers: {
       "Content-Type": "multipart/form-data",

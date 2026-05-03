@@ -17,52 +17,48 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Link, Stack, useRouter } from 'expo-router'
+import { Link, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router'
 import Contents800 from 'components/Contents800'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
-import { updateEmail, updatePassword, updateUserId } from 'components/account/accountSlice'
-import { jidAsStringOf } from 'utils/utility'
-import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
 import { axio2, axio2_api3 } from 'client/axio/axios'
+import { updatePassword, updateUserId } from 'components/account/accountSlice'
+import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
+import { jidAsStringOf } from 'utils/utility'
 
 
 
-export default function ResetPasswordMail() {
-
+export default function NewPassword() {
+  
+  const { user_id, token } = useGlobalSearchParams<{ user_id: string; token: string }>();
   const router = useRouter()
   const { width, height } = useWindowDimensions();
-  const { user_id, email, password, user_token } = useAppSelector(state => state.account.user)
+  const { email, password, user_token } = useAppSelector(state => state.account.user)
   const [isloading, setIsloading] = React.useState(false)
   const [isopen, setIsopen] = React.useState(false)
   const [errorm, setErrorm] = React.useState("")
   const dispatch = useAppDispatch();
 
-  const sendreset = async () => {
+  const reset = async () => {
 
-
-    if (user_id == "") {
-      setErrorm("Please enter account name");
+    console.log(user_id)
+    console.log(token)
+    console.log("-------------------------------------token---reset---------------------------------")
+    if (password == "") {
+      setErrorm("Please enter something for new passwrd! ");
       setIsloading(false);
       setIsopen(true)
       return
     }
 
-    if (email == "") {
-      setErrorm("Please enter your email address!");
-      setIsloading(false);
-      setIsopen(true)
-      return
-    }
-
-    let jid = await jidAsStringOf(user_id)
-    dispatch(updateUserId(jid))
+    //let jid = await jidAsStringOf(user_id)
+    dispatch(updateUserId(user_id))
     setIsloading(true)
-    axio2_api3(LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY)
-      .post("/reset/user/password/email/",
+    axio2(token)
+      .post("/reset/user/password/",
         {
           email: email,
-          user_id: jid,
+          user_id: user_id,
           password: password,
         }, {})
       .then((response) => {
@@ -70,6 +66,8 @@ export default function ResetPasswordMail() {
         const message: any = response.data.message;
         if (message) {
           if (message.includes("User reset successfully")) {
+                        setErrorm(response.data.message)
+            setIsopen(true)
             dispatch(updatePassword(password))
             router.navigate({
               pathname: '/account/login',
@@ -84,7 +82,9 @@ export default function ResetPasswordMail() {
         setIsloading(false)
       })
       .catch((error) => {
-        console.log(error);
+        console.log(JSON.stringify(error.message)  + "(Anauthorized or Expired token)");
+                    setErrorm(JSON.stringify(error.message)  + "(Unauthorized or Expired token)")
+            setIsopen(true)
         setIsloading(false)
         console.log(
           "--------------------------items error is running-------------------------------------"
@@ -95,10 +95,11 @@ export default function ResetPasswordMail() {
 
 
 
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Stack.Screen options={{ title: "Reset mail", headerShown: true }} />
+        <Stack.Screen options={{ title: "Change account password", headerShown: true }} />
         <Contents800_2_flexdirection>
           <AlertDialog open={isopen} onOpenChange={() => setIsopen(false)}>
             <AlertDialog.Portal>
@@ -131,7 +132,7 @@ export default function ResetPasswordMail() {
                 y={0}
               >
                 <YStack gap="$4">
-                  <AlertDialog.Title>Reset message!</AlertDialog.Title>
+                  <AlertDialog.Title>Password reset message</AlertDialog.Title>
                   <AlertDialog.Description>
                     {errorm}
                   </AlertDialog.Description>
@@ -144,41 +145,26 @@ export default function ResetPasswordMail() {
               </AlertDialog.Content>
             </AlertDialog.Portal>
           </AlertDialog>
+
           <Contents400>
             <View style={{ width: width < 600 ? width : 400 }}>
               <Form
-                onSubmit={() => sendreset()}
+                onSubmit={() => reset()}
                 self={'center'} width={350} gap={'$4'}>
                 <Label width={400} htmlFor="name">
-                  <H5>Send reset password email</H5>
+                  <H5>Reset account password</H5>
                 </Label>
                 <Input
                   theme="surface1"
                   size={'$4'}
-                  placeholder={'Username'}
-                  value={user_id}
-                  onChangeText={(text) => dispatch(updateUserId(text))}
-                />
-                <Input
-                  theme="surface1"
-                  size={'$4'}
-                  placeholder={'Email'}
-                  value={email}
-                  onChangeText={(text) => dispatch(updateEmail(text))}
+                  placeholder={'New password'}
+                  onChangeText={(text) => dispatch(updatePassword(text))}
                 />
                 <Form.Trigger style={{ marginTop: 16 }} asChild>
                   <Button
                     size="$3" background="#04AA6D" >
                     <Spinner style={{ display: isloading ? 'flex' : 'none' }} size="small" color="$green10" />
-                    <Button.Text fontSize={14} color={'white'}>Send reset mail</Button.Text>
-                  </Button>
-                </Form.Trigger>
-
-                <Form.Trigger style={{ marginTop: 16 }} asChild>
-                  <Button
-                    onPress={() => router.navigate('/account/login')}
-                    size="$3" >
-                    <Text fontSize={14}>I remembered my password</Text>
+                    <Button.Text fontSize={14} color={'white'}>Change</Button.Text>
                   </Button>
                 </Form.Trigger>
               </Form>

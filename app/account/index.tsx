@@ -30,9 +30,9 @@ export default function Account() {
 
 
 
-  useEffect(() => {
-    initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
-  }, [])
+  //useEffect(() => {
+  //  initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
+  //}, [])
 
 
 

@@ -4,7 +4,7 @@
     "slug": "Loprice",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/favicon.png",
     "scheme": "tz.co.loprice",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/loprice-favicon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "tz.co.loprice",

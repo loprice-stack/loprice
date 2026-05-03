@@ -6,6 +6,7 @@ import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
 import { YGroup, ListItem, useWindowDimensions, XStack, Text, ScrollView, Separator, YStack, Spinner } from "tamagui";
 import { CreateContactGroupDialogy } from "./CreateContactGroupDialogy";
 import { loadContacts } from "client/xmpp/xmppcontracts";
+import { isXmppNotNull } from "client/janus/janus";
 
 export default function ContactsTypeCard() {
 
@@ -14,7 +15,8 @@ export default function ContactsTypeCard() {
     const dispatch = useAppDispatch();
 
 
-    const { user_id, password } = useAppSelector(state => state.account.user)
+    const { user_id, password, user_token } = useAppSelector(state => state.account.user)
+    //const user = useAppSelector(state => state.account)
     const { groups, contact_type_openswitch, contact_group_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
 
@@ -25,34 +27,38 @@ export default function ContactsTypeCard() {
 
 
     function loadContactsgGroups() {
-        dispatch(setContactGroupIsLoading(true))
-        getContacts(messageContext.xmpp, user_id)
-            .then((iq) => {
 
-                parseContactGroups(iq).then((groupss) => {
+        if (isXmppNotNull( messageContext, user_id, user_token, password )) {
+            dispatch(setContactGroupIsLoading(true))
+            getContacts(messageContext.xmpp, user_id)
+                .then((iq) => {
 
-                    const uniqGroupss = groupss.filter((grp, index, self) =>
-                        //@ts-ignore
-                        index === self.findIndex((u) => u.name === grp.name)
-                    );
+                    parseContactGroups(iq).then((groupss) => {
+
+                        const uniqGroupss = groupss.filter((grp, index, self) =>
+                            //@ts-ignore
+                            index === self.findIndex((u) => u.name === grp.name)
+                        );
 
 
-                    dispatch(setContactGroupIsLoading(false))
-                    dispatch(updateConctactGroupList(uniqGroupss))
-                    console.log(groupss)
-                    console.log("----------------------items---my--contacts---groups---------------------")
+                        dispatch(setContactGroupIsLoading(false))
+                        dispatch(updateConctactGroupList(uniqGroupss))
+                        console.log(groupss)
+                        console.log("----------------------items---my--contacts---groups---------------------")
+                    }).catch((error) => {
+                        dispatch(setContactGroupIsLoading(false))
+                        dispatch(updateConctactGroupList([]))
+                        console.log(error)
+                        console.log("--------items---my--contacts---error---parsing---group---------")
+                    })
                 }).catch((error) => {
                     dispatch(setContactGroupIsLoading(false))
                     dispatch(updateConctactGroupList([]))
                     console.log(error)
-                    console.log("--------items---my--contacts---error---parsing---group---------")
+                    console.log("-----------items---my--contacts--error--fetching--contacts-----------")
                 })
-            }).catch((error) => {
-                dispatch(setContactGroupIsLoading(false))
-                dispatch(updateConctactGroupList([]))
-                console.log(error)
-                console.log("-----------items---my--contacts--error--fetching--contacts-----------")
-            })
+        }
+
     }
 
 
@@ -103,7 +109,7 @@ export default function ContactsTypeCard() {
                                 dispatch(updateConctactList([]))
                                 dispatch(updateConctactGroupList([]))
                                 loadContactsgGroups()
-                             loadContacts(contact_type_openswitch, messageContext, user_id, password)
+                                loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
 
 
                             }}
@@ -135,7 +141,7 @@ export default function ContactsTypeCard() {
                                     () => {
                                         dispatch(changeContactTypeOpenSwitch(group.name))
                                         dispatch(updateConctactList([]))
-                                        loadContacts(contact_type_openswitch, messageContext, user_id, password)
+                                        loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
                                         //dispatch(updateConctactGroupList([]))
                                         //loadContactsgGroups()
                                         console.log("Clicked " + group.name)

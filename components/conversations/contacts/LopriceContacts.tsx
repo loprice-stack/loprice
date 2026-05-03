@@ -1,18 +1,18 @@
-import {  Phone, MessageSquare,Info, MoreVertical } from "@tamagui/lucide-icons-2";
-import {  View } from "react-native";
+import { Phone, MessageSquare, Info, MoreVertical } from "@tamagui/lucide-icons-2";
+import { View } from "react-native";
 import { useAppDispatch, useAppSelector } from "store/redux/store";
 import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu } from "tamagui";
 import { setCaller, setCallState } from "../calls/callsSlice";
 import { CALL_STATE_START_CALL } from "utils/constants";
 import { useRouter } from "expo-router";
+import { setMessages } from "../messages/messagesSlice";
 
 export default function LopriceContacts() {
 
     const { width, height } = useWindowDimensions();
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const { contacts, more_buttons_contact_menu_open } = useAppSelector(state => state.contacts.roaster)
-
+    const { user_id } = useAppSelector(state => state.account.user)
 
     const MoreButtonsMenu = (user_idd) => {
 
@@ -130,24 +130,24 @@ export default function LopriceContacts() {
                                         size={'$1'} />
                                     <MessageSquare
                                         cursor="pointer"
-                                                         onPress={
-                                                 () => {
-                                                     //@ts-ignore
-                                                     router.navigate('/conversations/messages')
-                                                     dispatch(setCaller("loprice@loprice.co.tz"))
-                                                 }}
+                                        onPress={
+                                            () => {
+                                                //@ts-ignore
+                                                router.navigate('/conversations/messages')
+                                                if (user_id !== "loprice@loprice.co.tz") {
+                                                    dispatch(setMessages([]))
+                                                }
+                                                dispatch(setCaller("loprice@loprice.co.tz"))
+                                            }}
                                         size={'$1'} />
 
                                     {MoreButtonsMenu("loprice@loprice.co.tz")}
                                 </XStack>}
-
                         />
                     </YGroup.Item>
-
                     <Separator />
                     <YGroup.Item>
                         <ListItem
-
                             title="Accounts"
                             subTitle="accounts@loprice.co.tz"
                             icon={<Avatar circular size='$6'>
@@ -167,31 +167,30 @@ export default function LopriceContacts() {
                                                 //@ts-ignore
                                                 router.navigate('/conversations/calls')
                                                 dispatch(setCallState(CALL_STATE_START_CALL))
+
                                                 dispatch(setCaller("accounts@loprice.co.tz"))
                                             }}
                                         size={'$1'}
                                     />
-
                                     <MessageSquare cursor="pointer"
-                                                         onPress={
-                                                 () => {
-                                                     //@ts-ignore
-                                                     router.navigate('/conversations/messages')
-                                                     dispatch(setCaller("accounts@loprice.co.tz"))
-                                                 }}
+                                        onPress={
+                                            () => {
+                                                //@ts-ignore
+                                                router.navigate('/conversations/messages')
+                                                if (user_id !== "accounts@loprice.co.tz") {
+                                                    dispatch(setMessages([]))
+                                                }
+                                                dispatch(setCaller("accounts@loprice.co.tz"))
+                                            }}
                                         size={'$1'}
                                     />
-
                                     {MoreButtonsMenu("accounts@loprice.co.tz")}
                                 </XStack>}
-
                         />
                     </YGroup.Item>
-
                     <Separator />
                     <YGroup.Item>
                         <ListItem
-
                             title="Customer care"
                             subTitle="customercare@loprice.co.tz"
                             icon={<Avatar circular size='$6'>
@@ -203,7 +202,6 @@ export default function LopriceContacts() {
                             </Avatar>}
                             iconAfter={
                                 <XStack gap="$4">
-
                                     <Phone cursor="pointer"
                                         onPress={
 
@@ -215,14 +213,16 @@ export default function LopriceContacts() {
                                             }}
                                         size={'$1'}
                                     />
-
                                     <MessageSquare cursor="pointer"
-                                                         onPress={
-                                                 () => {
-                                                     //@ts-ignore
-                                                     router.navigate('/conversations/messages')
-                                                     dispatch(setCaller("customercare@loprice.co.tz"))
-                                                 }}
+                                        onPress={
+                                            () => {
+                                                //@ts-ignore
+                                                router.navigate('/conversations/messages')
+                                                if (user_id !== "customercare@loprice.co.tz") {
+                                                    dispatch(setMessages([]))
+                                                }
+                                                dispatch(setCaller("customercare@loprice.co.tz"))
+                                            }}
                                         size={'$1'}
                                     />
                                     {MoreButtonsMenu("customercare@loprice.co.tz")}

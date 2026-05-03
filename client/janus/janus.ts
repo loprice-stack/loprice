@@ -7,11 +7,11 @@ import VideoCallHandle from 'client/janus/videocall-plugin'
 import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { getXmppClient } from 'client/xmpp/xmpp';
 import { xml } from "@xmpp/client";
-import { generateResource, jidAsStringOf } from 'utils/utility';
+import { generateResource, getJidLocal, jidAsStringOf } from 'utils/utility';
 import { get_archieve_message, isIqStanza, isMessageStanza, isPresenceStanza, parseArchievedMessages, parseMessages } from 'client/xmpp/xmlutilty';
 import { pushMessage } from 'components/conversations/messages/messagesSlice';
 
-export async function janussession() {
+export async function janussession(sessionContext) {
     //const dispatch = useAppDispatch();
     const connection = await Janode.connect({
         is_admin: false,
@@ -21,8 +21,19 @@ export async function janussession() {
         }
     });
 
-    //dispatch(setConnection(connection))
 
+
+    connection.once(Janode.EVENT.CONNECTION_CLOSED, () => {
+        sessionContext.connection = null
+        Logger.info(`${'Janus'} connection  closed ---------------------------`);
+    });
+
+    connection.once(Janode.EVENT.CONNECTION_ERROR, error => {
+        Logger.error(`${'Janus'} connection error: ${error.message} ----------------------------`);
+
+    });
+
+    sessionContext.connection = connection
     return await connection.create()
 }
 
@@ -34,15 +45,19 @@ export async function initializeLopriceServices(sessionContext, videoCallContext
     } else {
 
         store.dispatch(setRequireLoginDialogOpen(false))
-        sessionContext.session = null
-        videoCallContext.videohandle = null
+        stopLopriceServices(sessionContext, videoCallContext, messageContext)
     }
 }
 
+export async function stopLopriceServices(sessionContext, videoCallContext, messageContext) {
+
+    stopVideoCallHandleWithItsSession(sessionContext, videoCallContext);
+    stopXmpp(messageContext)
+}
 
 export async function initializeVideoCallHandleWithNewSession(sessionContext, videoCallContext, user_id) {
     //janus session and handle goes hand in hand. better to deal with them together
-    if ((sessionContext.session !== null) || (videoCallContext.videohandle !== null)) {
+    if ((sessionContext.session !== null) && (videoCallContext.videohandle !== null)) {
         if (videoCallContext.videohandleattached) {
 
             //@ts-ignore
@@ -56,23 +71,29 @@ export async function initializeVideoCallHandleWithNewSession(sessionContext, vi
             videoCallContext.videohandleattached = true
 
         }
-
     } else {
 
-        const session = await janussession();
+        const session = await janussession(sessionContext);
         session.once(Janode.EVENT.SESSION_DESTROYED, () => {
             sessionContext.session = null;
-            videoCallContext.videohandle = null
-            videoCallContext.videohandleattached = false
-            Logger.info(`${'Janus'} session ${session.id} destroyed`);
+            //then close the connection all together
+            if (sessionContext.connection !== null) {
+                sessionContext.connection.close()
+            }
+            Logger.info(`${'Janus'} session ${session.id} destroyed --------------------`);
         });
 
         const videohandle = await session.attach(VideoCallHandle)
         // generic handle events
-        videohandle.once(Janode.EVENT.HANDLE_DETACHED, () => {
+        videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_DETACHED, evtdata => {
             videoCallContext.videohandle = null
             videoCallContext.videohandleattached = false
-            Logger.info(`${'Handle'} ${videohandle.name} manager handle detached event`);
+
+            //then detroy its associated session
+            if (sessionContext.session !== null) {
+                sessionContext.session.destroy()
+            }
+            Logger.info(`${'VideoCallHandle'} ${videohandle.name} detached --------------`);
         });
 
         videohandle.register(user_id)
@@ -85,79 +106,127 @@ export async function initializeVideoCallHandleWithNewSession(sessionContext, vi
 }
 
 
+export async function stopVideoCallHandleWithItsSession(sessionContext, videoCallContext) {
+    //janus session and handle goes hand in hand. better to deal with them together
+
+
+    try {
+
+        if (videoCallContext.videohandle !== null) {
+            await videoCallContext.videohandle.detach()
+        }
+
+    } catch (e) {
+        console.log(e)
+        console.log("------------stopVideoCallHandleWithItsSession---error---------------")
+    }
+
+}
+
 
 export async function initializeXmpp(messageContext, user_id, password) {
 
-    let res = generateResource(3)
-    const xmpp = getXmppClient(user_id, password, res)
 
-    xmpp.on("status", (status) => {
-        if (status == 'open') {
-            messageContext.xmppopen = true
-        } else if (status == 'online') {
-            // Makes itself available
-            xmpp.send(xml("presence"));
-        } else {
-            messageContext.xmppopen = false
-        }
+    if (messageContext.xmpp == null) {
 
-        console.log(status);
-        console.log("----------------xmpp---status---------------------");
+        let res = generateResource(3)
+        const xmpp = getXmppClient(user_id, password, res)
 
-    });
-
-    xmpp.on("stanza", onStanza);
-    async function onStanza(stanza) {
-
-        if (isMessageStanza(stanza)) {
-            const ismessagearchived = await get_archieve_message(stanza)
-            if (ismessagearchived !== undefined) {
-                parseArchievedMessages(stanza, user_id).then((msg) => {
-
-                    if (msg !== undefined) {
-                        store.dispatch(pushMessage(msg))
-                    }
-
-                    console.log(msg);
-                    console.log("--------------archived---message--parsed------------------------");
-                })
+        xmpp.on("status", (status) => {
+            if (status == 'open') {
+                messageContext.xmppopen = true
+            } else if (status == 'online') {
+                // Makes itself available
+                xmpp.send(xml("presence"));
             } else {
-
-                parseMessages(stanza, user_id).then((msg) => {
-
-                    if (msg !== undefined) {
-                        store.dispatch(pushMessage(msg))
-                    }
-                    console.log(msg);
-                    console.log("-----------------message--parsed------------------------");
-                })
+                messageContext.xmppopen = false
             }
 
-            console.log(stanza);
-            console.log("-----------------isMessageStanza------------------------");
-        } else if (isIqStanza(stanza)) {
+            console.log(status);
+            console.log("----------------xmpp---status---------------------");
 
-            console.log(stanza.toString());
-            console.log("-----------------isIqStanza------------------------");
-        } else if (isPresenceStanza(stanza)) {
+        });
 
-            console.log(stanza.toString());
-            console.log("-----------------isPresenceStanza-----------------------");
-        } else {
+        xmpp.on("stanza", onStanza);
+        async function onStanza(stanza) {
 
-            console.log(stanza.toString());
-            console.log("-----------------isUnknownStanza-----------------------");
+            if (isMessageStanza(stanza)) {
+                const ismessagearchived = await get_archieve_message(stanza)
+                if (ismessagearchived !== undefined) {
+                    parseArchievedMessages(stanza, user_id).then((msg) => {
+
+                        if (msg !== undefined) {
+                            store.dispatch(pushMessage(msg))
+                        }
+                        console.log(msg);
+                        console.log("--------------archived---message--parsed------------------------");
+                    })
+                } else {
+
+                    parseMessages(stanza, user_id).then((msg) => {
+
+                        if (msg !== undefined) {
+                            store.dispatch(pushMessage(msg))
+                        }
+                        console.log(msg);
+                        console.log("-----------------message--parsed------------------------");
+                    })
+                }
+
+                console.log(stanza);
+                console.log("-----------------isMessageStanza------------------------");
+            } else if (isIqStanza(stanza)) {
+
+                console.log(stanza.toString());
+                console.log("-----------------isIqStanza------------------------");
+            } else if (isPresenceStanza(stanza)) {
+
+                console.log(stanza.toString());
+                console.log("-----------------isPresenceStanza-----------------------");
+            } else {
+
+                console.log(stanza.toString());
+                console.log("-----------------isUnknownStanza-----------------------");
+            }
         }
+
+        xmpp.on("error", (err) => {
+            console.error(err);
+            //xmpp.stop()
+            console.log("----------------xmpp---error---------------------");
+        });
+
+
+        console.log(user_id);
+        console.log(password);
+        console.log("-----------------user_id------password-----------------");
+
+        await xmpp.start()
+        messageContext.xmpp = xmpp
+
+
+    }
+}
+
+
+
+export async function stopXmpp(messageContext) {
+    try {
+
+        if (messageContext.xmpp !== null) {
+            messageContext.xmpp.stop()
+            messageContext.xmpp = null
+            console.log("----------------------xmpp---stop------------------")
+        }
+
+
+    } catch (e) {
+        messageContext.xmpp = null
+        console.log(e)
+        console.log("----------------------xmpp---stop---error---------------")
     }
 
-    xmpp.on("error", (err) => {
-        console.error(err);
-        //xmpp.stop()
-        console.log("----------------xmpp---error---------------------");
-    });
 
-    await xmpp.start()
-    messageContext.xmpp = xmpp
 }
 
 
@@ -173,29 +242,38 @@ export function isLoggedIn(user_token) {
 }
 
 
-export  function isXmppNotNull(messageContext, user_id, password) {
+export function isXmppNotNull(messageContext, user_id, user_token, password) {
 
-    if (messageContext.xmpp !== null) {
-        return true
-    } else {
-        initializeXmpp(messageContext, user_id, password)
-        return false
+    if (isLoggedIn(user_token)) {
 
+        if (messageContext.xmpp !== null) {
+
+            
+            console.log("---------------------- messageContext.xmpp---is-xmpp-not--null---------------")
+            return true
+        } else {
+            initializeXmpp(messageContext, user_id, password)
+            console.log("---------initializing------------- messageContext.xmpp---is-xmpp-not--null---------------")
+            return false
+        }
     }
 }
 
-export function isVideoCallHandlePluged(sessionContext, videoCallContext, user_id) {
+export function isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token) {
+    if (isLoggedIn(user_token)) {
+        if ((sessionContext.session !== null) || (videoCallContext.videohandle !== null)) {
+            return true
+        } else {
+            //start new alltogether
+            initializeVideoCallHandleWithNewSession(sessionContext, videoCallContext, user_id)
+            return false
 
-    if ((sessionContext.session !== null) || (videoCallContext.videohandle !== null)) {
-        return true
-    } else {
-        initializeVideoCallHandleWithNewSession(sessionContext, videoCallContext, user_id)
-        return false
-
+        }
     }
 
 }
 
-export function isSessionDestroyed() {
-
+export function isSessionDestroyed(sessionContext, videoCallContext, user_id, user_token) {
+    if (isLoggedIn(user_token)) {
+    }
 }

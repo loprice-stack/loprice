@@ -20,11 +20,11 @@ export default function GroupContacts() {
     const dispatch = useAppDispatch();
     const { contacts, contact_type_openswitch, contact_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
-    const { user_id, password} = useAppSelector(state => state.account.user)
+    const {user_id, user_token, password} = useAppSelector(state => state.account.user)
     //const [isloading, setIsloading] = useState(false)
 
     useEffect(() => {
-         loadContacts(contact_type_openswitch, messageContext, user_id, password)
+       loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
     }, [])
 
 
@@ -97,7 +97,7 @@ export default function GroupContacts() {
                                 cursor="pointer"
                                 onPress={() => {
                                     deleteContacts(messageContext.xmpp, user_id, user_idd)
-                                    loadContacts(contact_type_openswitch, messageContext, user_id, password)
+                                    loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
                                     console.log("deleted succcesssfullly")
                                 }}
                                 key="delete">
@@ -144,7 +144,7 @@ export default function GroupContacts() {
                         p="$3" gap="$4" items="center">
                         <Text >List is empty</Text>
                         <RefreshCcw
-                            onPress={() =>  loadContacts(contact_type_openswitch, messageContext, user_id, password)}
+                            onPress={() => loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)}
                             cursor="pointer" color={'$accent6'} />
                     </XStack>
                 </YStack>
