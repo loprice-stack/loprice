@@ -1,5 +1,5 @@
 import {  X } from '@tamagui/lucide-icons-2'
-import { setAddressDialogOpen, setFullnameDialogOpen, updateAddress, updateFirstname} from 'components/account/accountSlice';
+import { setFullnameDialogOpen, setTinDialogOpen, updateFirstname, updateTin} from 'components/account/info/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
@@ -15,7 +15,7 @@ import {
 
 
 
-export function AddressEditDialog() {
+export function TinEditDialog() {
 
     const dispatch = useAppDispatch();
     const userinfo = useAppSelector(state => state.account.userinfo)
@@ -23,7 +23,7 @@ export function AddressEditDialog() {
     return (
         <Dialog
             modal
-            open={userinfo.address_d_open}
+            open={userinfo.tin_d_open}
             onOpenChange={undefined}
         >
             <Adapt
@@ -82,15 +82,15 @@ export function AddressEditDialog() {
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
                         gap="$4"
                     >
-                        <Dialog.Title>Edit address</Dialog.Title>
+                        <Dialog.Title>Edit Tin</Dialog.Title>
                         <Dialog.Description>
-                            Make changes to your address. Click save when you're done.
+                            Make changes to your tin. Click save when you're done.
                         </Dialog.Description>
                         <Fieldset gap="$4" horizontal>
                             <Label width={100} htmlFor="fname">
-                                Address
+                                Tin
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateAddress(text))} flex={1} id="fname" />
+                            <Input onChangeText={(text) => dispatch(updateTin(text))} flex={1} id="fname" />
                         </Fieldset>
                         <XStack self="flex-end" gap="$4">
                             <Button theme="accent" aria-label="Close">
@@ -98,7 +98,7 @@ export function AddressEditDialog() {
                             </Button>
                         </XStack>
                         <Unspaced>
-                            <Button onPress={() => dispatch(setAddressDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
+                            <Button onPress={() => dispatch(setTinDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
                         </Unspaced>
                     </Dialog.Content>
                 </Dialog.FocusScope>

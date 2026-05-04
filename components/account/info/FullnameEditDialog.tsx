@@ -1,5 +1,6 @@
-import {  X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, setTinDialogOpen, updateFirstname, updateTin} from 'components/account/accountSlice';
+import { ChevronDown, X } from '@tamagui/lucide-icons-2'
+import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'components/account/info/accountSlice';
+import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
@@ -8,14 +9,19 @@ import {
     Fieldset,
     Input,
     Label,
+    Paragraph,
+    Select,
     Sheet,
+    TooltipSimple,
     Unspaced,
+    View,
+    XGroup,
     XStack,
 } from 'tamagui'
 
 
 
-export function TinEditDialog() {
+export function FullnameEditDialog() {
 
     const dispatch = useAppDispatch();
     const userinfo = useAppSelector(state => state.account.userinfo)
@@ -23,7 +29,7 @@ export function TinEditDialog() {
     return (
         <Dialog
             modal
-            open={userinfo.tin_d_open}
+            open={userinfo.fullname_d_open}
             onOpenChange={undefined}
         >
             <Adapt
@@ -50,6 +56,8 @@ export function TinEditDialog() {
                     />
                 </Sheet>
             </Adapt>
+
+
             <Dialog.Portal>
                 <Dialog.Overlay
                     bg="$background"
@@ -67,6 +75,7 @@ export function TinEditDialog() {
                     enterStyle={{ opacity: 0 }}
                     exitStyle={{ opacity: 0 }}
                 />
+
                 <Dialog.FocusScope focusOnIdle>
                     <Dialog.Content
                         transition={[
@@ -82,23 +91,44 @@ export function TinEditDialog() {
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
                         gap="$4"
                     >
-                        <Dialog.Title>Edit Tin</Dialog.Title>
+                        <Dialog.Title>Edit full name</Dialog.Title>
                         <Dialog.Description>
-                            Make changes to your tin. Click save when you're done.
+                            Make changes to your names. Click save when you're done.
                         </Dialog.Description>
+
                         <Fieldset gap="$4" horizontal>
                             <Label width={100} htmlFor="fname">
-                                Tin
+                                First name
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateTin(text))} flex={1} id="fname" />
+                            <Input onChangeText={(text) => dispatch(updateFirstname(text))} flex={1} id="fname"  />
                         </Fieldset>
+
+                        <Fieldset gap="$4" horizontal>
+                            <Label width={100} htmlFor="sname">
+                                Second name
+                            </Label>
+                            <Input onChangeText={(text) => dispatch(updatesecondname(text))} flex={1} id="sname"  />
+                        </Fieldset>
+
+                        <Fieldset gap="$4" horizontal>
+                            <Label width={100} htmlFor="lname">
+                                Last name
+                            </Label>
+                            <Input onChangeText={(text) => dispatch(updateLastname(text))} flex={1} id="lname"  />
+                        </Fieldset>
+
                         <XStack self="flex-end" gap="$4">
+
                             <Button theme="accent" aria-label="Close">
                                 Save changes
                             </Button>
+
                         </XStack>
+
                         <Unspaced>
-                            <Button onPress={() => dispatch(setTinDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
+
+                            <Button onPress={() => dispatch(setFullnameDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
+
                         </Unspaced>
                     </Dialog.Content>
                 </Dialog.FocusScope>

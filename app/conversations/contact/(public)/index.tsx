@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Button,
   Separator,Text,
   useWindowDimensions,
 } from 'tamagui'
@@ -9,16 +10,18 @@ import Contents400_2 from 'components/Contents400_2'
 import { Stack, useGlobalSearchParams, useLocalSearchParams } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch } from 'store/redux/store'
-import UserInfoCard from 'components/account/UserInfoCard'
-import { FullnameEditDialog } from 'components/account/FullnameEditDialog'
-import { GenderAgeEditDialogy } from 'components/account/GenderAgeEditDialogy'
-import { NationalityEditDialog } from 'components/account/NationalityEditDialog'
-import { TinEditDialog } from 'components/account/TinEditDialog'
-import { ContactsEditDialog } from 'components/account/ContactsEditDialog'
-import { AddressEditDialog } from 'components/account/AddressEditDialog'
-import { PaymentsAccountEditDialog } from 'components/account/PaymentsAccountEditDialog'
-import UserInfoCard2 from 'components/account/UserInfoCard2'
-import { ProfilePhotoEditorDialog } from 'components/account/ProfilePhotoEditorDialog'
+import UserInfoCard from 'components/account/info/UserInfoCard'
+import { FullnameEditDialog } from 'components/account/info/FullnameEditDialog'
+import { GenderAgeEditDialogy } from 'components/account/info/GenderAgeEditDialogy'
+import { NationalityEditDialog } from 'components/account/info/NationalityEditDialog'
+import { TinEditDialog } from 'components/account/info/TinEditDialog'
+import { ContactsEditDialog } from 'components/account/info/ContactsEditDialog'
+import { AddressEditDialog } from 'components/account/info/AddressEditDialog'
+import { PaymentsAccountEditDialog } from 'components/account/info/PaymentsAccountEditDialog'
+import UserInfoCard2 from 'components/account/info/UserInfoCard2'
+import { ProfilePhotoEditorDialog } from 'components/account/info/ProfilePhotoEditorDialog'
+import PublicContactProfile from 'components/conversations/contacts/public/PublicContactProfile'
+import PublicContactProfileActions from 'components/conversations/contacts/public/PublicContactProfileActions'
 
 
 export default function UserId() {
@@ -33,24 +36,16 @@ export default function UserId() {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: Platform.OS !== 'web' ? 40 : undefined}}>
-        <Stack.Screen options={{ title: "Info", headerShown: true }} />
-        
+        <Stack.Screen options={{ title: user_id, headerShown: true }} />
+
         <Contents800_2_flexdirection>
 
-          <Contents400_2>
-            <ProfilePhotoEditorDialog/>
-            <FullnameEditDialog/>
-            <GenderAgeEditDialogy/>
-            <UserInfoCard />
-          </Contents400_2>
+          <Contents400>
+            <PublicContactProfile />
+          </Contents400>
           <Separator style={{display: Platform.OS !== 'web' ? 'none' : 'flex'}} vertical={width < 600 ? false : true} my={15} gap={'$8'} />
           <Contents400>
-            <NationalityEditDialog/>
-            <TinEditDialog/>
-            <ContactsEditDialog/>
-            <AddressEditDialog/>
-            <PaymentsAccountEditDialog/>
-            <UserInfoCard2 />
+            <PublicContactProfileActions />
           </Contents400>
         </Contents800_2_flexdirection>
       </View>

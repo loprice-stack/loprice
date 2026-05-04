@@ -1,26 +1,29 @@
-import { X } from '@tamagui/lucide-icons-2'
-import { setProfilePhotoEditDialogOpen} from 'components/account/accountSlice';
+import {  X } from '@tamagui/lucide-icons-2'
+import { setFullnameDialogOpen, setNationalityDialogOpen, updateFirstname, updateNationality} from 'components/account/info/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
     Button,
     Dialog,
     Fieldset,
+    Input,
+    Label,
     Sheet,
     Unspaced,
+    XStack,
 } from 'tamagui'
-import ProfilePhotoCard from './ProfilePhotoCard';
 
 
-export function ProfilePhotoEditorDialog() {
+
+export function NationalityEditDialog() {
 
     const dispatch = useAppDispatch();
-    const user = useAppSelector(state => state.account.user)
+    const userinfo = useAppSelector(state => state.account.userinfo)
 
     return (
         <Dialog
             modal
-            open={user.profileimage_d_open}
+            open={userinfo.nationality_d_open}
             onOpenChange={undefined}
         >
             <Adapt
@@ -79,15 +82,23 @@ export function ProfilePhotoEditorDialog() {
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
                         gap="$4"
                     >
-                        <Dialog.Title>Upload  photo</Dialog.Title>
+                        <Dialog.Title>Edit nationality</Dialog.Title>
                         <Dialog.Description>
-                            Make changes to your profile photo.
+                            Make changes to your nationality. Click save when you're done.
                         </Dialog.Description>
                         <Fieldset gap="$4" horizontal>
-                            <ProfilePhotoCard/>
+                            <Label width={100} htmlFor="fname">
+                                Nationality
+                            </Label>
+                            <Input onChangeText={(text) => dispatch(updateNationality(text))} flex={1} id="fname" />
                         </Fieldset>
+                        <XStack self="flex-end" gap="$4">
+                            <Button theme="accent" aria-label="Close">
+                                Save changes
+                            </Button>
+                        </XStack>
                         <Unspaced>
-                            <Button onPress={() => dispatch(setProfilePhotoEditDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
+                            <Button onPress={() => dispatch(setNationalityDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
                         </Unspaced>
                     </Dialog.Content>
                 </Dialog.FocusScope>

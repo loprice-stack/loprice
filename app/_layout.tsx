@@ -11,7 +11,7 @@ import { useTheme } from 'tamagui'
 import { Provider } from 'react-redux'
 import { store } from 'store/redux/store'
 import CallAlertDialog from 'components/conversations/calls/CallAlertDialogy'
-import LoginCreateAccountDiAlert from 'components/account/AccountAlertDialogy'
+import LoginCreateAccountDiAlert from 'components/account/info/AccountAlertDialogy'
 import 'react-native-gesture-handler';
 
 

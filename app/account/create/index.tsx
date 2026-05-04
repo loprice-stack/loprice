@@ -1,6 +1,3 @@
-import { HorizontalTabs } from 'components/listings/HorizontalTabs'
-
-import { VerticalTabs } from 'components/listings/VerticalTabs '
 import React from 'react'
 import {
   Button,
@@ -17,26 +14,22 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Link, Stack, useRouter } from 'expo-router'
-import Contents800 from 'components/Contents800'
+import { Stack, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { jidAsStringOf } from 'utils/utility'
-import { axio2, axio2_api3 } from 'client/axio/axios'
+import { axio2_api3 } from 'client/axio/axios'
 import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
-import { updateEmail, updatePassword, updateUserId } from 'components/account/accountSlice'
+import { updateEmail, updatePassword, updateUserId } from 'components/account/info/accountSlice'
 
 
 
 
 export default function CreateAccount() {
   const router = useRouter()
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const { width, height } = useWindowDimensions();
   const [isloading, setIsloading] = React.useState(false)
-  //const [username, setUsername] = React.useState("")
-  //const [password, setPassword] = React.useState("")
-  //const [email, setEmail] = React.useState("")
   const [isopen, setIsopen] = React.useState(false)
   const [errorm, setErrorm] = React.useState("")
   const { user_id, email, password } = useAppSelector(state => state.account.user)
@@ -61,7 +54,7 @@ export default function CreateAccount() {
 
     let jid = await jidAsStringOf(user_id)
     dispatch(updateUserId(jid))
-     setIsloading(true)
+    setIsloading(true)
     axio2_api3(LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY)
       .post("/user2/",
         {
@@ -83,9 +76,9 @@ export default function CreateAccount() {
         if (message) {
           if (message.includes("User created successfully")) {
             router.navigate({
-            pathname: '/account/login',
-            params: { _username: user_id, _password: password , from: 'signup_ui'}
-          })
+              pathname: '/account/login',
+              params: { _username: user_id, _password: password, from: 'signup_ui' }
+            })
           } else {
             setErrorm(response.data.message)
             setIsopen(true)
@@ -108,7 +101,7 @@ export default function CreateAccount() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "Create account", headerShown: true }} />
-                <AlertDialog open={isopen} onOpenChange={() => setIsopen(false)}>
+        <AlertDialog open={isopen} onOpenChange={() => setIsopen(false)}>
           <AlertDialog.Portal>
             <AlertDialog.Overlay
               key="overlay"
@@ -152,13 +145,13 @@ export default function CreateAccount() {
             </AlertDialog.Content>
           </AlertDialog.Portal>
         </AlertDialog>
-        
+
         <Contents800_2_flexdirection>
           <Contents400>
             <View style={{ width: width < 600 ? width : 400 }}>
-              <Form 
-               onSubmit={() => create()}
-              self={'center'} width={350} gap={'$4'}>
+              <Form
+                onSubmit={() => create()}
+                self={'center'} width={350} gap={'$4'}>
                 <Label width={400} htmlFor="name">
                   <H5>Create new account</H5>
                 </Label>

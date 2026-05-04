@@ -1,4 +1,4 @@
-import AccountCard from "components/account/AccountCard";
+import AccountCard from "components/account/info/AccountCard";
 import Contents400_2_flex from "components/Contents400_2_flex";
 import Contents800 from "components/Contents800";
 import { Stack } from "expo-router";
@@ -9,7 +9,6 @@ export default function SearchStreams() {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Stack.Screen options={{ title: "Search", headerShown: true }} />
-
             <Contents800>
                 <Contents400_2_flex>
                     <AccountCard

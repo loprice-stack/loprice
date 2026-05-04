@@ -1,5 +1,5 @@
-import {  X } from '@tamagui/lucide-icons-2'
-import { setContactPDialogOpen, setFullnameDialogOpen, updateContactP, updateFirstname} from 'components/account/accountSlice';
+import { X } from '@tamagui/lucide-icons-2'
+import { setFullnameDialogOpen, setPaymentsAccountDialogOpen, updateAccountName, updateAccountNumber, updateFirstname } from 'components/account/info/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
@@ -15,7 +15,7 @@ import {
 
 
 
-export function ContactsEditDialog() {
+export function PaymentsAccountEditDialog() {
 
     const dispatch = useAppDispatch();
     const userinfo = useAppSelector(state => state.account.userinfo)
@@ -23,7 +23,7 @@ export function ContactsEditDialog() {
     return (
         <Dialog
             modal
-            open={userinfo.contactp_d_open}
+            open={userinfo.paymentacc_d_open}
             onOpenChange={undefined}
         >
             <Adapt
@@ -82,15 +82,21 @@ export function ContactsEditDialog() {
                         exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
                         gap="$4"
                     >
-                        <Dialog.Title>Edit phone conctat</Dialog.Title>
+                        <Dialog.Title>Edit payments account</Dialog.Title>
                         <Dialog.Description>
-                            Make changes to your phone contact. Click save when you're done.
+                            Make changes to your payments account. Click save when you're done.
                         </Dialog.Description>
                         <Fieldset gap="$4" horizontal>
                             <Label width={100} htmlFor="fname">
-                                Phone
+                                Name
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateContactP(text))} flex={1} id="fname" />
+                            <Input onChangeText={(text) => dispatch(updateAccountName(text))} flex={1} id="fname" />
+                        </Fieldset>
+                        <Fieldset gap="$4" horizontal>
+                            <Label width={100} htmlFor="fname">
+                                Number
+                            </Label>
+                            <Input onChangeText={(text) => dispatch(updateAccountNumber(text))} flex={1} id="fname" />
                         </Fieldset>
                         <XStack self="flex-end" gap="$4">
                             <Button theme="accent" aria-label="Close">
@@ -98,7 +104,7 @@ export function ContactsEditDialog() {
                             </Button>
                         </XStack>
                         <Unspaced>
-                            <Button onPress={() => dispatch(setContactPDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
+                            <Button onPress={() => dispatch(setPaymentsAccountDialogOpen(false))} position="absolute" r="$3" size="$2" circular icon={X} />
                         </Unspaced>
                     </Dialog.Content>
                 </Dialog.FocusScope>

@@ -282,7 +282,7 @@ export default function Message() {
               }
             }}
             //@ts-ignore
-            renderActions={renderActions}
+            //renderActions={renderActions}
             //@ts-ignore
             onSend={_messages => onSend(_messages)}
             user={{

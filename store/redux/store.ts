@@ -1,11 +1,12 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
-import accountReducer from 'components/account/accountSlice'
+import accountReducer from 'components/account/info/accountSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import conversationsReducer from 'components/conversations/conversationsSlice'
 import contactsReducer from 'components/conversations/contacts/contactsSlice'
 import callsReducer from 'components/conversations/calls/callsSlice'
 import messagesReducer from 'components/conversations/messages/messagesSlice'
+import settingsReducer from 'components/settings/settingsSlice'
 import { createContext, useContext } from 'react'
 
 
@@ -17,7 +18,8 @@ export const store = configureStore({
     conversations: conversationsReducer,
     contacts: contactsReducer,
     calls: callsReducer,
-    messages: messagesReducer
+    messages: messagesReducer,
+    settings: settingsReducer
   },
 
   middleware: (getDefaultMiddleware) =>

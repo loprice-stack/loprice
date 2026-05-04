@@ -28,19 +28,19 @@ export default function Conversations() {
 
 
   return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Stack.Screen options={{ title: "Conversations", headerShown: true }} />
-    <Contents800_2_flexdirection>
-      <Contents400_2>
-        <ContactsTypeCard />
-      </Contents400_2>
-      <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
-      <Contents400_2_flex>
-        {contacts == "My contacts"
-          ? <MyContacts /> : contacts == " Loprice "
-            ? <LopriceContacts /> : <GroupContacts /> }
-      </Contents400_2_flex>
-    </Contents800_2_flexdirection>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Stack.Screen options={{ title: "Conversations", headerShown: true }} />
+      <Contents800_2_flexdirection>
+        <Contents400_2>
+          <ContactsTypeCard />
+        </Contents400_2>
+        <Separator vertical={width < 600 ? false : true} my={15} gap={'$8'} />
+        <Contents400_2_flex>
+          {contacts == "My contacts"
+            ? <MyContacts /> : contacts == " Loprice "
+              ? <LopriceContacts /> : <GroupContacts />}
+        </Contents400_2_flex>
+      </Contents800_2_flexdirection>
     </View>
   )
 }

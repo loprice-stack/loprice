@@ -33,7 +33,7 @@ import {
   RTCView,
 } from 'react-native-webrtc';
 import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
-import RegisterCallIdAlertDialogy from 'components/account/RegisterCallIdAlertDialogy';
+import RegisterCallIdAlertDialogy from 'components/account/info/RegisterCallIdAlertDialogy';
 
 
 
