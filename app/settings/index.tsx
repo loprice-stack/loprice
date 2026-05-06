@@ -1,13 +1,13 @@
 import Contents400_2_display from 'components/Contents400_2_display'
 import Contents400_3 from 'components/Contents400_3'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import AccountSettings from 'components/settings/AccountSettings'
-import CallSettings from 'components/settings/CallSettings'
-import ChatSettings from 'components/settings/ChatSettings'
-import GeneralSettings from 'components/settings/GeneralSettings'
-import ListingsSettings from 'components/settings/ListingsSettings'
+import AccountSettings from 'components/settings/account/AccountSettings'
+import CallSettings from 'components/settings/call/CallSettings'
+import ChatSettings from 'components/settings/chat/ChatSettings'
+import GeneralSettings from 'components/settings/general/GeneralSettings'
+import ListingsSettings from 'components/settings/listing/ListingsSettings'
 import SettingsTypeCard from 'components/settings/SettingsTypeCard'
-import StreamsSettings from 'components/settings/StreamsSettings'
+import StreamsSettings from 'components/settings/stream/StreamsSettings'
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import { _message, useAppSelector } from 'store/redux/store'
@@ -23,9 +23,6 @@ export default function SettingsHome() {
 
   const { width, height } = useWindowDimensions();
   const { settingstype } = useAppSelector(state => state.settings)
-
-
-
 
 
   return (

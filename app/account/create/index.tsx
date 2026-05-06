@@ -20,7 +20,7 @@ import { jidAsStringOf } from 'utils/utility'
 import { axio2_api3 } from 'client/axio/axios'
 import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
-import { updateEmail, updatePassword, updateUserId } from 'components/account/info/accountSlice'
+import { updateEmail, updatePassword, updateUserId } from 'components/account/accountSlice'
 
 
 

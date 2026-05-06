@@ -1,4 +1,4 @@
-import { updateLoginStatus, updateUserToken } from 'components/account/info/accountSlice';
+import { updateLoginStatus, updateUserToken } from 'components/account/accountSlice';
 import { Link, useRouter } from 'expo-router'
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
 import type { CardProps } from 'tamagui'

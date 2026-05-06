@@ -1,5 +1,5 @@
 import { ChevronDown, X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'components/account/info/accountSlice';
+import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'components/account/accountSlice';
 import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {

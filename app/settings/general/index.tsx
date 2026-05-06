@@ -1,5 +1,5 @@
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import GeneralSettings from 'components/settings/GeneralSettings'
+import GeneralSettings from 'components/settings/general/GeneralSettings'
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import { _message } from 'store/redux/store'

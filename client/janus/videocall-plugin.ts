@@ -15,7 +15,7 @@ import { setCallContext, setCaller, setCallErrorDialogOpen, setCallErrorMessage,
 
 import Handle from 'janode/src/handle.js';
 import { store } from 'store/redux/store';
-import { setRequireRegisterDialogOpen } from 'components/account/info/accountSlice';
+import { setRequireRegisterDialogOpen } from 'components/account/accountSlice';
 const PLUGIN_ID = 'janus.plugin.videocall';
 
 /* These are the requests defined for the Janus RecordPlay API */

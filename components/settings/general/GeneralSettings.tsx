@@ -34,8 +34,8 @@ export default function GeneralSettings() {
 
 
     return (
-        <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40, height: height }}>
-            <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
+        <View style={{ flex: 1, marginTop: width < 600 ? 2 : 40, height: height }}>
+            <ScrollView style={{ width: width < 600 ? width : 400, height: height }}>
             
                 <XStack gap={'$4'} style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
                     <Text >{settingstype}</Text>
@@ -47,7 +47,7 @@ export default function GeneralSettings() {
                     borderColor="$borderColor"
                     rounded="$4"
                     overflow="hidden"
-                    width={width < 600 ? width - 40 : 390}
+                    width={width < 600 ? width - 14 : 390}
                     size="$5"
                 >
                     <YGroup.Item>
@@ -56,7 +56,7 @@ export default function GeneralSettings() {
                             title={"Language"}
                             subTitle={"Set your language"}
 
-                            icon={Mail}
+                       
 
                         />
 
@@ -68,7 +68,7 @@ export default function GeneralSettings() {
                             title={"Themes"}
                             subTitle={"Default, Dark or Light"}
 
-                            icon={Mail}
+                        
 
                         />
 

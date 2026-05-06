@@ -1,5 +1,5 @@
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import AccountSettings from 'components/settings/AccountSettings'
+import AccountSettings from 'components/settings/account/AccountSettings'
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import { _message } from 'store/redux/store'

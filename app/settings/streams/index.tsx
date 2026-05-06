@@ -1,5 +1,5 @@
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import StreamsSettings from 'components/settings/StreamsSettings'
+import StreamsSettings from 'components/settings/stream/StreamsSettings'
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import { _message, useAppSelector } from 'store/redux/store'

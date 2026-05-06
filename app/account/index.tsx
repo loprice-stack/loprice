@@ -14,7 +14,7 @@ import { Stack, useRouter } from 'expo-router'
 import AccountCard from 'components/account/info/AccountCard'
 import Contents400_2_flex from 'components/Contents400_2_flex'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import { setProfilePhotoAlertDialogOpen } from '../../components/account/info/accountSlice'
+import { setProfilePhotoAlertDialogOpen } from '../../components/account/accountSlice'
 import { ProfilePhotoShowAlertDialog } from 'components/account/info/ProfilePhotoShowAlertDialog'
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
 import { useContext, useEffect } from 'react'
@@ -46,41 +46,7 @@ export default function Account() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
               <Stack.Screen options={{
-                title: "Account", headerShown: true, header: () => {
-                  return (
-                    <View
-                      style={{backgroundColor: '#ffff', marginTop: Platform.OS == 'web' ? undefined : 20, height: 70, alignItems: 'stretch', alignContent: 'space-between' }}
-                     
-                 
-                    >
-                      <XStack
-                        style={{ height: 70, alignSelf: 'flex-start', alignItems: 'center' }}
-                        background={"#fff"}
-                        p="$3" gap="$4" >
-
-        
-                        <Label
-                          self={'center'}
-                          htmlFor="name">The site is under constraction</Label>
-                      </XStack>
-                      <XStack
-                        style={{ height: 70, position: 'absolute', alignSelf: 'flex-end', alignItems: 'center' }}
-                        background={"#fff"}
-                        p="$3" gap="$0" >
-                        <Phone
-                          self={'center'}
-                          marginEnd={30}
-                          onPress={() => {
-                            //@ts-ignore
-                            router.navigate('/conversations/calls')
-                          }}
-                          cursor="pointer" color={'$accent6'} />
-                      </XStack>
-                    </View>
-        
-                  )
-                },
-              }} />
+                title: "Account", headerShown: true }} />
         <Contents800_2_flexdirection>
           <Contents400_2_flex>
             <Theme name="surface1">

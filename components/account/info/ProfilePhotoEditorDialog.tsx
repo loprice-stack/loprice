@@ -1,5 +1,5 @@
 import { X } from '@tamagui/lucide-icons-2'
-import { setProfilePhotoEditDialogOpen} from 'components/account/info/accountSlice';
+import { setProfilePhotoEditDialogOpen} from 'components/account/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,

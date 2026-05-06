@@ -2,7 +2,7 @@ import { Baby, ChevronRight, Moon, Plus, Star, User2 } from "@tamagui/lucide-ico
 import { Avatar, Image, ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 import Contents400_2 from "../../Contents400_2";
 import { useAppDispatch, useAppSelector } from "store/redux/store";
-import { setProfilePhotoEditDialogOpen, setFullnameDialogOpen, setGenderAgeDialogOpen, setProfilePhotoAlertDialogOpen } from "components/account/info/accountSlice";
+import { setProfilePhotoEditDialogOpen, setFullnameDialogOpen, setGenderAgeDialogOpen, setProfilePhotoAlertDialogOpen } from "components/account/accountSlice";
 
 
 export default function UserInfoCard() {

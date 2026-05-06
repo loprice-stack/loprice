@@ -2,7 +2,7 @@ import { CALL_STATE_HANGUP, CALL_STATE_INCOMMING } from 'utils/constants'
 import { useRouter } from 'expo-router'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
 import { AlertDialog, Button, useWindowDimensions, XStack, YStack } from 'tamagui'
-import { setRequireLoginDialogOpen } from './accountSlice';
+import { setRequireLoginDialogOpen } from '../accountSlice';
 
 
 export default function AccountAlertDialogy() {

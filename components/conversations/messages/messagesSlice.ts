@@ -2,17 +2,17 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 // Define the TS type for the counter slice's state
 
-export type FinObject =            {
-                count : number | undefined,
-                first : string | undefined,
-                last : string | undefined
-            }
+export type FinObject = {
+    count: number | undefined,
+    first: string | undefined,
+    last: string | undefined
+}
 
 
 export interface MessagesState {
     messages: []
     messages_isloading: boolean
-
+    message_text_size: number
     mam_fin: FinObject
 
 }
@@ -22,6 +22,7 @@ const initialState: MessagesState = {
 
     messages: [],
     messages_isloading: false,
+    message_text_size: 14,
     mam_fin: {
         count: 0,
         first: undefined,
@@ -49,7 +50,13 @@ export const messagesSlice = createSlice({
 
             //@ts-ignore
             state.messages.push(action.payload)
-            //console.log("New state is: " + state.user.user_jid)
+            //console.log("New state is: " + state.messages)
+        },
+
+        setMessagesTextSize: (state, action) => {
+
+            state.message_text_size = action.payload
+            console.log("New state callstate is: " + state.message_text_size)
         },
 
         setMessagesIsLoading: (state, action) => {
@@ -71,6 +78,7 @@ export const messagesSlice = createSlice({
 export const {
     setMessages,
     pushMessage,
+    setMessagesTextSize,
     setMessagesIsLoading,
     setMamFin
 } = messagesSlice.actions

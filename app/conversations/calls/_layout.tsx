@@ -38,7 +38,7 @@ import {
   registerGlobals,
   RTCView,
 } from 'react-native-webrtc-web-shim';
-import { setRequireLoginDialogOpen } from 'components/account/info/accountSlice';
+import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { useContext, useEffect, useState } from 'react';
 import RegisterCallIdAlertDialogy from 'components/account/info/RegisterCallIdAlertDialogy';
 import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';

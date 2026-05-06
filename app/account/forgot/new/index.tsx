@@ -22,7 +22,7 @@ import Contents800 from 'components/Contents800'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
 import { axio2, axio2_api3 } from 'client/axio/axios'
-import { updatePassword, updateUserId } from 'components/account/info/accountSlice'
+import { updatePassword, updateUserId } from 'components/account/accountSlice'
 import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
 import { jidAsStringOf } from 'utils/utility'
 

@@ -1,10 +1,15 @@
-import { ChevronRight, LayoutList, Mail, MessagesSquare, Settings, TvMinimalPlay, UserRoundCog, Video } from '@tamagui/lucide-icons-2'
-import { getContacts } from 'client/xmpp/xmlutilty'
-import Contents800 from 'components/Contents800'
-import { Stack, useRouter } from 'expo-router'
-import React, { useContext } from 'react'
-import { Platform, ScrollView, View } from 'react-native'
-import { _message, useAppDispatch, useAppSelector } from 'store/redux/store'
+import {
+    LayoutList,
+    MessagesSquare,
+    Settings,
+    TvMinimalPlay,
+    UserRoundCog,
+    Video
+} from '@tamagui/lucide-icons-2'
+import { useRouter } from 'expo-router'
+import React from 'react'
+import { Platform } from 'react-native'
+import { _message, useAppDispatch } from 'store/redux/store'
 import {
     Separator,
     useWindowDimensions,
@@ -12,7 +17,15 @@ import {
     ListItem,
 } from 'tamagui'
 import { setSettingsType } from './settingsSlice'
-import { SETTINGS_TYPE_ACCOUNT, SETTINGS_TYPE_CALLS, SETTINGS_TYPE_CHAT, SETTINGS_TYPE_GENERAL, SETTINGS_TYPE_INMAIL, SETTINGS_TYPE_LISTINGS, SETTINGS_TYPE_STREAMS } from 'utils/constants'
+import {
+    SETTINGS_TYPE_ACCOUNT,
+    SETTINGS_TYPE_CALLS,
+    SETTINGS_TYPE_CHAT,
+    SETTINGS_TYPE_GENERAL,
+    SETTINGS_TYPE_INMAIL,
+    SETTINGS_TYPE_LISTINGS,
+    SETTINGS_TYPE_STREAMS
+} from 'utils/constants'
 
 const demos = ['horizontal', 'vertical'] as const
 const demosTitle: Record<(typeof demos)[number], string> = {
@@ -31,7 +44,7 @@ export default function SettingsHome() {
 
     return (
         <YGroup
-            style={{ marginTop: Platform.OS == 'web' ? 2 : 30 }}
+            style={{ marginTop: Platform.OS == 'web' ? 2 : 20 }}
             justify={'center'}
             items={'center'}
             borderWidth={1}

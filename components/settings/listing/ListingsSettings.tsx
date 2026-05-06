@@ -13,7 +13,7 @@ import { CALL_STATE_START_CALL } from "utils/constants";
 import { getJidLocal } from "utils/utility";
 
 
-export default function CallSettings() {
+export default function ListingsSettings() {
 
     const router = useRouter();
     const { width, height } = useWindowDimensions();
@@ -34,8 +34,8 @@ export default function CallSettings() {
 
 
     return (
-        <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40, height: height }}>
-            <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
+        <View style={{ flex: 1, marginTop: width < 600 ? 2 : 40, height: height }}>
+            <ScrollView style={{ width: width < 600 ? width : 400, height: height }}>
                                <XStack gap={'$4'} style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
                     <Text >{settingstype}</Text>
                 </XStack>
@@ -46,23 +46,22 @@ export default function CallSettings() {
                     borderColor="$borderColor"
                     rounded="$4"
                     overflow="hidden"
-                    width={width < 600 ? width - 40 : 390}
+                    width={width < 600 ? width - 14 : 390}
                     size="$5"
                 >
                     <YGroup.Item>
                         <ListItem
                             gap="$3"
-                            title={"Services call"}
-                            subTitle={"Enable Loprice call services"}
+                            title={"ListingsSettings"}
+                            subTitle={"Listings Settings"}
 
-                            icon={Phone}
+                
 
                         />
-
+                 
                     </YGroup.Item>
                     <Separator gap={'$10'} />
-
-
+       
 
                 </YGroup>
             </ScrollView>

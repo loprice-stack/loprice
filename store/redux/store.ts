@@ -1,6 +1,6 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
-import accountReducer from 'components/account/info/accountSlice'
+import accountReducer from 'components/account/accountSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import conversationsReducer from 'components/conversations/conversationsSlice'
 import contactsReducer from 'components/conversations/contacts/contactsSlice'

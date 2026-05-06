@@ -1,5 +1,5 @@
 import { Badge, Barcode, Contact, Flag, Locate, Plus } from "@tamagui/lucide-icons-2";
-import { setAddressDialogOpen, setContactPDialogOpen, setFullnameDialogOpen, setNationalityDialogOpen, setPaymentsAccountDialogOpen, setTinDialogOpen } from "components/account/info/accountSlice";
+import { setAddressDialogOpen, setContactPDialogOpen, setFullnameDialogOpen, setNationalityDialogOpen, setPaymentsAccountDialogOpen, setTinDialogOpen } from "components/account/accountSlice";
 import { useAppDispatch, useAppSelector } from "store/redux/store";
 import { ListItem, Separator, useWindowDimensions, YGroup } from "tamagui";
 
@@ -7,7 +7,7 @@ export default function UserInfoCard2() {
 
     const { width, height } = useWindowDimensions();
     const dispatch = useAppDispatch();
-    const { user, enable_editing } = useAppSelector(state => state.account)
+    const { enable_editing } = useAppSelector(state => state.account)
 
     return (
         <YGroup
@@ -102,7 +102,7 @@ export default function UserInfoCard2() {
             <Separator />
             <YGroup.Item>
                 <ListItem
-                    gap="$3"
+                    gap="$3" 
                     title="Payments"
                     subTitle="Make payments to me"
                     icon={Badge}

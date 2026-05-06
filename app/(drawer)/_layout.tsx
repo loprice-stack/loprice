@@ -3,7 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Account from 'app/account';
 import Login from 'app/account/login';
 import Listings from 'app/listings/listings';
-import SettingsHome from 'app/settings/settings';
+import SettingsHome from 'app/settings';
 import Streams from 'app/streams/streams';
 import { _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
 import { useWindowDimensions } from 'tamagui';

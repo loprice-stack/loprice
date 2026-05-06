@@ -2,7 +2,7 @@ import { Baby, Badge, Barcode, ChevronRight, Contact, Flag, Locate, Moon, Plus, 
 import { Avatar, Image, ListItem, ScrollView, Separator, useWindowDimensions, View, YGroup } from "tamagui";
 
 import { useAppDispatch, useAppSelector } from "store/redux/store";
-import { setProfilePhotoEditDialogOpen, setFullnameDialogOpen, setGenderAgeDialogOpen, setProfilePhotoAlertDialogOpen, setNationalityDialogOpen, setTinDialogOpen, setContactPDialogOpen, setPaymentsAccountDialogOpen, setAddressDialogOpen } from "components/account/info/accountSlice";
+import { setProfilePhotoEditDialogOpen, setFullnameDialogOpen, setGenderAgeDialogOpen, setProfilePhotoAlertDialogOpen, setNationalityDialogOpen, setTinDialogOpen, setContactPDialogOpen, setPaymentsAccountDialogOpen, setAddressDialogOpen } from "components/account/accountSlice";
 import Contents400_2 from "components/Contents400_2";
 
 

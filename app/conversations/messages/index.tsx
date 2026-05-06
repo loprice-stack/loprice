@@ -33,8 +33,7 @@ export default function Message() {
   const dispatch = useAppDispatch();
   const { caller, remotesdp } = useAppSelector(state => state.calls)
   const { user_id, password, user_token } = useAppSelector(state => state.account.user)
-  const user = useAppSelector(state => state.account.user)
-  const { messages, messages_isloading, mam_fin, } = useAppSelector(state => state.messages)
+  const { messages, messages_isloading, mam_fin, message_text_size } = useAppSelector(state => state.messages)
   const headerHeight = useHeaderHeight()
   //const middleware = getXmppMiddleWhere(messageContext.xmpp)
 
@@ -187,7 +186,25 @@ export default function Message() {
         left: { color: 'orange' },
         right: { color: 'orange' },
       }}
-      customTextStyle={{ fontSize: 14, lineHeight: 24 }}
+      customTextStyle={{ 
+        fontSize: message_text_size == 15
+        ? 15 :message_text_size == 16 
+        ? 16 :message_text_size == 17
+        ? 17 :message_text_size == 18 
+        ? 18 :message_text_size == 19 
+        ? 19 :message_text_size == 20 
+        ? 20 : message_text_size == 21 
+        ? 21 : message_text_size == 22 
+        ? 22 : message_text_size == 23 
+        ? 23 : message_text_size == 24 
+        ? 24 : message_text_size == 25 
+        ? 25 : message_text_size == 26 
+        ? 26 : message_text_size == 27 
+        ? 27 : message_text_size == 28 
+        ? 28 : message_text_size == 29 
+        ? 29 : message_text_size == 30 
+        ? 30: 14,
+        lineHeight: 24 }}
     />
   )
 

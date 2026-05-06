@@ -4,7 +4,7 @@ import Janode from 'janode';
 import { store, useAppDispatch } from 'store/redux/store';
 const { Logger } = Janode;
 import VideoCallHandle from 'client/janus/videocall-plugin'
-import { setRequireLoginDialogOpen } from 'components/account/info/accountSlice';
+import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { getXmppClient } from 'client/xmpp/xmpp';
 import { xml } from "@xmpp/client";
 import { generateResource, getJidLocal, jidAsStringOf } from 'utils/utility';

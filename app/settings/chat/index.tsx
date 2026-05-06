@@ -1,5 +1,5 @@
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
-import ChatSettings from 'components/settings/ChatSettings'
+import ChatSettings from 'components/settings/chat/ChatSettings'
 import { Stack } from 'expo-router'
 import { View } from 'react-native'
 import { _message,  } from 'store/redux/store'

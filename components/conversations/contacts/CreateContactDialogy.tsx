@@ -1,6 +1,6 @@
 import { ChevronDown, X } from '@tamagui/lucide-icons-2'
 import { createContacts, getContacts, parseContactGroupItems, parseContactItems } from 'client/xmpp/xmlutilty';
-import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'components/account/info/accountSlice';
+import { setFullnameDialogOpen, updateFirstname, updateLastname, updatesecondname } from 'components/account/accountSlice';
 import { useContext, useState } from 'react'
 import { _message, useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
