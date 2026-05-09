@@ -60,8 +60,9 @@ export default function LopriceContacts() {
                             <Menu.Separator />
                             <Menu.Item
                                 cursor="pointer"
-                                onPress={() => {            //@ts-ignore
-                                    router.navigate('/conversations/contact/' + user_idd)
+                                onPress={() => {
+                                    //@ts-ignore
+                                    router.navigate('/conversations/contact/(public)' + '?' + 'user_id=' + user_idd)
                                 }}
                                 key="info">
                                 <Menu.ItemTitle cursor="pointer">Info</Menu.ItemTitle>

@@ -1,25 +1,26 @@
-import { updateLoginStatus, updateUserToken } from 'components/account/accountSlice';
-import { Link, useRouter } from 'expo-router'
+import {  updateUserToken } from 'components/account/accountSlice';
+import { useRouter } from 'expo-router'
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
 import type { CardProps } from 'tamagui'
 import { Text, Button, Card, H2, Paragraph, YStack, Form } from 'tamagui'
-import { ProfilePhotoShowAlertDialog } from './ProfilePhotoShowAlertDialog';
 import { stopLopriceServices } from 'client/janus/janus';
 import { useContext } from 'react';
+import { setSettingsType } from 'components/settings/settingsSlice';
+import { SETTINGS_TYPE_ACCOUNT } from 'utils/constants';
 
 export default function AccountCard(props: CardProps) {
 
     const router = useRouter();
 
     const dispatch = useAppDispatch();
-    const {user_id, user_type} = useAppSelector(state => state.account.user)
-  const sessionContext = useContext(_session)
-  const videoCallContext = useContext(_videohandle)
-  const messageContext = useContext(_message)
+    const { user_id, user_type } = useAppSelector(state => state.account.user)
+    const sessionContext = useContext(_session)
+    const videoCallContext = useContext(_videohandle)
+    const messageContext = useContext(_message)
 
-  
+
     return (
-    
+
         <Card size="$4" borderWidth={1} borderColor="$borderColor" {...props}>
             <Card.Header items={'center'} p="$4">
                 <H2>{user_type}</H2>
@@ -35,16 +36,18 @@ export default function AccountCard(props: CardProps) {
                     <Text maxW={'100%'} fontSize={14} >Info</Text>
                 </Button>
                 <Button
-                    onPress={() => router.navigate('/settings/settings')}
+                    onPress={() => {
+                        dispatch(setSettingsType(SETTINGS_TYPE_ACCOUNT))
+                        router.navigate('/settings/account')}}
                     rounded="$10">
                     <Button.Text fontSize={14} >Settings</Button.Text>
                 </Button>
                 <Form
                     onSubmit={async () => {
-              
+
                         dispatch(updateUserToken(undefined))
 
-                         stopLopriceServices(sessionContext, videoCallContext, messageContext)
+                        stopLopriceServices(sessionContext, videoCallContext, messageContext)
                     }}
                 >
                     <Form.Trigger asChild >
@@ -56,6 +59,6 @@ export default function AccountCard(props: CardProps) {
                 </Form>
             </Card.Footer>
         </Card >
-      
+
     )
 }

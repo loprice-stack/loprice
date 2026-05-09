@@ -1,11 +1,4 @@
-
-
-
-
-
-
 import { Stack } from 'expo-router';
-
 import {
   Avatar,
   Button,

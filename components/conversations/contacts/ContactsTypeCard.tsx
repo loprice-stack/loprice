@@ -1,9 +1,9 @@
-import { ChevronRight, Group, MessageSquare, Plus, RefreshCcw, X } from "@tamagui/lucide-icons-2";
-import { getContacts, parseContactGroupItems, parseContactGroups } from "client/xmpp/xmlutilty";
+import { Group, MessageSquare, Plus, RefreshCcw, X } from "@tamagui/lucide-icons-2";
+import { getContacts, parseContactGroups } from "client/xmpp/xmlutilty";
 import { changeContactTypeOpenSwitch, setContactGroupIsLoading, setCreateContactGroupDialogOpen, updateConctactGroupList, updateConctactList } from "components/conversations/contacts/contactsSlice";
 import { useContext, useEffect } from "react";
 import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
-import { YGroup, ListItem, useWindowDimensions, XStack, Text, ScrollView, Separator, YStack, Spinner } from "tamagui";
+import { YGroup, ListItem, useWindowDimensions, XStack, Text, ScrollView, Separator, Spinner } from "tamagui";
 import { CreateContactGroupDialogy } from "./CreateContactGroupDialogy";
 import { loadContacts } from "client/xmpp/xmppcontracts";
 import { isXmppNotNull } from "client/janus/janus";
@@ -16,7 +16,6 @@ export default function ContactsTypeCard() {
 
 
     const { user_id, password, user_token } = useAppSelector(state => state.account.user)
-    //const user = useAppSelector(state => state.account)
     const { groups, contact_type_openswitch, contact_group_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
 
@@ -60,8 +59,6 @@ export default function ContactsTypeCard() {
         }
 
     }
-
-
 
 
 
@@ -113,8 +110,7 @@ export default function ContactsTypeCard() {
 
 
                             }}
-                        gap="$3" icon={MessageSquare}
-                        iconAfter={ChevronRight}>
+                        gap="$3" icon={MessageSquare}>
                         My contacts
                     </ListItem>
                 </YGroup.Item>
@@ -125,7 +121,7 @@ export default function ContactsTypeCard() {
                             dispatch(updateConctactList([]))
                             dispatch(updateConctactGroupList([]))
                             loadContactsgGroups()
-                        }} gap="$3" icon={MessageSquare} iconAfter={ChevronRight}>
+                        }} gap="$3" icon={MessageSquare} >
                         Loprice
                     </ListItem>
                 </YGroup.Item>
@@ -147,8 +143,7 @@ export default function ContactsTypeCard() {
                                         console.log("Clicked " + group.name)
                                     }}
                                 gap="$3"
-                                icon={Group}
-                                iconAfter={ChevronRight}>
+                                icon={Group}>
                                 {group.name}
                             </ListItem>
                             <Separator gap={'$10'} />

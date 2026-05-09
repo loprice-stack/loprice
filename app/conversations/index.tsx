@@ -1,15 +1,10 @@
-
-
-
 import Contents400_2 from 'components/Contents400_2';
 import Contents400_2_flex from 'components/Contents400_2_flex';
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import ContactsTypeCard from 'components/conversations/contacts/ContactsTypeCard';
 import GroupContacts from 'components/conversations/contacts/GroupContacts';
 import LopriceContacts from 'components/conversations/contacts/LopriceContacts';
-import Mails from 'components/conversations/contacts/Mails';
 import MyContacts from 'components/conversations/contacts/MyContacts';
-import PublicContacts from 'components/conversations/contacts/PublicContacts';
 import { Stack } from 'expo-router';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {

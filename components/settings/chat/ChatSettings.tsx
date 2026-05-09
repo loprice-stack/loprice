@@ -36,7 +36,7 @@ export default function ChatSettings() {
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? 2 : 40, height: height }}>
             <ScrollView style={{ width: width < 600 ? width : 400, height: height }}>
-                <XStack gap={'$4'} style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
+                <XStack style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50, margin: 10 }}>
                     <Text >{settingstype}</Text>
                 </XStack>
                 <Separator gap={'$10'} />
@@ -46,7 +46,7 @@ export default function ChatSettings() {
                     borderColor="$borderColor"
                     rounded="$4"
                     overflow="hidden"
-                    width={width < 600 ? width - 14 : 390}
+                    width={width < 600 ? width - 14 : "99.2%"}
                     size="$5"
                 >
                     <YGroup.Item>
@@ -54,24 +54,18 @@ export default function ChatSettings() {
                             gap="$3"
                             title={"Text size"}
                             subTitle={"Chat messages text size"}
-
-                           
-
                         >
-                            <Slider onValueChange={(value: number[]) => dispatch(setMessagesTextSize(value))} defaultValue={[message_text_size < 14 ? 14 : message_text_size]} style={{ marginTop: 18, marginBottom: 4 }} max={30} step={1} >
+                            <Slider
+                                cursor='pointer'
+                                onValueChange={(value: number[]) => dispatch(setMessagesTextSize(value))} defaultValue={[message_text_size < 14 ? 14 : message_text_size]} style={{ marginTop: 18, marginBottom: 4 }} max={30} step={1} >
                                 <Slider.Track>
                                     <Slider.TrackActive />
                                 </Slider.Track>
                                 <Slider.Thumb theme="accent" size={20} />
-
                             </Slider>
-
                         </ListItem>
-
                     </YGroup.Item>
                     <Separator gap={'$10'} />
-
-
                 </YGroup>
             </ScrollView>
         </View>

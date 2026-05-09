@@ -50,7 +50,7 @@ export const callsSlice = createSlice({
         setCallState: (state, action) => {
 
             state.callstate = action.payload
-            console.log("New state callstate is: " + state.callstate)
+            //console.log("New state callstate is: " + state.callstate)
         },
 
         setRingerState: (state, action) => {
@@ -95,7 +95,7 @@ export const callsSlice = createSlice({
 
         setCallContext: (state, action) => {
             state.callcontext = action.payload
-            console.log("New state callcontext is: " + state.callcontext)
+            //console.log("New state callcontext is: " + state.callcontext)
         },
 
 

@@ -1,6 +1,3 @@
-import { HorizontalTabs } from 'components/listings/HorizontalTabs'
-
-import { VerticalTabs } from 'components/listings/VerticalTabs '
 import React from 'react'
 import {
   Button,
@@ -17,14 +14,13 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Link, Stack, useRouter } from 'expo-router'
-import Contents800 from 'components/Contents800'
+import { Stack, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
 import { updateEmail, updatePassword, updateUserId } from 'components/account/accountSlice'
 import { jidAsStringOf } from 'utils/utility'
 import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
-import { axio2, axio2_api3 } from 'client/axio/axios'
+import { axio2_api3 } from 'client/axio/axios'
 
 
 
@@ -66,7 +62,6 @@ export default function ResetPasswordMail() {
           password: password,
         }, {})
       .then((response) => {
-
         const message: any = response.data.message;
         if (message) {
           if (message.includes("User reset successfully")) {

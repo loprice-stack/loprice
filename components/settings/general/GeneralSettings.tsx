@@ -1,16 +1,8 @@
-import { Plus, RefreshCcw, Phone, MessageSquare, Delete, Mail } from "@tamagui/lucide-icons-2";
-import { loadContacts } from "client/xmpp/xmppcontracts";
-import { setCallState, setCaller } from "components/conversations/calls/callsSlice";
-import { setCreateContactDialogOpen, ContactsObject } from "components/conversations/contacts/contactsSlice";
-import { CreateContactDialogy } from "components/conversations/contacts/CreateContactDialogy";
-import { setMessages } from "components/conversations/messages/messagesSlice";
 import { useRouter } from "expo-router";
 import { useContext, useEffect } from "react";
 import { useWindowDimensions, View, ScrollView } from "react-native";
 import { useAppDispatch, useAppSelector, _message } from "store/redux/store";
-import { XStack, Separator, YStack, Spinner, YGroup, ListItem, Avatar, Text } from "tamagui";
-import { CALL_STATE_START_CALL } from "utils/constants";
-import { getJidLocal } from "utils/utility";
+import { XStack, Separator, YGroup, ListItem, Text } from "tamagui";
 
 
 export default function GeneralSettings() {
@@ -30,14 +22,10 @@ export default function GeneralSettings() {
 
 
 
-
-
-
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? 2 : 40, height: height }}>
             <ScrollView style={{ width: width < 600 ? width : 400, height: height }}>
-            
-                <XStack gap={'$4'} style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
+                <XStack style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50, margin: 10 }}>
                     <Text >{settingstype}</Text>
                 </XStack>
                 <Separator gap={'$10'} />
@@ -47,7 +35,7 @@ export default function GeneralSettings() {
                     borderColor="$borderColor"
                     rounded="$4"
                     overflow="hidden"
-                    width={width < 600 ? width - 14 : 390}
+                    width={width < 600 ? width - 14 : "99.2%"}
                     size="$5"
                 >
                     <YGroup.Item>
@@ -55,11 +43,8 @@ export default function GeneralSettings() {
                             gap="$3"
                             title={"Language"}
                             subTitle={"Set your language"}
-
-                       
-
+                            cursor='pointer'
                         />
-
                     </YGroup.Item>
                     <Separator gap={'$10'} />
                     <YGroup.Item>
@@ -67,15 +52,10 @@ export default function GeneralSettings() {
                             gap="$3"
                             title={"Themes"}
                             subTitle={"Default, Dark or Light"}
-
-                        
-
+                            cursor='pointer'
                         />
-
                     </YGroup.Item>
                     <Separator gap={'$10'} />
-
-
                 </YGroup>
             </ScrollView>
         </View>

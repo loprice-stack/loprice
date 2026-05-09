@@ -1,5 +1,5 @@
 import { X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, setPaymentsAccountDialogOpen, updateAccountName, updateAccountNumber, updateFirstname } from 'components/account/accountSlice';
+import { setPaymentsAccountDialogOpen, updateAccountName, updateAccountNumber } from 'components/account/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
@@ -18,12 +18,12 @@ import {
 export function PaymentsAccountEditDialog() {
 
     const dispatch = useAppDispatch();
-    const userinfo = useAppSelector(state => state.account.userinfo)
+    const { paymentacc_d_open, acname, acnumber} = useAppSelector(state => state.account.userinfo)
 
     return (
         <Dialog
             modal
-            open={userinfo.paymentacc_d_open}
+            open={paymentacc_d_open}
             onOpenChange={undefined}
         >
             <Adapt
@@ -90,13 +90,13 @@ export function PaymentsAccountEditDialog() {
                             <Label width={100} htmlFor="fname">
                                 Name
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateAccountName(text))} flex={1} id="fname" />
+                            <Input placeholder={acname} onChangeText={(text) => dispatch(updateAccountName(text))} flex={1} id="fname" />
                         </Fieldset>
                         <Fieldset gap="$4" horizontal>
                             <Label width={100} htmlFor="fname">
                                 Number
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateAccountNumber(text))} flex={1} id="fname" />
+                            <Input placeholder={acnumber}  onChangeText={(text) => dispatch(updateAccountNumber(text))} flex={1} id="fname" />
                         </Fieldset>
                         <XStack self="flex-end" gap="$4">
                             <Button theme="accent" aria-label="Close">

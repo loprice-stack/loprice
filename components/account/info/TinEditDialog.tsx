@@ -1,5 +1,6 @@
-import {  X } from '@tamagui/lucide-icons-2'
-import { setFullnameDialogOpen, setTinDialogOpen, updateFirstname, updateTin} from 'components/account/accountSlice';
+import { X } from '@tamagui/lucide-icons-2'
+import { axio2 } from 'client/axio/axios';
+import { setTinDialogOpen, updateTin } from 'components/account/accountSlice';
 import { useAppDispatch, useAppSelector } from 'store/redux/store';
 import {
     Adapt,
@@ -19,6 +20,116 @@ export function TinEditDialog() {
 
     const dispatch = useAppDispatch();
     const userinfo = useAppSelector(state => state.account.userinfo)
+    const { user_id,  user_token } = useAppSelector(state => state.account.user)
+    const {
+        //full name
+        firstname,
+        secondname,
+        lastname,
+        fullname_d_open,
+        //gender and age
+        gender,
+        age,
+        genderage_d_open,
+        //nationality
+        nationality,
+        national_id,
+        nationality_d_open,
+        //tin
+        tin,
+        tin_d_open,
+        //contactp
+        contactp,
+        contactp_d_open,
+        //address
+        address,
+        address_d_open,
+        //payments
+        acname,
+        acnumber,
+        paymentacc_d_open,
+        //optional
+        religion,
+        has_family,
+        family_member,
+        earning,
+        country,
+        region,
+        district,
+        count,
+        ward,
+        places
+
+    } = useAppSelector(state => state.account.userinfo)
+
+    const update = async () => {
+
+
+
+
+        //@ts-ignore
+        axio2(user_token)
+            .post("/update/info/columns/",
+                {
+                    user_id: user_id,
+                    //full name
+                    first_name: firstname,
+                    second_name: secondname,
+                    last_name: lastname,
+                    //gender and age
+                    gender: gender,
+                    age: age,
+                    //nationality
+                    nationality: nationality,
+                    national_id: national_id,
+                    //tin
+                    tin_number: tin,
+
+                    //contactp
+                    phone_number: contactp,
+
+                    //payments
+                    //acname: "LOPRICE LIMITED",
+                    //acnumber: "302010432",
+
+
+
+                    //optional
+
+                    religion: religion,
+                    has_family: has_family,
+                    family_member: family_member,
+                    earning: "",
+
+                    country: country,
+                    region: region,
+                    district: district,
+                    count: count,
+                    ward: ward,
+                    street: places, //street changed to places
+                }, {})
+            .then((response) => {
+
+                const message: any = response.data.message;
+                if (message) {
+                    if (message.includes("User created successfully")) {
+
+                    } else {
+
+                    }
+                }
+                console.log(response.data);
+                dispatch(setTinDialogOpen(false))
+            })
+            .catch((error) => {
+                console.log(error);
+                dispatch(setTinDialogOpen(false))
+                console.log(
+                    "--------------------------items error is running-------------------------------------"
+                );
+            });
+    }
+
 
     return (
         <Dialog
@@ -90,10 +201,12 @@ export function TinEditDialog() {
                             <Label width={100} htmlFor="fname">
                                 Tin
                             </Label>
-                            <Input onChangeText={(text) => dispatch(updateTin(text))} flex={1} id="fname" />
+                            <Input defaultValue={tin} onChangeText={(text) => dispatch(updateTin(text))} flex={1} id="fname" />
                         </Fieldset>
                         <XStack self="flex-end" gap="$4">
-                            <Button theme="accent" aria-label="Close">
+                            <Button
+                                onPress={update}
+                                theme="accent" aria-label="Close">
                                 Save changes
                             </Button>
                         </XStack>

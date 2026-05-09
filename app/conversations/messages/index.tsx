@@ -19,8 +19,6 @@ import { pushMessage, setMamFin, setMessages, setMessagesIsLoading } from 'compo
 import { Platform } from 'react-native';
 import React from 'react';
 import { parseFin } from 'client/xmpp/xmlutilty';
-import { isXmppNotNull } from 'client/janus/janus';
-import { getXmppMiddleWhere } from 'client/xmpp/xmpp';
 
 
 //StatusBar.setHidden(true)

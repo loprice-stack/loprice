@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import {
   Button,
   H5,
@@ -17,7 +17,7 @@ import {
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
 import Contents400_2 from 'components/Contents400_2'
-import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { updateLoginStatus, updatePassword, updateUserId } from '../../../components/account/accountSlice'
 import { accountLogin } from 'client/AxiosHttpClient'
@@ -31,8 +31,6 @@ export default function Login() {
 
   const router = useRouter()
   const { width, height } = useWindowDimensions();
-  //const [username, setUsername] = React.useState("")
-  //const [password, setPassword] = React.useState("")
   const [isloading, setIsloading] = React.useState(false)
   const [isopen, setIsopen] = React.useState(false)
   const [errorm, setErrorm] = React.useState("")
@@ -42,9 +40,6 @@ export default function Login() {
   const videoCallContext = useContext(_videohandle)
   const messageContext = useContext(_message)
   const { user_id, email, password, user_token } = useAppSelector(state => state.account.user)
-  const { _username, _password, from } = useLocalSearchParams();
-
-
 
   function login() {
 
@@ -193,7 +188,7 @@ export default function Login() {
                   </Button>
                 </Form.Trigger>
                 <Button
-                  onPress={() => router.navigate('/account/create')}
+                  onPress={() => router.navigate('/account/create_account')}
                   size="$3" variant="outlined">
                   <Text fontSize={14} >Create new account</Text>
                 </Button>

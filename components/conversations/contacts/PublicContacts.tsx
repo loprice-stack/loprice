@@ -1,4 +1,4 @@
-import {  Phone, MessageSquare } from "@tamagui/lucide-icons-2";
+import { Phone, MessageSquare } from "@tamagui/lucide-icons-2";
 import { View } from "react-native";
 import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text } from "tamagui";
 

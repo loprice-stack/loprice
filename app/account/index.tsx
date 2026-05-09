@@ -5,8 +5,6 @@ import {
   Avatar,
   YGroup,
   ListItem,
-  Label,
-  XStack,
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
@@ -17,30 +15,13 @@ import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { setProfilePhotoAlertDialogOpen } from '../../components/account/accountSlice'
 import { ProfilePhotoShowAlertDialog } from 'components/account/info/ProfilePhotoShowAlertDialog'
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
-import { useContext, useEffect } from 'react'
-import { initializeLopriceServices } from 'client/janus/janus'
-import { ArrowLeft, Phone } from '@tamagui/lucide-icons-2'
+import { useContext } from 'react'
 
 
 export default function Account() {
 
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
-  const { user_token, user_id, password } = useAppSelector(state => state.account.user)
-  const videoCallContext = useContext(_videohandle)
-  const sessionContext = useContext(_session)
-  const messageContext = useContext(_message)
-  const router = useRouter()
-
-
-
-  //useEffect(() => {
-  //  initializeLopriceServices(sessionContext, videoCallContext, messageContext, user_token, user_id, password)
-  //}, [])
-
-
-
-
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>

@@ -2,7 +2,7 @@ import { CALL_STATE_HANGUP, CALL_STATE_INCOMMING } from 'utils/constants'
 import { useRouter } from 'expo-router'
 import { _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
 import { AlertDialog, Button, useWindowDimensions, XStack, YStack } from 'tamagui'
-import { setRequireLoginDialogOpen, setRequireRegisterDialogOpen } from '../accountSlice';
+import { setRequireRegisterDialogOpen } from '../accountSlice';
 import { useContext } from 'react';
 
 

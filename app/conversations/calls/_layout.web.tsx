@@ -1,5 +1,4 @@
-import { router, Stack, useFocusEffect } from 'expo-router';
-
+import { Stack, useFocusEffect } from 'expo-router';
 import {
   Avatar,
   Button,
@@ -32,7 +31,6 @@ import {
   registerGlobals,
   RTCView,
 } from 'react-native-webrtc-web-shim';
-import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import RegisterCallIdAlertDialogy from 'components/account/info/RegisterCallIdAlertDialogy';
 import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';

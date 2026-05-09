@@ -7,6 +7,7 @@ import contactsReducer from 'components/conversations/contacts/contactsSlice'
 import callsReducer from 'components/conversations/calls/callsSlice'
 import messagesReducer from 'components/conversations/messages/messagesSlice'
 import settingsReducer from 'components/settings/settingsSlice'
+import componentsGenaeralReducer from 'components/componentsGenaeralSlice'
 import { createContext, useContext } from 'react'
 
 
@@ -19,7 +20,8 @@ export const store = configureStore({
     contacts: contactsReducer,
     calls: callsReducer,
     messages: messagesReducer,
-    settings: settingsReducer
+    settings: settingsReducer,
+    g_components: componentsGenaeralReducer
   },
 
   middleware: (getDefaultMiddleware) =>

@@ -53,7 +53,7 @@ export default function AccountAlertDialogy() {
                         </AlertDialog.Description>
                         <AlertDialog.Description>
                             Creating account is simple.
-                            Just type your name or email, create and then you have the account
+                            Just type your name or email, press create and then you have the account
                         </AlertDialog.Description>
                         <XStack gap="$3" justify="flex-end">
                             <Button
@@ -68,7 +68,7 @@ export default function AccountAlertDialogy() {
                                 onPress={
                                     //@ts-ignore
                                     () => {
-                                        router.navigate('/account/create')
+                                        router.navigate('/account/create_account')
                                         dispatch(setRequireLoginDialogOpen(false))
                                     }}
                                 theme="accent">Create account</Button>

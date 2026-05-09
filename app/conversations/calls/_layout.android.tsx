@@ -1,5 +1,4 @@
 import { Stack } from 'expo-router';
-
 import {
   Avatar,
   Button,
@@ -15,7 +14,7 @@ import { setCallContext, setCallState, setRemoteSdp } from '../../../components/
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
-import {  initializeLopriceServices, isLoggedIn, isVideoCallHandlePluged } from 'client/janus/janus';
+import {  isVideoCallHandlePluged } from 'client/janus/janus';
 
 import {
   RTCPeerConnection,

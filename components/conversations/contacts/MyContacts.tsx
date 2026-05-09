@@ -4,9 +4,9 @@ import { View } from "react-native";
 import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu, Spinner, YStack } from "tamagui";
 import { CreateContactDialogy } from "./CreateContactDialogy";
 import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
-import { ContactsObject, setContactIsLoading, setCreateContactDialogOpen, updateConctactList } from "./contactsSlice";
-import { useContext, useEffect, useState } from "react";
-import { deleteContacts, getContacts, parseContactGroupItems } from "client/xmpp/xmlutilty";
+import { ContactsObject, setCreateContactDialogOpen } from "./contactsSlice";
+import { useContext, useEffect } from "react";
+import { deleteContacts } from "client/xmpp/xmlutilty";
 import { getJidLocal } from "utils/utility";
 import { setCaller, setCallState } from "../calls/callsSlice";
 import { CALL_STATE_START_CALL } from "utils/constants";
@@ -22,14 +22,12 @@ export default function MyContacts() {
     const { contacts, contact_type_openswitch, contact_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
     const { user_id, password, user_token } = useAppSelector(state => state.account.user)
-    const {caller}= useAppSelector(state => state.calls)
-    //const [isloading, setIsloading] = useState(false)
+    const { caller } = useAppSelector(state => state.calls)
+
 
     useEffect(() => {
-        loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
+        loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
     }, [])
-
-
 
 
 
@@ -60,8 +58,9 @@ export default function MyContacts() {
                             padding={5}>
                             <Menu.Item
                                 cursor="pointer"
-                                onPress={() => {            //@ts-ignore
-                                    router.navigate('/conversations/contact/' + user_idd)
+                                onPress={() => {
+                                    //@ts-ignore
+                                    router.navigate('/conversations/contact/(public)' + '?' + 'user_id=' + user_idd)
                                 }}
                                 key="info">
                                 <Menu.ItemTitle cursor="pointer">Info</Menu.ItemTitle>
@@ -100,7 +99,7 @@ export default function MyContacts() {
                                 cursor="pointer"
                                 onPress={() => {
                                     deleteContacts(messageContext.xmpp, user_id, user_idd)
-                                    loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
+                                    loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
                                     console.log("deleted succcesssfullly")
                                 }}
                                 key="delete">
@@ -147,7 +146,7 @@ export default function MyContacts() {
                         p="$3" gap="$4" items="center">
                         <Text >List is empty</Text>
                         <RefreshCcw
-                            onPress={() => loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch) }
+                            onPress={() => loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)}
                             cursor="pointer" color={'$accent6'} />
                     </XStack>
                 </YStack>
@@ -196,7 +195,7 @@ export default function MyContacts() {
                                                     //@ts-ignore
                                                     router.navigate('/conversations/messages')
                                                     dispatch(setCallState(CALL_STATE_START_CALL))
-                                                    if (contact.jid !== caller){
+                                                    if (contact.jid !== caller) {
                                                         dispatch(setMessages([]))
                                                         console.log(contact.jid)
                                                         console.log(caller)
@@ -204,7 +203,7 @@ export default function MyContacts() {
                                                     }
                                                     dispatch(setCaller(contact.jid))
 
-                                                    
+
                                                 }}
                                             size={'$1'} />
 

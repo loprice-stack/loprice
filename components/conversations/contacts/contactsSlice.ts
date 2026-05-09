@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
+
 
 
 export type ContactsObject = {
@@ -60,22 +60,22 @@ export const contactsSlice = createSlice({
 
         setContactIsLoading: (state, action) => {
             state.roaster.contact_isloading = action.payload
-            console.log("New state is " + state.roaster.contact_isloading)
+            //console.log("New state is " + state.roaster.contact_isloading)
         },
 
         setContactGroupIsLoading: (state, action) => {
             state.roaster.contact_group_isloading = action.payload
-            console.log("New state is " + state.roaster.contact_group_isloading)
+            //console.log("New state is " + state.roaster.contact_group_isloading)
         },
 
         setCreateContactDialogOpen: (state, action) => {
             state.roaster.create_contact_d_open = action.payload
-            console.log("New state is " + state.roaster.create_contact_d_open)
+            //console.log("New state is " + state.roaster.create_contact_d_open)
         },
 
         setCreateContactGroupDialogOpen: (state, action) => {
             state.roaster.create_contact_group_d_open = action.payload
-            console.log("New state is " + state.roaster.create_contact_group_d_open)
+            //console.log("New state is " + state.roaster.create_contact_group_d_open)
         },
 
         updateConctactList: (state, action) => {
@@ -95,7 +95,7 @@ export const contactsSlice = createSlice({
 
         setMoreButtonsContactMenuOpen: (state, action) => {
             state.roaster.more_buttons_contact_menu_open = action.payload
-            console.log("New state is " + state.roaster.more_buttons_contact_menu_open)
+            //console.log("New state is " + state.roaster.more_buttons_contact_menu_open)
         },
 
 

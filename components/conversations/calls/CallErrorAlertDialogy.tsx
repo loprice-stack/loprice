@@ -1,16 +1,11 @@
-import { CALL_STATE_HANGUP, CALL_STATE_INCOMMING } from 'utils/constants'
-import { useRouter } from 'expo-router'
 import { _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store'
 import { AlertDialog, Button, useWindowDimensions, XStack, YStack } from 'tamagui'
-import { useContext } from 'react';
 import { setCallErrorDialogOpen } from './callsSlice';
-
 
 export default function CallErrorAlertDialogy() {
   const { width, height } = useWindowDimensions();
     const {callerror_d_open, callerror_message } = useAppSelector(state => state.calls)
     const dispatch = useAppDispatch();
-
 
     return (
         <AlertDialog  open={callerror_d_open ? true : false} >

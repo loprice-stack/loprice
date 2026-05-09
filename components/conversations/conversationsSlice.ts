@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
+
 
 type JanodeObject = null | undefined
 
@@ -20,9 +20,6 @@ const initialState: ConversationsState = {
         connection: null,
         session: null
     },
-
-
-
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -42,7 +39,6 @@ export const conversationsSlice = createSlice({
         setSession: (state, action) => {
             state.janode.session = action.payload
         },
-
 
     }
 })

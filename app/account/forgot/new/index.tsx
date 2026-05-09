@@ -5,7 +5,6 @@ import React from 'react'
 import {
   Button,
   H5,
-  Text,
   useWindowDimensions,
   Input,
   Form,
@@ -17,16 +16,11 @@ import {
 } from 'tamagui'
 import Contents400 from 'components/Contents400'
 import { KeyboardAvoidingView, Platform, View } from 'react-native'
-import { Link, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router'
-import Contents800 from 'components/Contents800'
+import { Stack, useGlobalSearchParams, useRouter } from 'expo-router'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
-import { axio2, axio2_api3 } from 'client/axio/axios'
+import { axio2 } from 'client/axio/axios'
 import { updatePassword, updateUserId } from 'components/account/accountSlice'
-import { LOPRICE_API_PRODUCTION_ENV_PUBLIC_KEY } from 'utils/constants'
-import { jidAsStringOf } from 'utils/utility'
-
-
 
 export default function NewPassword() {
   
@@ -62,7 +56,6 @@ export default function NewPassword() {
           password: password,
         }, {})
       .then((response) => {
-
         const message: any = response.data.message;
         if (message) {
           if (message.includes("User reset successfully")) {

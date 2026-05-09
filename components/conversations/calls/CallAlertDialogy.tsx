@@ -10,7 +10,6 @@ export default function CallAlertDialog() {
     const { caller, callstate, callcontext } = useAppSelector(state => state.calls)
     const dispatch = useAppDispatch();
 
-
     return (
         <AlertDialog open={callstate == CALL_STATE_INCOMMING ? (callcontext == 'call_ui' ? false : true) : false} >
 

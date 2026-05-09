@@ -2,9 +2,6 @@ import { AlertDialog, Button, XStack, YStack } from 'tamagui'
 
 export const LoginFailAlertDialog = (open: boolean, erromessage: string) => {
 
-
-
-
   return (
     <AlertDialog open={open} native>
       <AlertDialog.Portal>

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 
-type Gender = 'male' | 'female';
+type Gender = 'male' | 'female' | undefined;
 
 // Define the TS type for the counter slice's state
 export interface AccountState {
@@ -20,6 +20,8 @@ export interface AccountState {
     },
 
     userinfo: {
+        _user_id: string,
+        //required
         firstname: string
         secondname: string
         lastname: string
@@ -28,6 +30,7 @@ export interface AccountState {
         age: number
         genderage_d_open: boolean
         nationality: string
+        national_id: string
         nationality_d_open: boolean
         tin: string
         tin_d_open: boolean
@@ -38,11 +41,66 @@ export interface AccountState {
         acname: string
         acnumber: string
         paymentacc_d_open: boolean
+
+
+        //optional
+
+        religion: string
+        has_family: string
+        family_member: number
+        earning: string
+
+        country: string
+        region: string
+        district: string
+        count: string
+        ward: string
+        places: string
     },
+
+
 
     requirelogin_d_open: boolean
     requireregister_d_open: boolean
-    enable_editing: boolean
+    enable_editing: boolean,
+    user_info_isloading: boolean,
+
+    //for other user public profile
+    userinfop: {
+        user_id_: string,
+        //required
+        firstname: string
+        secondname: string
+        lastname: string
+        gender: Gender
+        age: number
+        nationality: string
+        national_id: string
+        tin: string
+        contactp: string
+
+
+        //optional
+
+        religion: string
+        has_family: string
+        family_member: number
+        earning: string
+
+        country: string
+        region: string
+        district: string
+        count: string
+        ward: string
+        places: string
+
+
+        acname: string
+        acnumber: string
+    },
+
+    public_user_id: string
+    public_user_info_isloading: boolean,
 }
 
 // Define the initial value for the slice state
@@ -61,10 +119,11 @@ const initialState: AccountState = {
     },
 
     userinfo: {
+        _user_id: "",
         //full name
-        firstname: "Loprice",
+        firstname: "",
         secondname: "",
-        lastname: "Limited",
+        lastname: "",
         fullname_d_open: false,
         //gender and age
         gender: "male",
@@ -72,6 +131,7 @@ const initialState: AccountState = {
         genderage_d_open: false,
         //nationality
         nationality: "",
+        national_id: "",
         nationality_d_open: false,
         //tin
         tin: "",
@@ -87,11 +147,71 @@ const initialState: AccountState = {
         acnumber: "",
         paymentacc_d_open: false,
 
+
+
+        //optional
+
+        religion: "",
+        has_family: "",
+        family_member: 0,
+        earning: "",
+
+        country: "",
+        region: "",
+        district: "",
+        count: "",
+        ward: "",
+        places: "",
+
     },
+
+
     requirelogin_d_open: false,
     requireregister_d_open: false,
-    enable_editing: false
+    enable_editing: false,
+    user_info_isloading: false,
 
+
+    userinfop: {
+        user_id_: "",
+        //full name
+        firstname: "",
+        secondname: "",
+        lastname: "",
+        //gender and age
+        gender: undefined,
+        age: 0,
+        //nationality
+        nationality: "",
+        national_id: "",
+        //tin
+        tin: "",
+        //contactp
+        contactp: "",
+
+
+
+        //optional
+
+        religion: "",
+        has_family: "",
+        family_member: 0,
+        earning: "",
+
+        country: "",
+        region: "",
+        district: "",
+        count: "",
+        ward: "",
+        places: "",
+
+        acname: "",
+        acnumber: "",
+
+
+    },
+    public_user_id: "private@loprice.co.tz",
+    public_user_info_isloading: false,
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -106,27 +226,27 @@ export const accountSlice = createSlice({
 
         updateLoginStatus: (state, action) => {
             state.user = action.payload
-            console.log("New state account is: " + state.user.password)
+            //console.log("New state account is: " + state.user.password)
         },
 
         updateUserId: (state, action) => {
             state.user.user_id = action.payload
-            console.log("New state account is: " + state.user.user_id)
+            //console.log("New state account is: " + state.user.user_id)
         },
 
         updateEmail: (state, action) => {
             state.user.email = action.payload
-            console.log("New state account is: " + state.user.email)
+            //console.log("New state account is: " + state.user.email)
         },
 
         updatePassword: (state, action) => {
             state.user.password = action.payload
-            console.log("New state account is: " + state.user.password)
+            //console.log("New state account is: " + state.user.password)
         },
 
         updateUserToken: (state, action) => {
             state.user.user_token = action.payload
-            console.log("New state account is: " + state.user.user_token)
+            //console.log("New state account is: " + state.user.user_token)
         },
 
 
@@ -145,15 +265,15 @@ export const accountSlice = createSlice({
         //full name
         updateFirstname: (state, action) => {
             state.userinfo.firstname = action.payload
-            console.log(state.userinfo.firstname)
+            //console.log(state.userinfo.firstname)
         },
         updatesecondname: (state, action) => {
             state.userinfo.secondname = action.payload
-            console.log(state.userinfo.secondname)
+            //console.log(state.userinfo.secondname)
         },
         updateLastname: (state, action) => {
             state.userinfo.lastname = action.payload
-            console.log(state.userinfo.lastname)
+            //console.log(state.userinfo.lastname)
         },
         setFullnameDialogOpen: (state, action) => {
             state.userinfo.fullname_d_open = action.payload
@@ -162,11 +282,11 @@ export const accountSlice = createSlice({
         //gender and age
         updateGender: (state, action) => {
             state.userinfo.gender = action.payload
-            console.log(state.userinfo.gender)
+            //console.log(state.userinfo.gender)
         },
         updateAge: (state, action) => {
             state.userinfo.age = action.payload
-            console.log(state.userinfo.age)
+            //console.log(state.userinfo.age)
         },
         setGenderAgeDialogOpen: (state, action) => {
             state.userinfo.genderage_d_open = action.payload
@@ -176,7 +296,12 @@ export const accountSlice = createSlice({
         //nationality
         updateNationality: (state, action) => {
             state.userinfo.nationality = action.payload
-            console.log(state.userinfo.nationality)
+            //console.log(state.userinfo.nationality)
+        },
+
+        updateNationalId: (state, action) => {
+            state.userinfo.national_id = action.payload
+            //console.log(state.userinfo.national_id)
         },
         setNationalityDialogOpen: (state, action) => {
             state.userinfo.nationality_d_open = action.payload
@@ -186,7 +311,7 @@ export const accountSlice = createSlice({
         //tin
         updateTin: (state, action) => {
             state.userinfo.tin = action.payload
-            console.log(state.userinfo.tin)
+            //console.log(state.userinfo.tin)
         },
         setTinDialogOpen: (state, action) => {
             state.userinfo.tin_d_open = action.payload
@@ -195,7 +320,7 @@ export const accountSlice = createSlice({
         //contact phone
         updateContactP: (state, action) => {
             state.userinfo.contactp = action.payload
-            console.log(state.userinfo.contactp)
+            //console.log(state.userinfo.contactp)
         },
         setContactPDialogOpen: (state, action) => {
             state.userinfo.contactp_d_open = action.payload
@@ -205,27 +330,62 @@ export const accountSlice = createSlice({
         //address
         updateAddress: (state, action) => {
             state.userinfo.address = action.payload
-            console.log(state.userinfo.address)
+            //console.log(state.userinfo.address)
         },
+
+        setCountry: (state, action) => {
+            state.userinfo.country = action.payload
+        },
+
+        setRegion: (state, action) => {
+            state.userinfo.region = action.payload
+        },
+
+        setCount: (state, action) => {
+            state.userinfo.count = action.payload
+        },
+
+
+        setDistrict: (state, action) => {
+            state.userinfo.district = action.payload
+        },
+
+        setWard: (state, action) => {
+            state.userinfo.ward = action.payload
+        },
+        setPlaces: (state, action) => {
+            state.userinfo.places = action.payload
+        },
+
+
+
         setAddressDialogOpen: (state, action) => {
             state.userinfo.address_d_open = action.payload
+        },
+
+
+        setUserProfileInfo: (state, action) => {
+            state.userinfo = action.payload
+            //console.log(state.userinfo)
         },
 
 
         //paymentsaccount
         updateAccountName: (state, action) => {
             state.userinfo.acname = action.payload
-            console.log(state.userinfo.acname)
+            //console.log(state.userinfo.acname)
         },
         updateAccountNumber: (state, action) => {
             state.userinfo.acnumber = action.payload
-            console.log(state.userinfo.acnumber)
+            //console.log(state.userinfo.acnumber)
         },
         setPaymentsAccountDialogOpen: (state, action) => {
             state.userinfo.paymentacc_d_open = action.payload
         },
 
-
+        setUserInfoIsLoading: (state, action) => {
+            state.user_info_isloading = action.payload
+        },
 
         ////////////////////////////////////open dialog//////////////////////////////////////
         setRequireLoginDialogOpen: (state, action) => {
@@ -240,6 +400,20 @@ export const accountSlice = createSlice({
             state.enable_editing = action.payload
         },
 
+
+        ////////////////////////////////////other user public profile////////////////////////////////
+        setUserPublicProfileInfo: (state, action) => {
+            state.userinfop = action.payload
+            //console.log(state.userinfop)
+        },
+
+        setPublicUserId: (state, action) => {
+            state.public_user_id = action.payload
+        },
+
+        setPublicUserInfoIsLoading: (state, action) => {
+            state.public_user_info_isloading = action.payload
+        },
     }
 })
 
@@ -258,12 +432,20 @@ export const {
     updateAge,
     setGenderAgeDialogOpen,
     updateNationality,
+    updateNationalId,
     setNationalityDialogOpen,
     updateTin,
     setTinDialogOpen,
     updateContactP,
     setContactPDialogOpen,
     updateAddress,
+    setCountry,
+    setRegion,
+    setCount,
+    setDistrict,
+    setWard,
+    setPlaces,
+    setUserProfileInfo,
     setAddressDialogOpen,
     updateAccountName,
     updateAccountNumber,
@@ -272,7 +454,11 @@ export const {
     setProfilePhotoAlertDialogOpen,
     setRequireLoginDialogOpen,
     setRequireRegisterDialogOpen,
-    setEditingState
+    setEditingState,
+    setUserInfoIsLoading,
+    setUserPublicProfileInfo,
+    setPublicUserId,
+    setPublicUserInfoIsLoading
 } = accountSlice.actions
 
 // Export the slice reducer for use in the store configuration

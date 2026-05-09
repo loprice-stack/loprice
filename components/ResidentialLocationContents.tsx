@@ -4,7 +4,7 @@ import { Check, ChevronDown, ChevronUp, Search } from '@tamagui/lucide-icons-2'
 import type { FontSizeTokens, SelectProps } from 'tamagui'
 import { Adapt, Label, ListItem, Select, Sheet, Theme, XStack, YGroup, YStack, getFontSize, useWindowDimensions } from 'tamagui'
 import { LinearGradient } from 'tamagui/linear-gradient'
-import Contents800_2_flexdirection_no_bckgnd from '../Contents800_2_flexdirection_no_bckgnd'
+import Contents800_2_flexdirection_no_bckgnd from './Contents800_2_flexdirection_no_bckgnd'
 import { GLOBAL_COUNTRIES, TANZANIA_REGIONS } from 'utils/constants'
 import arusha from 'assets/location/arusha.json';
 import dar_es_salaam from 'assets/location/dar_es_salaam.json';
@@ -32,6 +32,8 @@ import singida from 'assets/location/singida.json';
 import songwe from 'assets/location/songwe.json';
 import tabora from 'assets/location/tabora.json';
 import tanga from 'assets/location/tanga.json';
+import { useAppDispatch, useAppSelector } from 'store/redux/store'
+import { setDistrict, setPlaces, setRegion, setWard } from './componentsGenaeralSlice'
 
 
 
@@ -39,7 +41,8 @@ export function ResidentialLocationContents() {
 
 
   const { width, height } = useWindowDimensions();
-
+    const dispatch = useAppDispatch();
+    const { country, region, count, district, ward, places } = useAppSelector(state => state.g_components.location)
   //location list
   const [countrylist, setCountryList] = React.useState(GLOBAL_COUNTRIES);
   const [regionlist, setRegionList] = React.useState(TANZANIA_REGIONS);
@@ -49,12 +52,12 @@ export function ResidentialLocationContents() {
   const [placeslist, setPlacesList] = React.useState(TANZANIA_REGIONS);
 
   //location
-  const [country, setCountry] = React.useState<string>('Tanzania');
-  const [region, setRegion] = React.useState<string>();
-  const [district, setDistrict] = React.useState<string>();
-  const [ward, setWard] = React.useState<string>();
-  const [street, setStreet] = React.useState<string>();
-  const [places, setPlaces] = React.useState<string>();
+  //const [country, setCountry] = React.useState<string>('Tanzania');
+  //const [region, setRegion] = React.useState<string>();
+  //const [district, setDistrict] = React.useState<string>();
+  //const [ward, setWard] = React.useState<string>();
+  //const [street, setStreet] = React.useState<string>();
+  //const [places, setPlaces] = React.useState<string>();
 
   const getDistrict = (region: any) => {
     if (region.includes('ARUSHA')) {
@@ -1231,7 +1234,6 @@ export function ResidentialLocationContents() {
             }
           }
         }
-
       })
       setPlacesList(list)
     } else if (region.includes('SONGWE')) {
@@ -1249,7 +1251,6 @@ export function ResidentialLocationContents() {
             }
           }
         }
-
       })
       setPlacesList(list)
     } else if (region.includes('TABORA')) {
@@ -1267,7 +1268,6 @@ export function ResidentialLocationContents() {
             }
           }
         }
-
       })
       setPlacesList(list)
     } else if (region.includes('TANGA')) {
@@ -1315,7 +1315,7 @@ export function ResidentialLocationContents() {
             <Contents800_2_flexdirection_no_bckgnd>
               <Select
                 value={region}
-                onValueChange={(text) => { setRegion(text); getDistrict(text) }}
+                onValueChange={(text) => { dispatch(setRegion(text)); getDistrict(text) }}
               // renderValue enables SSR support by providing the label synchronously
               >
                 <Select.Trigger
@@ -1439,7 +1439,7 @@ export function ResidentialLocationContents() {
 
               <Select
                 value={district}
-                onValueChange={(text) => { setDistrict(text); getWard(region, text) }}
+                onValueChange={(text) => { dispatch(setDistrict(text)); getWard(region, text) }}
               >
                 <Select.Trigger
                   maxWidth={190}
@@ -1564,7 +1564,7 @@ export function ResidentialLocationContents() {
 
               <Select
                 value={ward}
-                onValueChange={(text) => { setWard(text); getPlaces(region, district, text) }}
+                onValueChange={(text) => { dispatch(setWard(text)); getPlaces(region, district, text) }}
               >
                 <Select.Trigger
                   maxWidth={190}

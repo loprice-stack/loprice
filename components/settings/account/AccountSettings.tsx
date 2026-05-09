@@ -70,8 +70,8 @@ export default function AccountSettings() {
 
   return (
     <View style={{ flex: 1, marginTop: width < 600 ? 2 : 40, height: height }}>
-      <ScrollView style={{ width: width < 600 ? width : 400, height: height }}>
-        <XStack gap={'$4'} style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
+      <ScrollView style={{ width: width < 600 ? width : "100%", height: height }}>
+        <XStack style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50, margin: 10 }}>
           <Text >{settingstype}</Text>
         </XStack>
         <AlertDialog open={open2} onOpenChange={() => setIsOpen(false)}>
@@ -170,7 +170,8 @@ export default function AccountSettings() {
           borderColor="$borderColor"
           rounded="$4"
           overflow="hidden"
-          width={width < 600 ? width - 14 : 390}
+          width={width < 600 ? width - 14 : "99.2%"}
+
           size="$5"
         >
           <YGroup.Item>
@@ -179,8 +180,8 @@ export default function AccountSettings() {
               gap="$3"
               title={"Recover email"}
               subTitle={"Email address to send recover password link"}
+              cursor='pointer'
 
-        
 
             />
 
@@ -191,8 +192,8 @@ export default function AccountSettings() {
               gap="$3"
               title={"Update account type"}
               subTitle={"Other account type gives you much benefits"}
+              cursor='pointer'
 
-           
 
             />
 
@@ -204,7 +205,7 @@ export default function AccountSettings() {
               title={"Delete account"}
               subTitle={"This will delete account and all data"}
               onPress={() => setIsOpen2(true)}
-          
+              cursor='pointer'
 
             />
 

@@ -9,6 +9,7 @@ import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection'
 import { useAppDispatch } from 'store/redux/store'
 import PublicContactProfile from 'components/conversations/contacts/public/PublicContactProfile'
 import PublicContactProfileActions from 'components/conversations/contacts/public/PublicContactProfileActions'
+import { setPublicUserId } from 'components/account/accountSlice'
 
 
 export default function UserId() {
@@ -16,6 +17,8 @@ export default function UserId() {
   const { user_id } = useGlobalSearchParams<{ user_id: string }>();
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
+
+  dispatch(setPublicUserId(user_id))
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>

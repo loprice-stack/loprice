@@ -5,15 +5,17 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 // Define the TS type for the counter slice's state
 export interface SettingsState {
-   settingstype: string
-
+    settingstype: string
+    is_service_call_enabled: boolean
+    language_selected: string
 
 }
 
 // Define the initial value for the slice state
 const initialState: SettingsState = {
-  settingstype: ""
-
+    settingstype: "General",
+    is_service_call_enabled: false,
+    language_selected: "english"
 
 }
 
@@ -31,14 +33,22 @@ export const settingsSlice = createSlice({
             state.settingstype = action.payload
         },
 
+        setServiceCall: (state, action) => {
+            state.is_service_call_enabled = action.payload
+        },
 
+        setLanguage: (state, action) => {
+            state.language_selected = action.payload
+        },
 
     }
 })
 
 // Export the generated action creators for use in components
 export const {
-    setSettingsType
+    setSettingsType,
+    setServiceCall,
+    setLanguage
 } = settingsSlice.actions
 
 // Export the slice reducer for use in the store configuration

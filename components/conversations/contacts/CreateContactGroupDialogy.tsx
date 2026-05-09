@@ -7,9 +7,9 @@ import { useState } from "react"
 export const CreateContactGroupDialogy = () => {
 
     const { groups, create_contact_group_d_open } = useAppSelector(state => state.contacts.roaster)
-
     const [name, setName] = useState('')
     const dispatch = useAppDispatch();
+    
     return (
         <Dialog
             modal
