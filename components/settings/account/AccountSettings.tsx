@@ -74,7 +74,7 @@ export default function AccountSettings() {
         <XStack style={{ display: width < 600 ? 'none' : 'flex', alignContent: 'center', alignItems: 'center', width: width, height: 50, margin: 10 }}>
           <Text >{settingstype}</Text>
         </XStack>
-        <AlertDialog open={open2} onOpenChange={() => setIsOpen(false)}>
+        <AlertDialog  open={open2} onOpenChange={() => setIsOpen(false)}>
           <AlertDialog.Portal>
             <AlertDialog.Overlay
               key="overlay"
@@ -103,15 +103,17 @@ export default function AccountSettings() {
               scale={1}
               opacity={1}
               y={0}
+              width={width < 600 ? width - 20 : 400}
+       
             >
               <YStack gap="$4">
                 <AlertDialog.Title>Delete your account!</AlertDialog.Title>
-                <AlertDialog.Description>
+                <AlertDialog.Description > 
                   Are you sure you want to delete {user_id}. This will also delete all your data and history
                 </AlertDialog.Description>
                 <XStack gap="$3" justify="flex-end">
 
-                  <Button onPress={() => setIsOpen2(false)} theme="accent">Cancel</Button>
+                  <Button onPress={() => setIsOpen2(false)} >Cancel</Button>
 
                   <Button onPress={() => deleteaccount()} theme='red_accent'>Delete</Button>
                 </XStack>
@@ -119,7 +121,6 @@ export default function AccountSettings() {
             </AlertDialog.Content>
           </AlertDialog.Portal>
         </AlertDialog>
-        <Separator gap={'$10'} />
         <AlertDialog open={open} onOpenChange={() => setIsOpen(false)}>
           <AlertDialog.Portal>
             <AlertDialog.Overlay
@@ -149,6 +150,7 @@ export default function AccountSettings() {
               scale={1}
               opacity={1}
               y={0}
+              width={width < 600 ? width - 20 : 400}
             >
               <YStack gap="$4">
                 <AlertDialog.Title>Response mesage!</AlertDialog.Title>

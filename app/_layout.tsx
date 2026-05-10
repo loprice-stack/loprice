@@ -12,7 +12,9 @@ import { Provider } from 'react-redux'
 import { store } from 'store/redux/store'
 import CallAlertDialog from 'components/conversations/calls/CallAlertDialogy'
 import LoginCreateAccountDiAlert from 'components/account/info/AccountAlertDialogy'
-import 'react-native-gesture-handler';
+import { GestureDetector, GestureHandlerRootView, Gesture } from 'react-native-gesture-handler'
+
+const tap = Gesture.Tap()
 
 
 export const unstable_settings = {
@@ -41,11 +43,15 @@ export default function RootLayout() {
   }
 
   return (
-    <Provider store={store}>
-      <Providers>
-        <RootLayoutNav />
-      </Providers>
-    </Provider>
+    <GestureHandlerRootView>
+      <GestureDetector gesture={tap}>
+        <Provider store={store}>
+          <Providers>
+            <RootLayoutNav />
+          </Providers>
+        </Provider>
+      </GestureDetector>
+    </GestureHandlerRootView>
   )
 }
 
@@ -74,3 +80,5 @@ function RootLayoutNav() {
     </ThemeProvider>
   )
 }
+
+

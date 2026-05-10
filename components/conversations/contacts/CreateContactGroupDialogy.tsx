@@ -92,7 +92,7 @@ export const CreateContactGroupDialogy = () => {
                                     dispatch(pushConctactGroupList(grp))
                                     dispatch(setCreateContactGroupDialogOpen(false))
                                 }}
-                                theme="accent" aria-label="Close">
+                                theme='green_accent' aria-label="Close">
                                 Create
                             </Button>
                         </XStack>

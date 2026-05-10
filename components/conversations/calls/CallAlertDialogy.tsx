@@ -1,8 +1,9 @@
-import { CALL_STATE_HANGUP, CALL_STATE_INCOMMING } from 'utils/constants'
+import { CALL_STATE_HANGUP, CALL_STATE_HANGUP_D, CALL_STATE_INCOMMING } from 'utils/constants'
 import { useRouter } from 'expo-router'
 import { useAppDispatch, useAppSelector } from 'store/redux/store'
 import { AlertDialog, Button, XStack, YStack } from 'tamagui'
 import { setCallContext, setCallState } from './callsSlice';
+import { PhoneIncoming, PhoneOff } from '@tamagui/lucide-icons-2';
 
 export default function CallAlertDialog() {
 
@@ -12,7 +13,6 @@ export default function CallAlertDialog() {
 
     return (
         <AlertDialog open={callstate == CALL_STATE_INCOMMING ? (callcontext == 'call_ui' ? false : true) : false} >
-
             <AlertDialog.Portal>
                 <AlertDialog.Overlay
                     key="overlay"
@@ -50,15 +50,24 @@ export default function CallAlertDialog() {
                         <XStack gap="$3" justify="flex-end">
                             <Button onPress={
                                 //@ts-ignore
-                                () => dispatch(setCallState(CALL_STATE_HANGUP))}
-                            >Hangup</Button>
+                                () => {
+                                    dispatch(setCallState(CALL_STATE_HANGUP_D))
+                                    dispatch(setCallContext('call_ui'))
+                                    //@ts-ignore
+                                    router.navigate('/conversations/calls')
+
+                                }}
+                                theme='red_accent'
+                            ><PhoneOff /></Button>
                             <Button
                                 onPress={
-                                    //@ts-ignore
-                                    () => {router.navigate('/conversations/calls')
+                                    
+                                    () => {
+                                        //@ts-ignore
+                                        router.navigate('/conversations/calls')
                                         dispatch(setCallContext('call_ui'))
                                     }}
-                                theme="accent">Answer</Button>
+                                theme='green_accent'><PhoneIncoming /></Button>
                         </XStack>
                     </YStack>
                 </AlertDialog.Content>

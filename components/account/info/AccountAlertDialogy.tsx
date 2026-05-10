@@ -63,7 +63,7 @@ export default function AccountAlertDialogy() {
                                         router.navigate('/account/login')
                                         dispatch(setRequireLoginDialogOpen(false))
                                     }}
-                                theme="accent">Login</Button>
+                                theme='green_accent'>Login</Button>
                             <Button
                                 onPress={
                                     //@ts-ignore
@@ -71,7 +71,7 @@ export default function AccountAlertDialogy() {
                                         router.navigate('/account/create_account')
                                         dispatch(setRequireLoginDialogOpen(false))
                                     }}
-                                theme="accent">Create account</Button>
+                                theme="green_accent">Create account</Button>
                             <Button onPress={
                                 //@ts-ignore
                                 () => dispatch(setRequireLoginDialogOpen(false))}

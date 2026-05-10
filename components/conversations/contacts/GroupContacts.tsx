@@ -1,16 +1,17 @@
 import { Phone, MessageSquare, Plus, Mail, MoreVertical, Delete, Info, RefreshCcw } from "@tamagui/lucide-icons-2";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
-import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu, Spinner, YStack } from "tamagui";
+import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu, Spinner, YStack, AlertDialog, Button } from "tamagui";
 import { CreateContactDialogy } from "./CreateContactDialogy";
 import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
 import { ContactsObject, setCreateContactDialogOpen } from "./contactsSlice";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { deleteContacts } from "client/xmpp/xmlutilty";
 import { getJidLocal } from "utils/utility";
 import { setCaller, setCallState } from "../calls/callsSlice";
 import { CALL_STATE_START_CALL } from "utils/constants";
 import { loadContacts } from "client/xmpp/xmppcontracts";
+import { setMessages } from "../messages/messagesSlice";
 
 
 export default function GroupContacts() {
@@ -20,11 +21,14 @@ export default function GroupContacts() {
     const dispatch = useAppDispatch();
     const { contacts, contact_type_openswitch, contact_isloading } = useAppSelector(state => state.contacts.roaster)
     const messageContext = useContext(_message)
-    const {user_id, user_token, password} = useAppSelector(state => state.account.user)
-    //const [isloading, setIsloading] = useState(false)
+    const { user_id, user_token, password } = useAppSelector(state => state.account.user)
+    const { caller } = useAppSelector(state => state.calls)
+    const [open, setIsOpen] = useState(false)
+    const [useriddd, setUserIddd] = useState("")
+
 
     useEffect(() => {
-       loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
+        loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
     }, [])
 
 
@@ -57,8 +61,9 @@ export default function GroupContacts() {
                             padding={5}>
                             <Menu.Item
                                 cursor="pointer"
-                                onPress={() => {            //@ts-ignore
-                                    router.navigate('/conversations/contact/' + user_idd)
+                                onPress={() => {
+                                    //@ts-ignore
+                                    router.navigate('/conversations/contact/(public)' + '?' + 'user_id=' + user_idd)
                                 }}
                                 key="info">
                                 <Menu.ItemTitle cursor="pointer">Info</Menu.ItemTitle>
@@ -76,8 +81,9 @@ export default function GroupContacts() {
                             <Menu.Separator />
                             <Menu.Item
                                 cursor="pointer"
-                                onPress={() => {            //@ts-ignore
-                                    router.navigate('/conversations/contact/' + user_idd)
+                                onPress={() => {
+                                    //@ts-ignore
+                                    router.navigate('/conversations/contact/(public)' + '?' + 'user_id=' + user_idd)
                                 }}
                                 key="mail">
                                 <Menu.ItemTitle cursor="pointer">Mail</Menu.ItemTitle>
@@ -96,9 +102,8 @@ export default function GroupContacts() {
                             <Menu.Item
                                 cursor="pointer"
                                 onPress={() => {
-                                    deleteContacts(messageContext.xmpp, user_id, user_idd)
-                                    loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)
-                                    console.log("deleted succcesssfullly")
+                                    setIsOpen(true)
+                                    setUserIddd(user_idd)
                                 }}
                                 key="delete">
                                 <Menu.ItemTitle cursor="pointer" color="red">Delete</Menu.ItemTitle>
@@ -125,6 +130,57 @@ export default function GroupContacts() {
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40, height: height }}>
             <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
+                <AlertDialog open={open} onOpenChange={() => setIsOpen(false)}>
+                    <AlertDialog.Portal>
+                        <AlertDialog.Overlay
+                            key="overlay"
+                            //@ts-ignore
+                            transition="quick"
+                            opacity={0.5}
+                            backgroundColor="$background"
+                            enterStyle={{ opacity: 0 }}
+                            exitStyle={{ opacity: 0 }}
+                        />
+                        <AlertDialog.Content
+                            elevate
+                            key="content"
+                            transition={[
+                                //@ts-ignore
+                                'quick',
+                                {
+                                    opacity: {
+                                        overshootClamping: true,
+                                    },
+                                },
+                            ]}
+                            enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
+                            exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
+                            x={0}
+                            scale={1}
+                            opacity={1}
+                            y={0}
+                            width={width < 600 ? width - 20 : 400}
+
+                        >
+                            <YStack gap="$4">
+                                <AlertDialog.Title>Delete contact!</AlertDialog.Title>
+                                <AlertDialog.Description >
+                                    Are you sure you want to delete {useriddd} contact. This will also unsubscribe to the contact.
+                                </AlertDialog.Description>
+                                <XStack gap="$3" justify="flex-end">
+
+                                    <Button onPress={() => setIsOpen(false)} >Cancel</Button>
+
+                                    <Button onPress={() => {
+                                        deleteContacts(messageContext.xmpp, user_id, useriddd)
+                                        loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
+                                        setIsOpen(false)
+                                    }} theme='red_accent'>Delete</Button>
+                                </XStack>
+                            </YStack>
+                        </AlertDialog.Content>
+                    </AlertDialog.Portal>
+                </AlertDialog>
                 <CreateContactDialogy />
                 <XStack gap={'$4'} style={{ alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
                     <Text >{contact_type_openswitch}</Text>
@@ -144,7 +200,7 @@ export default function GroupContacts() {
                         p="$3" gap="$4" items="center">
                         <Text >List is empty</Text>
                         <RefreshCcw
-                            onPress={() => loadContacts(messageContext, user_id, user_token, password ,contact_type_openswitch)}
+                            onPress={() => loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)}
                             cursor="pointer" color={'$accent6'} />
                     </XStack>
                 </YStack>
@@ -193,7 +249,15 @@ export default function GroupContacts() {
                                                     //@ts-ignore
                                                     router.navigate('/conversations/messages')
                                                     dispatch(setCallState(CALL_STATE_START_CALL))
+                                                    if (contact.jid !== caller) {
+                                                        dispatch(setMessages([]))
+                                                        console.log(contact.jid)
+                                                        console.log(caller)
+                                                        console.log("-------contact.jid-----caller------------------------")
+                                                    }
                                                     dispatch(setCaller(contact.jid))
+
+
                                                 }}
                                             size={'$1'} />
 

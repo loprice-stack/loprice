@@ -62,7 +62,7 @@ export default function RegisterCallIdAlertDialogy() {
                                             videoCallContext.videohandle.register(user.user_id)
                                             dispatch(setRequireRegisterDialogOpen(false))
                                         }}
-                                    theme="accent">Register</Button>
+                                    theme="green_accent">Register</Button>
 
                                 <Button onPress={
                                     //@ts-ignore

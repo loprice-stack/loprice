@@ -160,7 +160,7 @@ export function CreateContactDialogy() {
 
                                 }}
 
-                                theme="accent" aria-label="Close">
+                                theme='green_accent' aria-label="Close">
                                 Create
                             </Button>
 

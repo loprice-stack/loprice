@@ -25,10 +25,13 @@ export async function janussession(sessionContext) {
 
     connection.once(Janode.EVENT.CONNECTION_CLOSED, () => {
         sessionContext.connection = null
+        sessionContext.session = null
         Logger.info(`${'Janus'} connection  closed ---------------------------`);
     });
 
     connection.once(Janode.EVENT.CONNECTION_ERROR, error => {
+        sessionContext.connection = null
+        sessionContext.session = null
         Logger.error(`${'Janus'} connection error: ${error.message} ----------------------------`);
 
     });
@@ -66,10 +69,20 @@ export async function initializeVideoCallHandleWithNewSession(sessionContext, vi
 
             //@ts-ignore
             const videohandle = await sessionContext.session.attach(VideoCallHandle)
+            // generic handle events
+            videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_DETACHED, evtdata => {
+                videoCallContext.videohandle = null
+                videoCallContext.videohandleattached = false
+
+                //then detroy its associated session
+                if (sessionContext.session !== null) {
+                    sessionContext.session.destroy()
+                }
+                Logger.info(`${'VideoCallHandle'} ${videohandle.name} detached --------------`);
+            });
             videohandle.register(user_id)
             videoCallContext.videohandle = videohandle
             videoCallContext.videohandleattached = true
-
         }
     } else {
 
@@ -261,7 +274,12 @@ export function isXmppNotNull(messageContext, user_id, user_token, password) {
 
 export function isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token) {
     if (isLoggedIn(user_token)) {
-        if ((sessionContext.session !== null) || (videoCallContext.videohandle !== null)) {
+        if ((sessionContext.session !== null) || (videoCallContext.session !== undefined)) {
+           
+            console.log(sessionContext.session)
+            console.log(sessionContext.videohandle)
+            console.log("-----------------------------isvideocallhandlepluged-----------------")
+           
             return true
         } else {
             //start new alltogether

@@ -99,7 +99,7 @@ export function PaymentsAccountEditDialog() {
                             <Input placeholder={acnumber}  onChangeText={(text) => dispatch(updateAccountNumber(text))} flex={1} id="fname" />
                         </Fieldset>
                         <XStack self="flex-end" gap="$4">
-                            <Button theme="accent" aria-label="Close">
+                            <Button theme="green_accent" aria-label="Close">
                                 Save changes
                             </Button>
                         </XStack>

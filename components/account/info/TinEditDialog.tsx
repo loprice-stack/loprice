@@ -206,7 +206,7 @@ export function TinEditDialog() {
                         <XStack self="flex-end" gap="$4">
                             <Button
                                 onPress={update}
-                                theme="accent" aria-label="Close">
+                                theme="green_accent" aria-label="Close">
                                 Save changes
                             </Button>
                         </XStack>

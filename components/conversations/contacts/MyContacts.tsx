@@ -1,11 +1,11 @@
 import { Phone, MessageSquare, Plus, Mail, MoreVertical, Delete, Info, RefreshCcw } from "@tamagui/lucide-icons-2";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
-import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Menu, Spinner, YStack } from "tamagui";
+import { YGroup, ListItem, Separator, Avatar, useWindowDimensions, XStack, ScrollView, Text, Spinner, YStack, Menu, AlertDialog, Button } from "tamagui";
 import { CreateContactDialogy } from "./CreateContactDialogy";
 import { _message, useAppDispatch, useAppSelector } from "store/redux/store";
 import { ContactsObject, setCreateContactDialogOpen } from "./contactsSlice";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { deleteContacts } from "client/xmpp/xmlutilty";
 import { getJidLocal } from "utils/utility";
 import { setCaller, setCallState } from "../calls/callsSlice";
@@ -23,7 +23,8 @@ export default function MyContacts() {
     const messageContext = useContext(_message)
     const { user_id, password, user_token } = useAppSelector(state => state.account.user)
     const { caller } = useAppSelector(state => state.calls)
-
+    const [open, setIsOpen] = useState(false)
+    const [useriddd, setUserIddd] = useState("")
 
     useEffect(() => {
         loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
@@ -35,12 +36,14 @@ export default function MyContacts() {
 
         return (
             <Menu
+                native
                 offset={8}>
                 <Menu.Trigger asChild>
                     <View >
                         <MoreVertical
                             cursor="pointer"
                             size={'$1'}
+                            onPress={() => console.log("Menu pressed")}
                         /></View>
                 </Menu.Trigger>
                 <Menu.Portal zIndex={100}>
@@ -98,9 +101,8 @@ export default function MyContacts() {
                             <Menu.Item
                                 cursor="pointer"
                                 onPress={() => {
-                                    deleteContacts(messageContext.xmpp, user_id, user_idd)
-                                    loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
-                                    console.log("deleted succcesssfullly")
+                                    setIsOpen(true)
+                                    setUserIddd(user_idd)
                                 }}
                                 key="delete">
                                 <Menu.ItemTitle cursor="pointer" color="red">Delete</Menu.ItemTitle>
@@ -126,7 +128,59 @@ export default function MyContacts() {
 
     return (
         <View style={{ flex: 1, marginTop: width < 600 ? undefined : 40, height: height }}>
+
             <ScrollView style={{ width: width < 600 ? width - 40 : 390, height: height }}>
+                <AlertDialog open={open} onOpenChange={() => setIsOpen(false)}>
+                    <AlertDialog.Portal>
+                        <AlertDialog.Overlay
+                            key="overlay"
+                            //@ts-ignore
+                            transition="quick"
+                            opacity={0.5}
+                            backgroundColor="$background"
+                            enterStyle={{ opacity: 0 }}
+                            exitStyle={{ opacity: 0 }}
+                        />
+                        <AlertDialog.Content
+                            elevate
+                            key="content"
+                            transition={[
+                                //@ts-ignore
+                                'quick',
+                                {
+                                    opacity: {
+                                        overshootClamping: true,
+                                    },
+                                },
+                            ]}
+                            enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
+                            exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
+                            x={0}
+                            scale={1}
+                            opacity={1}
+                            y={0}
+                            width={width < 600 ? width - 20 : 400}
+
+                        >
+                            <YStack gap="$4">
+                                <AlertDialog.Title>Delete contact!</AlertDialog.Title>
+                                <AlertDialog.Description >
+                                    Are you sure you want to delete {useriddd} contact. This will also unsubscribe to the contact.
+                                </AlertDialog.Description>
+                                <XStack gap="$3" justify="flex-end">
+
+                                    <Button onPress={() => setIsOpen(false)} >Cancel</Button>
+
+                                    <Button onPress={() => {
+                                        deleteContacts(messageContext.xmpp, user_id, useriddd)
+                                        loadContacts(messageContext, user_id, user_token, password, contact_type_openswitch)
+                                        setIsOpen(false)
+                                    }} theme='red_accent'>Delete</Button>
+                                </XStack>
+                            </YStack>
+                        </AlertDialog.Content>
+                    </AlertDialog.Portal>
+                </AlertDialog>
                 <CreateContactDialogy />
                 <XStack gap={'$4'} style={{ alignContent: 'center', alignItems: 'center', width: width, height: 50 }}>
                     <Text >{contact_type_openswitch}</Text>

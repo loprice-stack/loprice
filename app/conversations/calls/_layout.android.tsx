@@ -9,7 +9,7 @@ import {
   YStack,
 } from 'tamagui'
 import { useContext, useEffect, useState } from 'react';
-import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_HANGUP_D, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
 import { setCallContext, setCallState, setRemoteSdp } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
@@ -33,6 +33,7 @@ import {
 } from 'react-native-webrtc';
 import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
 import RegisterCallIdAlertDialogy from 'components/account/info/RegisterCallIdAlertDialogy';
+import { Mic, MicOff, Phone, PhoneCall, PhoneIncoming, PhoneOff, Video, VideoOff } from '@tamagui/lucide-icons-2';
 
 
 
@@ -45,6 +46,10 @@ export default function Calls() {
   const messageContext = useContext(_message)
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
+  const [ismicon, setIsMicOn] = useState(true)
+  const [isvideoon, setIsVideoOn] = useState(true)
+
+
   const {
     caller,
     callstate,
@@ -71,6 +76,8 @@ export default function Calls() {
       acceptCall()
     } else if (callstate == CALL_STATE_START_CALL) {
       startCall()
+    } else if (callstate == CALL_STATE_HANGUP_D) {
+      hangupCall()
     }
   }, [])
 
@@ -108,6 +115,59 @@ export default function Calls() {
       };
     }
   }
+
+
+
+    async function setAudio(audio) {
+      if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+        try {
+          //@ts-ignore
+          videoCallContext.videohandle.setAudio(audio)
+          setIsMicOn(audio)
+          console.log("--------mute---unmute--audio---calll------------")
+          
+        } catch (err) {
+          console.log(err)
+          console.log("Error mute  unmute a call")
+        };
+      }
+    }
+  
+  
+    async function setVideo(video) {
+      if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+        try {
+          //@ts-ignore
+          videoCallContext.videohandle.setVideo(video)
+          setIsVideoOn(video)
+          console.log("--------mute---unmute--audio---calll------------")
+  
+        } catch (err) {
+          console.log(err)
+          console.log("Error mute  unmute a call")
+        };
+      }
+    }
+  
+  
+      async function switchCamera(jsep) {
+      if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+        try {
+          //@ts-ignore
+          videoCallContext.videohandle.update(jsep)
+       
+          console.log("--------mute---unmute--audio---calll------------")
+  
+        } catch (err) {
+          console.log(err)
+          console.log("Error mute  unmute a call")
+        };
+      }
+    }
+  
+  
+
+
 
 
   async function acceptCall() {
@@ -357,39 +417,61 @@ export default function Calls() {
           </>
         )}
 
-      <View
-        style={{ marginBottom: 40 }}
-        position="absolute"
-        //@ts-ignore
-        bottom={20}
-        zIndex={999}
-      >
+        <View
+          style={{ width: width < 600 ? width - 20 : 800, alignItems: 'center', marginBottom: 40 }}
+
+          position="absolute"
+          //@ts-ignore
+          bottom={20}
+          zIndex={999}
+        >
         <XStack gap={8}>
-          <Button 
-          style={{background:'$red10'}} 
-          
-          onPress={
-            //"call" | "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
-            () => {
-              ((callstate == 'incoming')
-                || (callstate == 'calling')
-                || (callstate == 'connecting')
-                || (callstate == 'connected')
-                || (callstate == 'accepted')) ?
-                hangupCall() : startCall()
+          <Button
+            theme={((callstate == 'incoming')
+              || (callstate == 'calling')
+              || (callstate == 'connecting')
+              || (callstate == 'connected')
+              || (callstate == 'accepted')) ?
+              'red_accent' : 'green_accent'}
+            onPress={
+              //"call" | "calling" | "incoming" | "hangup" | "iddle" | "connected" | "accepted"
+              () => {
+                ((callstate == 'incoming')
+                  || (callstate == 'calling')
+                  || (callstate == 'connecting')
+                  || (callstate == 'connected')
+                  || (callstate == 'accepted')) ?
+                  hangupCall() : startCall()
+              }
             }
-          }
           >{((callstate == 'incoming')
             || (callstate == 'calling')
             || (callstate == 'connecting')
             || (callstate == 'connected')
             || (callstate == 'accepted')) ?
-            'Hangup' : 'Call'
+            <PhoneOff /> : <Phone />
             }</Button>
-          <Button 
-          style={{ display: callstate == "incoming" ? "flex" : "none", backgroundColor: "green" }} 
-          onPress={() => acceptCall()}
-          >Answer</Button>
+          <Button
+            theme={'green_accent'}
+            style={{ display: callstate == "incoming" ? "flex" : "none" }}
+            onPress={() => acceptCall()}
+          ><PhoneIncoming /></Button>
+          <Button
+            theme={'white'}
+            style={{
+              display: ((callstate == 'connected')
+                || (callstate == 'accepted')) ? "flex" : "none"
+            }}
+            onPress={() => { ismicon ? setAudio(false) : setAudio(true) }}
+          >{ismicon ? <Mic /> : <MicOff />}</Button>
+          <Button
+            theme={'white'}
+            style={{
+              display: ((callstate == 'connected')
+                || (callstate == 'accepted')) ? "flex" : "none"
+            }}
+            onPress={() => { isvideoon ? setVideo(false) : setVideo(true) }}
+          >{isvideoon ? <Video /> : <VideoOff />}</Button>
         </XStack>
       </View>
       </Contents800_2_flexdirection>

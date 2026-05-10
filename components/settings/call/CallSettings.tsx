@@ -1,10 +1,9 @@
-import { Phone } from "@tamagui/lucide-icons-2";
 import { useRouter } from "expo-router";
-import { useContext, useEffect, useState } from "react";
-import { useWindowDimensions, View, ScrollView, Switch } from "react-native";
+import { useWindowDimensions, View, ScrollView } from "react-native";
 import { useAppDispatch, useAppSelector, _message } from "store/redux/store";
-import { XStack, Separator, YGroup, ListItem, Text } from "tamagui";
+import { XStack, Separator, YGroup, ListItem, Text, Switch } from "tamagui";
 import { setServiceCall } from "../settingsSlice";
+
 
 export default function CallSettings() {
 
@@ -36,16 +35,32 @@ export default function CallSettings() {
                             title={"Services call"}
                             subTitle={"Enable Loprice call services"}
                             iconAfter={
-                                <XStack gap="$3" >
+                                <XStack gap="$2" >
+
                                     <Switch
-                                        trackColor={{ false: '#a09c9c', true: '#4ecfba' }}
-                                        thumbColor={is_service_call_enabled ? '#fff' : '#fff'}
-                                        ios_backgroundColor="#3e3e3e"
+                                        id={"hghghh"}
                                         //@ts-ignore
-                                        onValueChange={(value) => dispatch(setServiceCall(value))}
-                                        value={is_service_call_enabled}
-                                                      cursor='pointer'
-                                    />
+                                        transition="300ms"
+                                        size={"$3"}
+                                        defaultChecked={is_service_call_enabled}
+
+                                        // use activeStyle to choose youra active color
+                                        // default to $backgroundActive unless "unstyled" boolean prop is on
+                                        activeStyle={{
+                                            backgroundColor: '#3b9e78',
+                                        }}
+                                        onCheckedChange={(newstate) => dispatch(setServiceCall(newstate))}
+                                    >
+                                        <Switch.Thumb
+                                            //@ts-ignore
+                                            transition="quickest"
+                                            activeStyle={{
+                                                //@ts-ignore
+                                                backgroundColor: '#fff',
+                                                borderStartColor: '#fff'
+                                            }}
+                                        />
+                                    </Switch>
                                 </XStack>
                             }
                         />

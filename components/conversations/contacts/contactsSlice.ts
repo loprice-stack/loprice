@@ -95,7 +95,7 @@ export const contactsSlice = createSlice({
 
         setMoreButtonsContactMenuOpen: (state, action) => {
             state.roaster.more_buttons_contact_menu_open = action.payload
-            //console.log("New state is " + state.roaster.more_buttons_contact_menu_open)
+            console.log("New state is " + state.roaster.more_buttons_contact_menu_open)
         },
 
 

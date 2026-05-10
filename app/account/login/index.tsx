@@ -175,6 +175,7 @@ export default function Login() {
                 />
                 <Input
                   theme="surface1"
+                  type="password"
                   size={'$4'}
                   placeholder={'Password'}
                   value={password}

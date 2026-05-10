@@ -35,6 +35,7 @@ export const settingsSlice = createSlice({
 
         setServiceCall: (state, action) => {
             state.is_service_call_enabled = action.payload
+            //console.log(state.is_service_call_enabled)
         },
 
         setLanguage: (state, action) => {

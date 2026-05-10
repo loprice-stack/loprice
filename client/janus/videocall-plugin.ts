@@ -37,6 +37,7 @@ const PLUGIN_EVENT = {
   ACCEPTED: 'videocall_accepted',
   HANGUP: 'videocall_hangup',
   UPDATE: 'videocall_update',
+  SET: 'videocall_set',
   SIMULCAST: 'videocall_simulcast',
   JSEP: 'videocall_jsep',
   TRICKLE: 'videocall_trickle',
@@ -156,7 +157,13 @@ class VideoCallHandle extends Handle {
               case 'update':
                 janode_event.data.result = message_data.result;
                 janode_event.event = PLUGIN_EVENT.UPDATE;
+                store.dispatch(setRemoteSdp(janode_event.data.jsep))
                 console.log("---------videocall-plugin--events----update---check--------------")
+                break;
+              case 'set':
+                janode_event.data.result = message_data.result;
+                janode_event.event = PLUGIN_EVENT.SET;
+                console.log("---------videocall-plugin--events----set---check--------------")
                 break;
               case 'hangup':
                 janode_event.data.result = message_data.result;
@@ -379,6 +386,69 @@ class VideoCallHandle extends Handle {
     throw (error);
   }
 
+
+
+  async setAudio(audio) {
+    const body = {
+      request: REQUEST_SET,
+      audio: audio
+    };
+    //@ts-ignore
+    const response = await this.message(body);
+    //@ts-ignore
+    const { event, data: evtdata } = this._getPluginEvent(response);
+    if (event === PLUGIN_EVENT.SET || PLUGIN_EVENT.ERROR)
+      return evtdata;
+    const error = new Error(`unexpected response to ${body.request} request`);
+    throw (error);
+  }
+
+  async setVideo(video) {
+    const body = {
+      request: REQUEST_SET,
+      video: video
+    };
+    //@ts-ignore
+    const response = await this.message(body);
+    //@ts-ignore
+    const { event, data: evtdata } = this._getPluginEvent(response);
+    if (event === PLUGIN_EVENT.SET || PLUGIN_EVENT.ERROR)
+      return evtdata;
+    const error = new Error(`unexpected response to ${body.request} request`);
+    throw (error);
+  }
+
+
+  async record(record, filepath) {
+    const body = {
+      request: REQUEST_SET,
+      record: record,
+      filename: filepath
+    };
+    //@ts-ignore
+    const response = await this.message(body);
+    //@ts-ignore
+    const { event, data: evtdata } = this._getPluginEvent(response);
+    if (event === PLUGIN_EVENT.SET || PLUGIN_EVENT.ERROR)
+      return evtdata;
+    const error = new Error(`unexpected response to ${body.request} request`);
+    throw (error);
+  }
+
+  async update(jsep,) {
+    const body = {
+      request: REQUEST_SET,
+
+    };
+    //@ts-ignore
+    const response = await this.message(body, jsep);
+    //@ts-ignore
+    const { event, data: evtdata } = this._getPluginEvent(response);
+    if (event === PLUGIN_EVENT.SET || PLUGIN_EVENT.ERROR)
+      return evtdata;
+    const error = new Error(`unexpected response to ${body.request} request`);
+    throw (error);
+  }
 
 
   async tricklee(candidate) {

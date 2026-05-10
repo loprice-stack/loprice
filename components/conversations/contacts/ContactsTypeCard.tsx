@@ -31,7 +31,6 @@ export default function ContactsTypeCard() {
             dispatch(setContactGroupIsLoading(true))
             getContacts(messageContext.xmpp, user_id)
                 .then((iq) => {
-
                     parseContactGroups(iq).then((groupss) => {
 
                         const uniqGroupss = groupss.filter((grp, index, self) =>

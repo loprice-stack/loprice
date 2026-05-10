@@ -28,6 +28,7 @@ export default function ProfilePhotoCard(props: CardProps) {
             </YStack>
             <Card.Footer items={'center'} p="$2" gap={'$-11'}>
                 <Button
+                theme={'green_accent'}
                     onPress={
                         //@ts-ignore
                         () => router.navigate('/')}

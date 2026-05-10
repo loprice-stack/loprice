@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 
-type CallState = "call" | "calling" | "incoming" | "hangup" | "iddle" | "error" | "connecting" | "connected" | "accepted"
+type CallState = "call" | "calling" | "incoming" | "hangup" | "hangupd" |  "iddle" | "error" | "connecting" | "connected" | "accepted"
 type RingerState = "ringing" | "iddle"
 // Define the TS type for the counter slice's state
 export interface CallsState {
