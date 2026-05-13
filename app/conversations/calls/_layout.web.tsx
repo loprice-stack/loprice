@@ -9,8 +9,8 @@ import {
   YStack,
 } from 'tamagui'
 
-import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_HANGUP_D, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
-import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_HANGUP_D, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, CAMERA_FACING_MODE_ENVIRONMENT, CAMERA_FACING_MODE_USER, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
+import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setCameraFacingMode, setRemoteSdp } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -44,9 +44,13 @@ export default function Calls() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
-   const messageContext = useContext(_message)
+  const messageContext = useContext(_message)
   const { width, height } = useWindowDimensions();
   const dispatch = useAppDispatch();
+  const [callupdate, setCallUpdate] = useState(false)
+
+
+
   const {
     caller,
     callstate,
@@ -56,7 +60,8 @@ export default function Calls() {
     //localstream,
     //remotestream,
     localsdp,
-    remotesdp
+    remotesdp,
+    camera_facing_mode
   } = useAppSelector(state => state.calls)
   const { user_id, user_token, password } = useAppSelector(state => state.account.user)
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
@@ -90,8 +95,8 @@ export default function Calls() {
   }
 
 
-  function backNavigationListener(){
-  
+  function backNavigationListener() {
+
   }
 
 
@@ -100,26 +105,23 @@ export default function Calls() {
     if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
 
-          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+
+        let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
-          //if (!islisterning) {
           handleCallOnstart(pc, videoCallContext.videohandle)
           eventIcomming(videoCallContext.videohandle)
           eventCalling(videoCallContext.videohandle)
           eventAccepted(videoCallContext.videohandle)
           eventTricle(videoCallContext.videohandle)
-        eventHangup(videoCallContext.videohandle)
-        eventDetached(videoCallContext.videohandle)
-        setIsListerning(true)
-        console.log("--------setting----alll-------listerner------------")
-        //}
-        await setMediaStream(pc)
-        const jsep = await createOffer(pc)
-        //@ts-ignore
-        videoCallContext.videohandle.call(caller, jsep)
-        console.log("--------starting-----a-----calll------------")
-
+          eventHangup(videoCallContext.videohandle)
+          eventDetached(videoCallContext.videohandle)
+          eventUpdate(videoCallContext.videohandle)
+          await setMediaStream(pc)
+          const jsep = await createOffer(pc)
+          console.log("--------setting----all-------listerner------------")
+          //@ts-ignore
+          videoCallContext.videohandle.call(caller, jsep)
       } catch (err) {
         console.log(err)
         console.log("Error starting a call")
@@ -135,7 +137,7 @@ export default function Calls() {
         videoCallContext.videohandle.setAudio(audio)
         setIsMicOn(audio)
         console.log("--------mute---unmute--audio---calll------------")
-        
+
       } catch (err) {
         console.log(err)
         console.log("Error mute  unmute a call")
@@ -159,15 +161,28 @@ export default function Calls() {
     }
   }
 
+  
 
-    async function switchCamera(jsep) {
+  //This was attempt on call update when you want 
+  // to swiitch face camera from user to environment
+  //while the call is in connected state
+  async function updateCall() {
     if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
-        //@ts-ignore
-        videoCallContext.videohandle.update(jsep)
-     
-        console.log("--------mute---unmute--audio---calll------------")
 
+        if (((callstate == 'connected')
+          || (callstate == 'accepted'))) {
+
+          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+          await setMediaStream(pc)
+          const jsep = await createOffer(pc)
+          //@ts-ignore
+          videoCallContext.updatedpeerconn = pc
+          //@ts-ignore
+          videoCallContext.videohandle.update(jsep)
+          console.log("--------starting-----a-----calll---update---------")
+        }
+        console.log("--------setting----update-------listerner------------")
       } catch (err) {
         console.log(err)
         console.log("Error mute  unmute a call")
@@ -180,30 +195,29 @@ export default function Calls() {
 
 
 
+
   async function acceptCall() {
 
     if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
 
-          if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
-            dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
-          }
-          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
-          //@ts-ignore
-          videoCallContext.peerconn = pc
-
-          handleCallOnstart(pc, videoCallContext.videohandle)
-          eventIcomming(videoCallContext.videohandle)
-          eventAccepted(videoCallContext.videohandle)
-          eventTricle(videoCallContext.videohandle)
-          eventHangup(videoCallContext.videohandle)
-          eventDetached(videoCallContext.videohandle)
-          setIsListerning(true)
-          //}
-          await setMediaStream(videoCallContext.peerconn)
-          const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
-          //@ts-ignore
-          videoCallContext.videohandle.accept(jsep)
+        if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+          dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+        }
+        let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+        //@ts-ignore
+        videoCallContext.peerconn = pc
+        handleCallOnstart(pc, videoCallContext.videohandle)
+        eventIcomming(videoCallContext.videohandle)
+        eventAccepted(videoCallContext.videohandle)
+        eventTricle(videoCallContext.videohandle)
+        eventHangup(videoCallContext.videohandle)
+        eventDetached(videoCallContext.videohandle)
+        eventUpdate(videoCallContext.videohandle)
+        await setMediaStream(pc)
+        const jsep = await createOfferAnser(pc, remotesdp)
+        //@ts-ignore
+        videoCallContext.videohandle.accept(jsep)
 
       } catch (err) {
         console.log(err)
@@ -211,6 +225,40 @@ export default function Calls() {
       };
     }
   }
+
+
+
+  //This was attempt on call update when you want 
+  // to swiitch face camera from user to environment
+  //while the call is in connected state
+  async function acceptUpdatedCall(jsep_r) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+      try {
+
+        if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+          dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+        }
+  
+          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+        //@ts-ignore
+          videoCallContext.updatedpeerconn = pc
+          console.log("--------------------updated--peerconection----created------------")
+          const jsep = await createOfferAnser(videoCallContext.updatedpeerconn, jsep_r)
+          console.log("--------------------updated--jsep----created------------")
+          //@ts-ignore
+          videoCallContext.videohandle.update(jsep)
+          console.log("--------------------updated--jsep/answer----sent----back--------")
+        
+      } catch (err) {
+        console.log(err)
+        console.log("Error answering updated call")
+      };
+    }
+  }
+
+
+
+
 
   async function hangupCall() {
     if (isLoggedIn(user_token)) {
@@ -226,7 +274,7 @@ export default function Calls() {
         closePeerConnection(videoCallContext.peerconn)
         dispatch(setCallState(CALL_STATE_HANGUP))
         console.log("Error closing a call")
-       
+
       };
     }
   }
@@ -318,7 +366,7 @@ export default function Calls() {
         audio: true,
         video: {
           frameRate: 30,
-          facingMode: 'user'
+          facingMode: camera_facing_mode
         }
       })
       //@ts-ignore
@@ -329,10 +377,13 @@ export default function Calls() {
     } catch (err) {
       dispatch(setCallErrorDialogOpen(true))
       dispatch(setCallErrorMessage("Device in use"))
-       console.log(err)
+      console.log(err)
     }
 
   }
+
+
+  
 
   async function stopAllStreams() {
     if (localstream !== null) {
@@ -528,6 +579,7 @@ export default function Calls() {
       const jsep = evtdata.jsep
       dispatch(setRemoteSdp(jsep))
       saveReceivedJsepAnswer(videoCallContext.peerconn, jsep)
+      setCallUpdate(false)
       console.log("-------------------------accepted--------------------------------")
     });
   }
@@ -541,6 +593,7 @@ export default function Calls() {
       console.log(reason)
       console.log(username)
       hangupCallRemote()
+      setCallUpdate(false)
       console.log("-------------------------hangupCallRemote--------------------------------")
     });
   }
@@ -553,10 +606,33 @@ export default function Calls() {
       videoCallContext.videohandleattached = false
       console.log(session_id)
       console.log(handle_id)
-      console.log("-------------------------videocall--handle---detached------------------------------")
+      setCallUpdate(false)
+      console.log("--------videocall--handle---detached----------")
     });
   }
 
+
+  //This was attempt on call update when you want 
+  // to swiitch face camera from user to environment
+  //while the call is in connected state
+  function eventUpdate(videohandle) {
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_UPDATE, evtdata => {
+      const jsep = evtdata.jsep
+      if (jsep) {
+        if (jsep.type == "offer") {
+          acceptUpdatedCall(jsep)
+          console.log("-------------videocall--handle---update--we-received--offer-----------")
+        } else if (jsep.type == "answer") {
+          saveReceivedJsepAnswer(videoCallContext.updatedpeerconn, jsep).then((s) => {
+            videoCallContext.peerconn == videoCallContext.updatedpeerconn
+            videoCallContext.updatedpeerconn = null
+
+          })
+        }
+      }
+      console.log("-------------videocall--handle---update--------------")
+    });
+  }
 
 
   function handleCallOnstart(peerConnection, vch) {
@@ -564,7 +640,7 @@ export default function Calls() {
       peerConnection.addEventListener('track', event => {
         setRemotestream(event.streams[0])
         console.log(event)
-        console.log("----------------------track---------------------------------")
+        console.log("----------------------track----remote-----------------------------")
       });
 
       peerConnection.addEventListener('connectionstatechange', event => {

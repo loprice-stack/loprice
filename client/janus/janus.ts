@@ -274,16 +274,17 @@ export function isXmppNotNull(messageContext, user_id, user_token, password) {
 
 export function isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token) {
     if (isLoggedIn(user_token)) {
-        if ((sessionContext.session !== null) || (videoCallContext.session !== undefined)) {
+        if (sessionContext.session !== null )  {
            
-            console.log(sessionContext.session)
-            console.log(sessionContext.videohandle)
-            console.log("-----------------------------isvideocallhandlepluged-----------------")
+            console.log(typeof sessionContext.session)
+            console.log(typeof videoCallContext.videohandle)
+            console.log("-------isvideocallhandlepluged-----ee----------true-------------")
            
             return true
         } else {
             //start new alltogether
             initializeVideoCallHandleWithNewSession(sessionContext, videoCallContext, user_id)
+             console.log("------isvideocallhandlepluged----------------false-----------")
             return false
 
         }

@@ -74,7 +74,8 @@ const janodeContext = {
 const videoContext = {
   videohandle: null,
   videohandleattached: false,
-  peerconn: null
+  peerconn: null,
+  updatedpeerconn: null
 
 }
 

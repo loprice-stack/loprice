@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { CAMERA_FACING_MODE_USER } from 'utils/constants'
 
 
-type CallState = "call" | "calling" | "incoming" | "hangup" | "hangupd" |  "iddle" | "error" | "connecting" | "connected" | "accepted"
+type CallState = "call" | "calling" | "incoming" | "hangup" | "hangupd" |  "closed"  |  "iddle" | "error"| "checking"  | "connecting" | "connected" | "accepted"
 type RingerState = "ringing" | "iddle"
 // Define the TS type for the counter slice's state
 export interface CallsState {
@@ -19,6 +20,7 @@ export interface CallsState {
 
     callerror_d_open: boolean
     callerror_message: string
+    camera_facing_mode: string
 }
 
 // Define the initial value for the slice state
@@ -35,7 +37,8 @@ const initialState: CallsState = {
     callcontext: "",
 
     callerror_d_open: false,
-    callerror_message: ""
+    callerror_message: "",
+    camera_facing_mode: CAMERA_FACING_MODE_USER
 }
 
 // Slices contain Redux reducer logic for updating state, and
@@ -107,6 +110,11 @@ export const callsSlice = createSlice({
             state.callerror_message = action.payload
         },
 
+        
+        setCameraFacingMode: (state, action) => {
+            state.camera_facing_mode = action.payload
+        },
+
     }
 })
 
@@ -121,8 +129,10 @@ export const {
     setLocalSdp,
     setRemoteSdp,
     setCaller,
-    setCallContext, setCallErrorDialogOpen,
-    setCallErrorMessage
+    setCallContext, 
+    setCallErrorDialogOpen,
+    setCallErrorMessage,
+    setCameraFacingMode
 } = callsSlice.actions
 
 // Export the slice reducer for use in the store configuration

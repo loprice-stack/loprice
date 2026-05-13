@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useFocusEffect } from 'expo-router';
 import {
   Avatar,
   Button,
@@ -9,8 +9,8 @@ import {
   YStack,
 } from 'tamagui'
 
-import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_HANGUP_D, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
-import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setRemoteSdp  } from '../../../components/conversations/calls/callsSlice';
+import { CALL_STATE_CALLING, CALL_STATE_HANGUP, CALL_STATE_HANGUP_D, CALL_STATE_INCOMMING, CALL_STATE_START_CALL, CAMERA_FACING_MODE_ENVIRONMENT, CAMERA_FACING_MODE_USER, LOPRICE_JANUS_ICE_SERVER, LOPRICE_UI_CONTEXT_CALL } from 'utils/constants';
+import { setCallContext, setCallErrorDialogOpen, setCallErrorMessage, setCallState, setCameraFacingMode, setRemoteSdp } from '../../../components/conversations/calls/callsSlice';
 import VideoCallHandle from 'client/janus/videocall-plugin'
 import Contents800_2_flexdirection from 'components/Contents800_2_flexdirection';
 import { _message, _session, _videohandle, useAppDispatch, useAppSelector } from 'store/redux/store';
@@ -31,11 +31,10 @@ import {
   registerGlobals,
   RTCView,
 } from 'react-native-webrtc-web-shim';
-import { setRequireLoginDialogOpen } from 'components/account/accountSlice';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import RegisterCallIdAlertDialogy from 'components/account/info/RegisterCallIdAlertDialogy';
 import CallErrorAlertDialogy from 'components/conversations/calls/CallErrorAlertDialogy';
-import { Mic, MicOff, Phone, PhoneIncoming, PhoneOff, Video, VideoOff } from '@tamagui/lucide-icons-2';
+import { Mic, MicOff, Phone, PhoneIncoming, PhoneOff, SwitchCamera, Video, VideoOff } from '@tamagui/lucide-icons-2';
 
 
 
@@ -45,13 +44,13 @@ export default function Calls() {
 
   const sessionContext = useContext(_session)
   const videoCallContext = useContext(_videohandle)
-   const messageContext = useContext(_message)
+  const messageContext = useContext(_message)
   const { width, height } = useWindowDimensions();
-    const [ismicon, setIsMicOn] = useState(true)
-    const [isvideoon, setIsVideoOn] = useState(true)
-
-
   const dispatch = useAppDispatch();
+  const [callupdate, setCallUpdate] = useState(false)
+
+
+
   const {
     caller,
     callstate,
@@ -61,7 +60,8 @@ export default function Calls() {
     //localstream,
     //remotestream,
     localsdp,
-    remotesdp
+    remotesdp,
+    camera_facing_mode
   } = useAppSelector(state => state.calls)
   const { user_id, user_token, password } = useAppSelector(state => state.account.user)
   const [signalingstatechange, setSignalingstatechange] = useState("have-local-offer")
@@ -69,6 +69,8 @@ export default function Calls() {
   const [remotestream, setRemotestream] = useState<MediaStream>(null)
   const [remoteCandidates, setRemoteCandidates] = useState([])
   const [islisterning, setIsListerning] = useState(false)
+  const [ismicon, setIsMicOn] = useState(true)
+  const [isvideoon, setIsVideoOn] = useState(true)
 
   useEffect(() => {
 
@@ -76,23 +78,37 @@ export default function Calls() {
       acceptCall()
     } else if (callstate == CALL_STATE_START_CALL) {
       startCall()
-    }else if (callstate == CALL_STATE_HANGUP_D) {
-          hangupCall()
-        }
+    } else if (callstate == CALL_STATE_HANGUP_D) {
+      hangupCall()
+    }
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Screen is now in focus (user may have come back to it)');
+    }, [])
+  );
+
 
   if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
     dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
   }
 
+
+  function backNavigationListener() {
+
+  }
+
+
+
   async function startCall() {
     if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
 
-          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+
+        let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
-          //if (!islisterning) {
           handleCallOnstart(pc, videoCallContext.videohandle)
           eventIcomming(videoCallContext.videohandle)
           eventCalling(videoCallContext.videohandle)
@@ -100,15 +116,12 @@ export default function Calls() {
           eventTricle(videoCallContext.videohandle)
           eventHangup(videoCallContext.videohandle)
           eventDetached(videoCallContext.videohandle)
-          setIsListerning(true)
-          console.log("--------setting----alll-------listerner------------")
-          //}
+          eventUpdate(videoCallContext.videohandle)
           await setMediaStream(pc)
           const jsep = await createOffer(pc)
+          console.log("--------setting----all-------listerner------------")
           //@ts-ignore
           videoCallContext.videohandle.call(caller, jsep)
-          console.log("--------starting-----a-----calll------------")
-
       } catch (err) {
         console.log(err)
         console.log("Error starting a call")
@@ -117,56 +130,63 @@ export default function Calls() {
   }
 
 
+  async function setAudio(audio) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+      try {
+        //@ts-ignore
+        videoCallContext.videohandle.setAudio(audio)
+        setIsMicOn(audio)
+        console.log("--------mute---unmute--audio---calll------------")
 
-    async function setAudio(audio) {
-      if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
-        try {
-          //@ts-ignore
-          videoCallContext.videohandle.setAudio(audio)
-          setIsMicOn(audio)
-          console.log("--------mute---unmute--audio---calll------------")
-          
-        } catch (err) {
-          console.log(err)
-          console.log("Error mute  unmute a call")
-        };
-      }
+      } catch (err) {
+        console.log(err)
+        console.log("Error mute  unmute a call")
+      };
     }
-  
-  
-    async function setVideo(video) {
-      if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
-        try {
-          //@ts-ignore
-          videoCallContext.videohandle.setVideo(video)
-          setIsVideoOn(video)
-          console.log("--------mute---unmute--audio---calll------------")
-  
-        } catch (err) {
-          console.log(err)
-          console.log("Error mute  unmute a call")
-        };
-      }
+  }
+
+
+  async function setVideo(video) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+      try {
+        //@ts-ignore
+        videoCallContext.videohandle.setVideo(video)
+        setIsVideoOn(video)
+        console.log("--------mute---unmute--audio---calll------------")
+
+      } catch (err) {
+        console.log(err)
+        console.log("Error mute  unmute a call")
+      };
     }
-  
-  
-      async function switchCamera(jsep) {
-      if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
-        try {
+  }
+
+
+  async function updateCall(jsep) {
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+      try {
+
+        await dispatch(setCameraFacingMode(camera_facing_mode == CAMERA_FACING_MODE_USER ? CAMERA_FACING_MODE_ENVIRONMENT : CAMERA_FACING_MODE_USER))
+     
+      
+        if (((callstate == 'connected')
+          || (callstate == 'accepted'))) {
+       
+          await setMediaStream(videoCallContext.peerconn)
+          const jsep = await createOffer(videoCallContext.peerconn)
+
           //@ts-ignore
           videoCallContext.videohandle.update(jsep)
-       
-          console.log("--------mute---unmute--audio---calll------------")
-  
-        } catch (err) {
-          console.log(err)
-          console.log("Error mute  unmute a call")
-        };
-      }
-    }
-  
-  
+          console.log("--------starting-----a-----calll---update---------")
+        } 
 
+        console.log("--------setting----update-------listerner------------")
+      } catch (err) {
+        console.log(err)
+        console.log("Error mute  unmute a call")
+      };
+    }
+  }
 
 
 
@@ -178,23 +198,21 @@ export default function Calls() {
     if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
       try {
 
-          if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
-            dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
-          }
-          let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
+        if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+          dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+        }
+        let pc = new RTCPeerConnection({ iceServers: LOPRICE_JANUS_ICE_SERVER });
           //@ts-ignore
           videoCallContext.peerconn = pc
-
           handleCallOnstart(pc, videoCallContext.videohandle)
           eventIcomming(videoCallContext.videohandle)
           eventAccepted(videoCallContext.videohandle)
           eventTricle(videoCallContext.videohandle)
           eventHangup(videoCallContext.videohandle)
           eventDetached(videoCallContext.videohandle)
-          setIsListerning(true)
-          //}
-          await setMediaStream(videoCallContext.peerconn)
-          const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
+          eventUpdate(videoCallContext.videohandle)
+          await setMediaStream(pc)
+          const jsep = await createOfferAnser(pc, remotesdp)
           //@ts-ignore
           videoCallContext.videohandle.accept(jsep)
 
@@ -204,6 +222,43 @@ export default function Calls() {
       };
     }
   }
+
+
+
+  
+  async function updateAcceptCall() {
+
+    if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+      try {
+
+        if (isVideoCallHandlePluged(sessionContext, videoCallContext, user_id, user_token)) {
+          try {
+
+            if (callstate.toString() !== LOPRICE_UI_CONTEXT_CALL) {
+              dispatch(setCallContext(LOPRICE_UI_CONTEXT_CALL))
+            }
+            if (((callstate == 'connected')
+              || (callstate == 'accepted'))) {
+              const jsep = await createOfferAnser(videoCallContext.peerconn, remotesdp)
+              //@ts-ignore
+              videoCallContext.videohandle.update(jsep)
+            }
+          } catch (err) {
+            console.log(err)
+            console.log("Error answering a call")
+          };
+        }
+
+      } catch (err) {
+        console.log(err)
+        console.log("Error answering a call")
+      };
+    }
+  }
+
+
+
+
 
   async function hangupCall() {
     if (isLoggedIn(user_token)) {
@@ -219,7 +274,7 @@ export default function Calls() {
         closePeerConnection(videoCallContext.peerconn)
         dispatch(setCallState(CALL_STATE_HANGUP))
         console.log("Error closing a call")
-       
+
       };
     }
   }
@@ -311,7 +366,7 @@ export default function Calls() {
         audio: true,
         video: {
           frameRate: 30,
-          facingMode: 'user'
+          facingMode: camera_facing_mode
         }
       })
       //@ts-ignore
@@ -322,10 +377,13 @@ export default function Calls() {
     } catch (err) {
       dispatch(setCallErrorDialogOpen(true))
       dispatch(setCallErrorMessage("Device in use"))
-       console.log(err)
+      console.log(err)
     }
 
   }
+
+
+  
 
   async function stopAllStreams() {
     if (localstream !== null) {
@@ -370,8 +428,8 @@ export default function Calls() {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Stack.Screen options={{ title: "Calls", headerShown: false }} />
       <YStack style={{ position: "absolute", display: remotestream ? 'none' : 'flex', }} items="center" gap="$6">
-        <RegisterCallIdAlertDialogy/>
-        <CallErrorAlertDialogy/>
+        <RegisterCallIdAlertDialogy />
+        <CallErrorAlertDialogy />
         <Avatar circular size="$10">
           <Avatar.Image
             aria-label="Cam"
@@ -394,7 +452,7 @@ export default function Calls() {
           style={{ width: width < 600 ? width : 800, height: height }}>
           {remotestream && (
             <RTCView
-              style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+              style={{ backgroundColor: 'black', width: 800, height: height }}
               mirror={true}
               objectFit={'cover'}
               stream={remotestream}
@@ -409,7 +467,7 @@ export default function Calls() {
           style={{ marginLeft: 8, width: 100, height: 150 }}>
           {localstream && (
             <RTCView
-              style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
+              style={{ backgroundColor: 'black', width: 100, height: 150 }}
               mirror={true}
               objectFit={'cover'}
               stream={localstream}
@@ -419,7 +477,7 @@ export default function Calls() {
         </View>
       </Contents800_2_flexdirection>
       <View
-        style={{width: width < 600 ? width - 20 : 800, alignItems: 'center'}}
+        style={{ width: width < 600 ? width - 20 : 800, alignItems: 'center' }}
         position="absolute"
         //@ts-ignore
         bottom={5}
@@ -521,6 +579,7 @@ export default function Calls() {
       const jsep = evtdata.jsep
       dispatch(setRemoteSdp(jsep))
       saveReceivedJsepAnswer(videoCallContext.peerconn, jsep)
+      setCallUpdate(false)
       console.log("-------------------------accepted--------------------------------")
     });
   }
@@ -534,6 +593,7 @@ export default function Calls() {
       console.log(reason)
       console.log(username)
       hangupCallRemote()
+      setCallUpdate(false)
       console.log("-------------------------hangupCallRemote--------------------------------")
     });
   }
@@ -546,10 +606,25 @@ export default function Calls() {
       videoCallContext.videohandleattached = false
       console.log(session_id)
       console.log(handle_id)
-      console.log("-------------------------videocall--handle---detached------------------------------")
+      setCallUpdate(false)
+      console.log("--------videocall--handle---detached----------")
     });
   }
 
+  function eventUpdate(videohandle) {
+    videohandle.once(VideoCallHandle.EVENT.VIDEOCALL_UPDATE, evtdata => {
+
+      const jsep = evtdata.jsep
+      if (jsep) {
+        if (jsep.type == "offer") {
+          updateAcceptCall()
+        } else if (jsep.type == "answer") {
+          saveReceivedJsepAnswer(videoCallContext.peerconn, jsep)
+        }
+      }
+      console.log("-----------videocall--handle---update-----------------")
+    });
+  }
 
 
   function handleCallOnstart(peerConnection, vch) {
@@ -636,4 +711,5 @@ export default function Calls() {
       console.log("----------null---------peerconnection---------------")
     }
   }
+
 }

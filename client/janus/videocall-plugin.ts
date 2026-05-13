@@ -435,7 +435,7 @@ class VideoCallHandle extends Handle {
     throw (error);
   }
 
-  async update(jsep,) {
+  async update(jsep) {
     const body = {
       request: REQUEST_SET,
 
