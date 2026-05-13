@@ -18,9 +18,14 @@ The unification of all these gives us the handfull of functionality.
 ### Features
 ----------------
 + Listings
+  - implemented with tamagui and other ui components
 + Media streaming
+  - [janus.plugin.streaming](https://janus.conf.meetecho.com/demos/streaming.html)
 + Video call
+  - [janus.plugin.videcall](https://janus.conf.meetecho.com/docs/videocall)
 + Messaging
+  - [xmpp core](https://datatracker.ietf.org/doc/html/rfc6121)
+  - [xep-0313 : Message archive management](https://xmpp.org/extensions/xep-0313.html)
 
 
 
