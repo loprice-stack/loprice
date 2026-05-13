@@ -29,7 +29,7 @@ The unification of all these gives us the handfull of functionality.
 1. Install and configure Janus Webrtc server
 2. Instal and configure Ejabberd server
 3. Install Fast api and implements minimal main.py for login authentication with sqlite database for dummy login or disable this feature in the app
-4. Download this repo souuce code to your favourite code editor and type,
+4. Download this repo source code to your favourite code editor and type,
 ```
  bun install
 ```
